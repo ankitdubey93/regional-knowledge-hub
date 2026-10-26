@@ -43,6 +43,41 @@
       "when": 1793011405687,
       "tag": "0005_workspace_checks",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793021840475,
+      "tag": "0006_admin",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793023890103,
+      "tag": "0007_admin_rules",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793024838204,
+      "tag": "0008_kb_vector",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793024862666,
+      "tag": "0009_kb",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793024884793,
+      "tag": "0010_kb_search",
+      "breakpoints": true
     }
   ]
 }

@@ -30,6 +30,13 @@ const WorkspaceSetup = page(() => import('./pages/workspace/WorkspaceSetup'), 'W
 const WorkspaceHome = page(() => import('./pages/workspace/WorkspaceHome'), 'WorkspaceHome');
 const EntityDashboard = page(() => import('./pages/entity/EntityDashboard'), 'EntityDashboard');
 const EntitySettings = page(() => import('./pages/entity/EntitySettings'), 'EntitySettings');
+const AdminHome = page(() => import('./pages/admin/AdminHome'), 'AdminHome');
+const AdminUsers = page(() => import('./pages/admin/AdminUsers'), 'AdminUsers');
+const AdminKb = page(() => import('./pages/admin/AdminKb'), 'AdminKb');
+const AdminKbSource = page(() => import('./pages/admin/AdminKbSource'), 'AdminKbSource');
+const AdminKbNew = page(() => import('./pages/admin/AdminKbNew'), 'AdminKbNew');
+const AdminKbVersion = page(() => import('./pages/admin/AdminKbVersion'), 'AdminKbVersion');
+const AdminKbSearch = page(() => import('./pages/admin/AdminKbSearch'), 'AdminKbSearch');
 
 export function App() {
   return (
@@ -67,6 +74,13 @@ export function App() {
           <Route path="business" element={<Navigate to="/workspace" replace />} />
           <Route path="clients" element={<Navigate to="/workspace" replace />} />
           <Route path="clients/:id" element={<ClientRedirect />} />
+          <Route path="admin" element={<AdminHome />} />
+          <Route path="admin/users" element={<AdminUsers />} />
+          <Route path="admin/kb" element={<AdminKb />} />
+          <Route path="admin/kb/sources/:id" element={<AdminKbSource />} />
+          <Route path="admin/kb/new" element={<AdminKbNew />} />
+          <Route path="admin/kb/search" element={<AdminKbSearch />} />
+          <Route path="admin/kb/versions/:id" element={<AdminKbVersion />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

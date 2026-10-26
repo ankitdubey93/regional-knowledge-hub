@@ -4,10 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "admin:promote": "node --env-file=../.env --import tsx scripts/admin-role.ts promote",
+    "admin:demote": "node --env-file=../.env --import tsx scripts/admin-role.ts demote",
     "dev": "node --env-file=../.env --import tsx --watch src/index.ts",
     "typecheck": "tsc --noEmit -p .",
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
+    "kb:seed-curriculum": "node --env-file=../.env --import tsx scripts/seed-curriculum.ts",
     "db:migrate": "node --env-file=../.env --import tsx scripts/migrate.ts"
   },
   "dependencies": {
@@ -15,7 +18,10 @@
     "cors": "^2.8.6",
     "drizzle-orm": "^0.45.4",
     "express": "^5.3.0",
+    "mammoth": "^1.13.0",
     "pg": "^8.23.1",
+    "turndown": "^7.2.4",
+    "unpdf": "^1.9.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -23,6 +29,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.5",
     "@types/pg": "^8.23.1",
+    "@types/turndown": "^5.0.6",
     "drizzle-kit": "^0.31.11",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"

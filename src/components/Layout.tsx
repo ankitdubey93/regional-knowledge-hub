@@ -49,6 +49,7 @@ export function Layout() {
     ? [
         { to: '/workspace', label: 'Workspace' },
         { to: '/knowledge', label: 'Knowledge Hub' },
+        ...(session.isAdmin ? [{ to: '/admin', label: 'Admin' }] : []),
       ]
     : [{ to: '/knowledge', label: 'Knowledge Hub' }];
 

@@ -10,6 +10,7 @@ export interface SessionInfo {
   activeFirmId: string | null;
   activeFirmName: string | null;
   activeWorkspaceKind: WorkspaceKind | null;
+  isAdmin?: boolean;
 }
 
 interface Snapshot {
@@ -23,7 +24,7 @@ const BASE = '/api/auth';
 const sessionBody = z
   .object({
     session: z.object({ activeOrganizationId: z.string().nullish() }),
-    user: z.object({ id: z.string(), email: z.string(), name: z.string() }),
+    user: z.object({ id: z.string(), email: z.string(), name: z.string(), role: z.string().nullish() }),
   })
   .nullable();
 const kindSchema = z.enum(['business', 'practice']);
@@ -94,8 +95,17 @@ async function refreshSession(): Promise<void> {
         activeWorkspaceKind = null;
       }
     }
+    // isAdmin only shows or hides the Admin link; the server checks the role on every /api/admin request.
     setSnapshot({
-      session: { userId: user.id, email: user.email, name: user.name, activeFirmId, activeFirmName, activeWorkspaceKind },
+      session: {
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+        activeFirmId,
+        activeFirmName,
+        activeWorkspaceKind,
+        isAdmin: user.role === 'platform_admin',
+      },
       pending: false,
     });
   } catch {

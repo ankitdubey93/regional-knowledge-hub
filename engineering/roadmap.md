@@ -57,7 +57,8 @@ Stack decisions:
 | **P1** | `server/` workspace, Compose Postgres, Better Auth with firms, RLS, a `client` (client heading) API with cross-tenant tests, sign-in/sign-up/firm/clients pages | done (2026-10-26) |
 | **P1.1** | Workspaces: business or practice kind, one self entity per business, entity profile (jurisdiction, entity type, GST/VAT registration and period, year end), workspace switcher | done (2026-10-26) |
 | **P1.2** | Workspace dashboard with entity tiles, entity dashboard, Knowledge Hub at /knowledge filtered by the selected entity's jurisdiction, chat UI (not connected) in the hub and on the entity dashboard | done (2026-10-26) |
-| **P2** | KB in the database (`kb_doc`, `kb_fact`, `kb_law`, `kb_chunk`, versions), seeded from `docs/` and `src/data/facts.json`; web reads KB from the API; `/laws` page; admin editor with draft → validate → publish | planned |
+| **P2a** | A platform admin (one, promoted from the command line), a users page with ban and unban, and the knowledge base in Postgres (sources, versions, chunks; draft → preview → publish) fed by paste, file upload or an allowlisted official URL, with hybrid search and a "test a question" page; the 14 curriculum docs seeded | done (2026-10-26) |
+| **P2b** | `kb_fact` and facts editing in the admin, a `/laws` page, the web reading the KB from the API | planned |
 | **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `src/lib/chat.ts` | planned |
 | **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT) stored encrypted; PII redaction with placeholders kept per conversation | planned |
 | **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | planned |
@@ -68,12 +69,13 @@ Stack decisions:
 | Phase | Needs |
 |---|---|
 | P1 | P0 |
-| P2 | P1 |
-| P3 | P2 (chat retrieves from the KB tables) |
+| P2a | P1 |
+| P2b | P2a |
+| P3 | P2a (chat retrieves from the KB tables) |
 | P4 | P3 (uploads attach to conversations) |
 | P5 | P3 |
 
 ### Owed to the platform track
 
 - P1 ships with `requireEmailVerification: false`; email verification is owed in P5 (needs SMTP).
-- Four content skills named in CLAUDE.md (`topic-author`, `fact-check`, `exercise-author`, `new-interactive`) are not written; after P2 they should edit through the admin API or the seed fixtures. `content-sync` was written on 2026-10-26.
+- Four content skills named in CLAUDE.md (`topic-author`, `fact-check`, `exercise-author`, `new-interactive`) are not written; after P2a they should edit through the admin API or the seed fixtures. `content-sync` was written on 2026-10-26.

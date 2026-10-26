@@ -1,7 +1,8 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { APIError } from 'better-auth/api';
-import { organization } from 'better-auth/plugins';
+import { admin, organization } from 'better-auth/plugins';
+import { adminAc, userAc } from 'better-auth/plugins/admin/access';
 import { db } from './db/client';
 import * as schema from './db/schema';
 import { env } from './env';
@@ -30,5 +31,7 @@ export const auth = betterAuth({
         },
       },
     }),
+    // Platform admin (one for now, see migration 0007): a role on the user, separate from workspace roles. Promoted only by scripts/admin-role.ts.
+    admin({ roles: { user: userAc, platform_admin: adminAc }, adminRoles: ['platform_admin'], defaultRole: 'user' }),
   ],
 });

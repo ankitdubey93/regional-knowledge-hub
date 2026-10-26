@@ -1,4 +1,6 @@
 import { randomUUID } from 'node:crypto';
+import pg from 'pg';
+import { testEnv } from './testEnv';
 import { startApp } from './server';
 
 export const ORIGIN = 'http://localhost:5190';
@@ -59,4 +61,25 @@ export async function setActive(cookie: string, orgId: string): Promise<string> 
   const res = await call('POST', '/api/auth/organization/set-active', { cookie, body: { organizationId: orgId } });
   if (res.status !== 200) throw new Error(`set-active failed: ${res.status} ${await res.text()}`);
   return mergeCookies(cookie, res);
+}
+
+/** Makes userId the one platform admin, demoting any earlier test admin (the DB allows one). */
+export async function makePlatformAdmin(userId: string): Promise<void> {
+  const adminPool = new pg.Pool({ connectionString: testEnv.DATABASE_ADMIN_URL });
+  try {
+    const c = await adminPool.connect();
+    try {
+      await c.query('BEGIN');
+      await c.query(`update "user" set role = 'user' where role = 'platform_admin'`);
+      await c.query(`update "user" set role = 'platform_admin' where id = $1`, [userId]);
+      await c.query('COMMIT');
+    } catch (e) {
+      await c.query('ROLLBACK');
+      throw e;
+    } finally {
+      c.release();
+    }
+  } finally {
+    await adminPool.end();
+  }
 }

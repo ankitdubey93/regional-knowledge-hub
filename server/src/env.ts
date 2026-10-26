@@ -8,6 +8,9 @@ const schema = z.object({
   BETTER_AUTH_SECRET: z.string().min(32),
   BETTER_AUTH_URL: z.url(),
   WEB_ORIGIN: z.url(),
+  // An empty string in .env counts as unset. Server-only (Hard rule 10): sent in a header, never in a URL, never logged.
+  GEMINI_API_KEY: z.string().optional().transform((v) => (v ? v : undefined)),
+  GEMINI_EMBED_MODEL: z.string().optional().transform((v) => (v ? v : 'gemini-embedding-001')),
 });
 
 export const env = schema.parse(process.env);
