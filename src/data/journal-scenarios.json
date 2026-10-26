@@ -1,0 +1,590 @@
+[
+  {
+    "id": "j-laptop-credit",
+    "title": "Buy equipment on credit",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/double-entry-rules",
+    "prompt": "The business buys a laptop for 2,000 on 30 days' credit. Ignore sales tax.",
+    "hint": "An asset goes up and so does a liability.",
+    "lines": [
+      {
+        "account": "1500",
+        "debit": 200000,
+        "credit": 0
+      },
+      {
+        "account": "2000",
+        "debit": 0,
+        "credit": 200000
+      }
+    ],
+    "explanation": "Equipment (asset) increases with a debit; Accounts Payable (liability) increases with a credit.",
+    "facts": []
+  },
+  {
+    "id": "j-customer-invoice",
+    "title": "Invoice a customer",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/double-entry-rules",
+    "prompt": "You invoice a customer 5,000 for consulting work finished this month. Ignore sales tax.",
+    "hint": "Revenue is earned when the work is done, not when cash arrives.",
+    "lines": [
+      {
+        "account": "1100",
+        "debit": 500000,
+        "credit": 0
+      },
+      {
+        "account": "4000",
+        "debit": 0,
+        "credit": 500000
+      }
+    ],
+    "explanation": "Accounts Receivable (asset) up with a debit; Sales (revenue) up with a credit.",
+    "facts": []
+  },
+  {
+    "id": "j-customer-receipt",
+    "title": "Customer pays an invoice",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/double-entry-rules",
+    "prompt": "The customer pays the 5,000 invoice from last month into the bank.",
+    "hint": "The revenue was already recognised; one asset swaps for another.",
+    "lines": [
+      {
+        "account": "1000",
+        "debit": 500000,
+        "credit": 0
+      },
+      {
+        "account": "1100",
+        "debit": 0,
+        "credit": 500000
+      }
+    ],
+    "explanation": "Bank up (debit), Accounts Receivable down (credit). Crediting Sales again would double count.",
+    "facts": []
+  },
+  {
+    "id": "j-owner-drawings",
+    "title": "Owner takes money out",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/double-entry-rules",
+    "prompt": "A sole trader transfers 1,000 from the business account to their personal account.",
+    "hint": "This is not an expense of the business.",
+    "lines": [
+      {
+        "account": "3200",
+        "debit": 100000,
+        "credit": 0
+      },
+      {
+        "account": "1000",
+        "debit": 0,
+        "credit": 100000
+      }
+    ],
+    "explanation": "Drawings reduce equity (debit Owner Drawings) and the bank goes down (credit Bank).",
+    "facts": []
+  },
+  {
+    "id": "j-loan-repayment",
+    "title": "Repay a loan instalment",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/double-entry-rules",
+    "prompt": "A loan instalment of 1,200 is paid: 1,000 principal and 200 interest.",
+    "hint": "Split the payment: only one part is an expense.",
+    "lines": [
+      {
+        "account": "2400",
+        "debit": 100000,
+        "credit": 0
+      },
+      {
+        "account": "6600",
+        "debit": 20000,
+        "credit": 0
+      },
+      {
+        "account": "1000",
+        "debit": 0,
+        "credit": 120000
+      }
+    ],
+    "explanation": "Principal reduces the Loan liability; interest is an expense. Bank goes down by the full 1,200.",
+    "facts": []
+  },
+  {
+    "id": "j-prepay-insurance",
+    "title": "Pay a year of insurance upfront",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/accounting-policies-templates",
+    "prompt": "On 1 January the business pays 1,200 for 12 months of insurance. Record the payment.",
+    "hint": "The cover has not been used yet.",
+    "lines": [
+      {
+        "account": "1300",
+        "debit": 120000,
+        "credit": 0
+      },
+      {
+        "account": "1000",
+        "debit": 0,
+        "credit": 120000
+      }
+    ],
+    "explanation": "The whole amount is a Prepayment (asset) until each month of cover is used.",
+    "facts": []
+  },
+  {
+    "id": "j-release-prepayment",
+    "title": "Release one month of insurance",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/accounting-policies-templates",
+    "prompt": "At 31 January, release one month of the 1,200 insurance prepayment.",
+    "hint": "1,200 ÷ 12.",
+    "lines": [
+      {
+        "account": "6400",
+        "debit": 10000,
+        "credit": 0
+      },
+      {
+        "account": "1300",
+        "debit": 0,
+        "credit": 10000
+      }
+    ],
+    "explanation": "Insurance expense 100 (debit), Prepayments down 100 (credit).",
+    "facts": []
+  },
+  {
+    "id": "j-accrue-electricity",
+    "title": "Accrue an unbilled expense",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/month-end-close-checklist",
+    "prompt": "At 31 March, electricity used in March is estimated at 300 (net of tax). The bill arrives in April.",
+    "hint": "The cost belongs to March; nothing has been billed yet.",
+    "lines": [
+      {
+        "account": "6500",
+        "debit": 30000,
+        "credit": 0
+      },
+      {
+        "account": "2100",
+        "debit": 0,
+        "credit": 30000
+      }
+    ],
+    "explanation": "Utilities expense (debit) and Accrued Expenses liability (credit). Reverse it on 1 April.",
+    "facts": []
+  },
+  {
+    "id": "j-depreciation",
+    "title": "Post depreciation",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/accounting-policies-templates",
+    "prompt": "Equipment costing 3,000 with no residual value is depreciated straight line over 3 years. Post one year.",
+    "hint": "The credit does not go to the asset's cost account.",
+    "lines": [
+      {
+        "account": "6200",
+        "debit": 100000,
+        "credit": 0
+      },
+      {
+        "account": "1510",
+        "debit": 0,
+        "credit": 100000
+      }
+    ],
+    "explanation": "Depreciation expense 1,000 (debit); Accumulated Depreciation (contra-asset) 1,000 (credit).",
+    "facts": []
+  },
+  {
+    "id": "j-bad-debt-allowance",
+    "title": "Raise an allowance for credit losses",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/accounting-policies-templates",
+    "prompt": "At year end you estimate 600 of receivables will not be collected.",
+    "hint": "Use the contra-asset, not the receivable itself.",
+    "lines": [
+      {
+        "account": "6300",
+        "debit": 60000,
+        "credit": 0
+      },
+      {
+        "account": "1150",
+        "debit": 0,
+        "credit": 60000
+      }
+    ],
+    "explanation": "Bad Debts expense (debit) and Allowance for Credit Losses (credit). Specific write-offs later use the allowance.",
+    "facts": []
+  },
+  {
+    "id": "j-stock-writedown",
+    "title": "Write stock down to NRV",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/accounting-policies-templates",
+    "prompt": "Damaged stock that cost 1,000 can now only be sold for 600.",
+    "hint": "Lower of cost and net realisable value.",
+    "lines": [
+      {
+        "account": "6700",
+        "debit": 40000,
+        "credit": 0
+      },
+      {
+        "account": "1200",
+        "debit": 0,
+        "credit": 40000
+      }
+    ],
+    "explanation": "Write down by 400: Inventory Write-down expense (debit), Inventory (credit).",
+    "facts": []
+  },
+  {
+    "id": "j-subscription-received",
+    "title": "Annual subscription received upfront",
+    "jurisdiction": "INTL",
+    "doc": "core-accounting/accounting-policies-templates",
+    "prompt": "A customer pays 12,000 for a 12-month subscription starting today.",
+    "hint": "Nothing has been delivered yet.",
+    "lines": [
+      {
+        "account": "1000",
+        "debit": 1200000,
+        "credit": 0
+      },
+      {
+        "account": "2200",
+        "debit": 0,
+        "credit": 1200000
+      }
+    ],
+    "explanation": "Cash in (debit Bank), Deferred Revenue liability (credit). Release 1,000 to Sales each month.",
+    "facts": []
+  },
+  {
+    "id": "j-disposal",
+    "title": "Sell an old asset at a loss",
+    "jurisdiction": "INTL",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "prompt": "Equipment cost 10,000 with 7,000 accumulated depreciation is sold for 2,500 cash. Ignore tax.",
+    "hint": "Remove both the cost and the accumulated depreciation.",
+    "lines": [
+      {
+        "account": "1000",
+        "debit": 250000,
+        "credit": 0
+      },
+      {
+        "account": "1510",
+        "debit": 700000,
+        "credit": 0
+      },
+      {
+        "account": "6800",
+        "debit": 50000,
+        "credit": 0
+      },
+      {
+        "account": "1500",
+        "debit": 0,
+        "credit": 1000000
+      }
+    ],
+    "explanation": "Carrying amount 3,000 less proceeds 2,500 = loss of 500.",
+    "facts": []
+  },
+  {
+    "id": "j-lease-start",
+    "title": "Start an IFRS 16 lease",
+    "jurisdiction": "INTL",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "prompt": "A lessee signs a 5-year lease. The present value of the lease payments is 50,000. No payment yet.",
+    "hint": "Two new balance sheet lines.",
+    "lines": [
+      {
+        "account": "1600",
+        "debit": 5000000,
+        "credit": 0
+      },
+      {
+        "account": "2300",
+        "debit": 0,
+        "credit": 5000000
+      }
+    ],
+    "explanation": "Right-of-Use Asset (debit) and Lease Liability (credit) at the present value.",
+    "facts": [
+      "intl.ifrs16.shortTermMonths"
+    ]
+  },
+  {
+    "id": "j-au-laptop-gst",
+    "title": "Buy a laptop with GST",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "prompt": "An Australian business buys a laptop for $2,200 including GST on credit, with a tax invoice.",
+    "hint": "GST is 1/11 of the inclusive price.",
+    "lines": [
+      {
+        "account": "720",
+        "debit": 200000,
+        "credit": 0
+      },
+      {
+        "account": "820",
+        "debit": 20000,
+        "credit": 0
+      },
+      {
+        "account": "800",
+        "debit": 0,
+        "credit": 220000
+      }
+    ],
+    "explanation": "Computer Equipment $2,000, GST credit $200 (debit to the GST account), Accounts Payable $2,200.",
+    "facts": [
+      "au.gst.rate"
+    ]
+  },
+  {
+    "id": "j-au-sale-gst",
+    "title": "Invoice with GST",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "prompt": "Invoice a customer $1,100 including GST for services.",
+    "hint": "Sales are recorded net of GST.",
+    "lines": [
+      {
+        "account": "610",
+        "debit": 110000,
+        "credit": 0
+      },
+      {
+        "account": "200",
+        "debit": 0,
+        "credit": 100000
+      },
+      {
+        "account": "820",
+        "debit": 0,
+        "credit": 10000
+      }
+    ],
+    "explanation": "Accounts Receivable $1,100; Sales $1,000; GST collected $100 (credit to the GST account).",
+    "facts": [
+      "au.gst.rate"
+    ]
+  },
+  {
+    "id": "j-au-bas-payment",
+    "title": "Pay the BAS",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "prompt": "The BAS shows 1A $100 and 1B $20. Pay the net GST.",
+    "hint": "Clear the GST account.",
+    "lines": [
+      {
+        "account": "820",
+        "debit": 8000,
+        "credit": 0
+      },
+      {
+        "account": "090",
+        "debit": 0,
+        "credit": 8000
+      }
+    ],
+    "explanation": "Paying $80 debits the GST liability and credits the bank.",
+    "facts": []
+  },
+  {
+    "id": "j-au-payrun",
+    "title": "Run payroll",
+    "jurisdiction": "AU",
+    "doc": "australia/payg-superannuation",
+    "prompt": "Gross wages $2,000, PAYG withheld $300, net pay $1,700 paid from the bank.",
+    "hint": "Expense the gross; withholding is owed to the ATO.",
+    "lines": [
+      {
+        "account": "477",
+        "debit": 200000,
+        "credit": 0
+      },
+      {
+        "account": "825",
+        "debit": 0,
+        "credit": 30000
+      },
+      {
+        "account": "090",
+        "debit": 0,
+        "credit": 170000
+      }
+    ],
+    "explanation": "Wages expense at gross; PAYG Withholdings Payable $300; Bank $1,700.",
+    "facts": []
+  },
+  {
+    "id": "j-au-super-accrual",
+    "title": "Accrue super",
+    "jurisdiction": "AU",
+    "doc": "australia/payg-superannuation",
+    "prompt": "Accrue super guarantee at 12% on $2,000 of qualifying earnings.",
+    "hint": "Super is paid on top of wages.",
+    "lines": [
+      {
+        "account": "478",
+        "debit": 24000,
+        "credit": 0
+      },
+      {
+        "account": "826",
+        "debit": 0,
+        "credit": 24000
+      }
+    ],
+    "explanation": "Superannuation expense $240 and Superannuation Payable $240. No GST.",
+    "facts": [
+      "au.super.guaranteeRate"
+    ]
+  },
+  {
+    "id": "j-uk-sale-vat",
+    "title": "Invoice with VAT",
+    "jurisdiction": "UK",
+    "doc": "uk/mtd-vat-guide",
+    "prompt": "Invoice a UK client £1,000 plus VAT at the standard rate.",
+    "hint": "VAT is added on top of the net price.",
+    "lines": [
+      {
+        "account": "610",
+        "debit": 120000,
+        "credit": 0
+      },
+      {
+        "account": "200",
+        "debit": 0,
+        "credit": 100000
+      },
+      {
+        "account": "820",
+        "debit": 0,
+        "credit": 20000
+      }
+    ],
+    "explanation": "Trade Debtors £1,200; Sales £1,000; VAT £200.",
+    "facts": [
+      "uk.vat.standardRate"
+    ]
+  },
+  {
+    "id": "j-uk-office-supplies",
+    "title": "Buy supplies with VAT",
+    "jurisdiction": "UK",
+    "doc": "uk/mtd-vat-guide",
+    "prompt": "Buy office supplies for £120 including VAT on account, with a VAT invoice.",
+    "hint": "VAT is 1/6 of a gross price.",
+    "lines": [
+      {
+        "account": "453",
+        "debit": 10000,
+        "credit": 0
+      },
+      {
+        "account": "820",
+        "debit": 2000,
+        "credit": 0
+      },
+      {
+        "account": "800",
+        "debit": 0,
+        "credit": 12000
+      }
+    ],
+    "explanation": "Office Expenses £100; VAT reclaimable £20; Trade Creditors £120.",
+    "facts": [
+      "uk.vat.standardRate"
+    ]
+  },
+  {
+    "id": "j-uk-payroll",
+    "title": "Post a UK payroll journal",
+    "jurisdiction": "UK",
+    "doc": "uk/paye-cis-overview",
+    "prompt": "Gross pay £3,000; PAYE £300; employee NIC £120; employer NIC £387.45 (15% of the pay above the £417 monthly threshold); employee pension £120; employer pension £90.",
+    "hint": "Net pay is gross less PAYE, employee NIC and employee pension.",
+    "lines": [
+      {
+        "account": "477",
+        "debit": 300000,
+        "credit": 0
+      },
+      {
+        "account": "478",
+        "debit": 38745,
+        "credit": 0
+      },
+      {
+        "account": "479",
+        "debit": 9000,
+        "credit": 0
+      },
+      {
+        "account": "825",
+        "debit": 0,
+        "credit": 80745
+      },
+      {
+        "account": "826",
+        "debit": 0,
+        "credit": 21000
+      },
+      {
+        "account": "814",
+        "debit": 0,
+        "credit": 246000
+      }
+    ],
+    "explanation": "PAYE & NIC Payable = 300 + 120 + 387.45; Pensions Payable = 120 + 90; net pay = 3,000 − 300 − 120 − 120 = 2,460.",
+    "facts": [
+      "uk.nic.employerRate",
+      "uk.nic.secondaryThresholdAnnual"
+    ]
+  },
+  {
+    "id": "j-uk-cis-bill",
+    "title": "Subcontractor bill under CIS",
+    "jurisdiction": "UK",
+    "doc": "uk/paye-cis-overview",
+    "prompt": "A verified subcontractor (not VAT registered) invoices £2,000 labour and £500 materials. CIS at 20%.",
+    "hint": "Deduct from labour only.",
+    "lines": [
+      {
+        "account": "320",
+        "debit": 250000,
+        "credit": 0
+      },
+      {
+        "account": "827",
+        "debit": 0,
+        "credit": 40000
+      },
+      {
+        "account": "800",
+        "debit": 0,
+        "credit": 210000
+      }
+    ],
+    "explanation": "Cost £2,500; CIS Deductions Payable £400 (20% × £2,000); owed to the subcontractor £2,100.",
+    "facts": [
+      "uk.cis.registeredRate"
+    ]
+  }
+]

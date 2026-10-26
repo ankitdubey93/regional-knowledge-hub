@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+/*
+ * Tokens. Light is the default; dark applies from the system preference unless
+ * the user forced light, or when the user forces dark. Every component uses the
+ * Tailwind names mapped in @theme below, never raw colours.
+ */
+:root {
+  --bg: #f7f7f4;
+  --panel: #ffffff;
+  --panel-2: #f0f0eb;
+  --border: #dedcd4;
+  --text: #1c1d1f;
+  --muted: #5f6368;
+  --accent: #0f766e;
+  --accent-hover: #115e59;
+  --accent-soft: #ccfbf1;
+  --accent-fg: #ffffff;
+  --good: #15803d;
+  --good-soft: #dcfce7;
+  --bad: #b91c1c;
+  --bad-soft: #fee2e2;
+  --warn: #a16207;
+  --warn-soft: #fef3c7;
+  --au: #b45309;
+  --au-soft: #ffedd5;
+  --uk: #1d4ed8;
+  --uk-soft: #dbeafe;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111315;
+    --panel: #181b1e;
+    --panel-2: #202428;
+    --border: #2e3338;
+    --text: #e8eaed;
+    --muted: #9aa0a6;
+    --accent: #2dd4bf;
+    --accent-hover: #5eead4;
+    --accent-soft: #123b37;
+    --accent-fg: #0b1b19;
+    --good: #4ade80;
+    --good-soft: #14321f;
+    --bad: #f87171;
+    --bad-soft: #3b1717;
+    --warn: #fbbf24;
+    --warn-soft: #3a2c0b;
+    --au: #fb923c;
+    --au-soft: #3a2310;
+    --uk: #60a5fa;
+    --uk-soft: #132743;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #111315;
+  --panel: #181b1e;
+  --panel-2: #202428;
+  --border: #2e3338;
+  --text: #e8eaed;
+  --muted: #9aa0a6;
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
+  --accent-soft: #123b37;
+  --accent-fg: #0b1b19;
+  --good: #4ade80;
+  --good-soft: #14321f;
+  --bad: #f87171;
+  --bad-soft: #3b1717;
+  --warn: #fbbf24;
+  --warn-soft: #3a2c0b;
+  --au: #fb923c;
+  --au-soft: #3a2310;
+  --uk: #60a5fa;
+  --uk-soft: #132743;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-line: var(--border);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-fg: var(--accent-fg);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-au: var(--au);
+  --color-au-soft: var(--au-soft);
+  --color-uk: var(--uk);
+  --color-uk-soft: var(--uk-soft);
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Rendered curriculum. Kept here because react-markdown emits plain elements. */
+.prose-doc {
+  line-height: 1.7;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+.prose-doc h2 {
+  font-size: 1.35rem;
+  font-weight: 650;
+  margin: 2.25rem 0 0.75rem;
+  letter-spacing: -0.01em;
+}
+.prose-doc h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 1.75rem 0 0.5rem;
+}
+.prose-doc p,
+.prose-doc ul,
+.prose-doc ol {
+  margin: 0.75rem 0;
+}
+.prose-doc ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.prose-doc ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+.prose-doc li {
+  margin: 0.25rem 0;
+}
+.prose-doc a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-doc blockquote {
+  border-left: 3px solid var(--accent);
+  background: var(--panel-2);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+.prose-doc code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--panel-2);
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+}
+.prose-doc table {
+  border-collapse: collapse;
+  font-size: 0.925rem;
+  min-width: 100%;
+}
+.prose-doc th,
+.prose-doc td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+.prose-doc th {
+  background: var(--panel-2);
+  font-weight: 600;
+}
+.prose-doc td:not(:first-child) {
+  font-variant-numeric: tabular-nums;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

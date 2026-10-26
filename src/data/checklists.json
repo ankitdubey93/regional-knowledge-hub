@@ -1,0 +1,49 @@
+[
+  {
+    "id": "month-end",
+    "title": "Month-end close",
+    "doc": "core-accounting/month-end-close-checklist",
+    "groups": [
+      {
+        "title": "1. Get everything in",
+        "items": [
+          { "id": "bank-feeds", "text": "Bank feeds are up to date for every account, card and payment platform (Stripe, PayPal, Square).", "why": "Reconciliation is only as complete as the transactions you have." },
+          { "id": "bills-in", "text": "All supplier bills dated in the month are entered, including ones still in the inbox.", "why": "A bill missing at month end understates expenses and accounts payable." },
+          { "id": "sales-in", "text": "All sales invoices for work done in the month are raised.", "why": "Revenue belongs to the month the work was done (accruals basis)." },
+          { "id": "payroll-in", "text": "Payroll for the month is posted, with super (AU) or pension and PAYE/NIC (UK) liabilities.", "why": "Wages and their on-costs are usually the largest expense." }
+        ]
+      },
+      {
+        "title": "2. Reconcile",
+        "items": [
+          { "id": "bank-rec", "text": "Every bank and card account reconciles to the statement closing balance.", "why": "The bank statement is the one external, independent check on the ledger." },
+          { "id": "clearing", "text": "Clearing and suspense accounts are at zero, or every item in them is explained.", "why": "A balance left in suspense is an error waiting to be found by someone else." },
+          { "id": "ar-ap", "text": "Aged receivables and aged payables agree to the balance sheet control accounts.", "why": "A difference means a journal hit a control account directly." },
+          { "id": "tax-accounts", "text": "The GST or VAT account agrees to the tax report for the period.", "why": "Manual journals to the tax account are the usual cause of a BAS or VAT return that does not tie up." },
+          { "id": "payroll-liab", "text": "Payroll liabilities (PAYG, super, PAYE, pension) agree to the payroll reports.", "why": "Unpaid super or PAYE carries penalties; the balance must be what is actually owed." }
+        ]
+      },
+      {
+        "title": "3. Adjust",
+        "items": [
+          { "id": "accruals", "text": "Accrue expenses incurred but not yet billed (electricity, audit fees, contractor time).", "why": "Matching: the cost belongs to the month it was incurred." },
+          { "id": "prepayments", "text": "Release one month of each prepayment (insurance, annual software) to expense.", "why": "A 12-month policy paid in January is 1/12 an expense each month." },
+          { "id": "deferred-rev", "text": "Release deferred revenue earned this month; defer amounts billed in advance.", "why": "Revenue is recognised when the obligation is satisfied, not when billed." },
+          { "id": "depreciation", "text": "Post depreciation and amortisation from the fixed asset register.", "why": "Spreads the cost of assets over the periods that benefit." },
+          { "id": "stock", "text": "Adjust inventory to the count or the perpetual records, and post write-downs to NRV.", "why": "Closing stock drives cost of sales directly." },
+          { "id": "bad-debts", "text": "Review old receivables; update the allowance for credit losses or write off what will not be paid.", "why": "Prudence: expected losses are recognised, not hoped away." },
+          { "id": "reversals", "text": "Set last month's accruals to reverse on the first day of this month.", "why": "Otherwise the real bill arriving this month doubles the expense." }
+        ]
+      },
+      {
+        "title": "4. Review and lock",
+        "items": [
+          { "id": "tb-review", "text": "Read the trial balance: every balance on its normal side, nothing strange or unexplained.", "why": "A credit balance on an expense account or a debit on a liability is usually a mis-posting." },
+          { "id": "pl-variance", "text": "Compare the P&L with last month and with budget; explain big swings.", "why": "Analytical review catches what reconciliations miss, such as a missing rent bill." },
+          { "id": "lock", "text": "Set the lock date in Xero or close the books in QBO.", "why": "Stops anyone changing a period that has been reported." },
+          { "id": "reports", "text": "Send the management pack (P&L, balance sheet, cash flow, aged reports).", "why": "The close is only useful if the owner sees the numbers while they still matter." }
+        ]
+      }
+    ]
+  }
+]

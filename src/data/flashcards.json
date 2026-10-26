@@ -1,0 +1,856 @@
+[
+  {
+    "id": "f-double-entry-rules-1",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "front": "The accounting equation",
+    "back": "Assets = Liabilities + Equity. Expanded: Assets + Expenses = Liabilities + Equity + Revenue."
+  },
+  {
+    "id": "f-double-entry-rules-2",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "front": "Normal balance of an asset",
+    "back": "Debit."
+  },
+  {
+    "id": "f-double-entry-rules-3",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "front": "Normal balance of revenue",
+    "back": "Credit."
+  },
+  {
+    "id": "f-double-entry-rules-4",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "front": "Money into the bank account is a…",
+    "back": "Debit to Bank (the bank statement shows it as a credit, from the bank's side)."
+  },
+  {
+    "id": "f-double-entry-rules-5",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "front": "Accruals basis",
+    "back": "Record income when earned and expenses when incurred, whatever the timing of cash."
+  },
+  {
+    "id": "f-double-entry-rules-6",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "front": "Matching principle",
+    "back": "Expenses are recognised in the same period as the revenue they helped earn."
+  },
+  {
+    "id": "f-double-entry-rules-7",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "front": "Materiality",
+    "back": "An item is material if omitting or misstating it could change a reader's decisions."
+  },
+  {
+    "id": "f-double-entry-rules-8",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "front": "Going concern",
+    "back": "Accounts assume the business keeps operating for the foreseeable future (at least 12 months)."
+  },
+  {
+    "id": "f-double-entry-rules-9",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "front": "What a balanced trial balance proves",
+    "back": "Only that each entry had equal debits and credits. Not that postings are right."
+  },
+  {
+    "id": "f-double-entry-rules-10",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "front": "Owner drawings",
+    "back": "A reduction of equity, not an expense."
+  },
+  {
+    "id": "f-accounting-policies-templates-1",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "front": "Inventory measurement",
+    "back": "Lower of cost and net realisable value."
+  },
+  {
+    "id": "f-accounting-policies-templates-2",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "front": "Net realisable value",
+    "back": "Expected selling price less the costs to complete and sell."
+  },
+  {
+    "id": "f-accounting-policies-templates-3",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "front": "FIFO",
+    "back": "First in, first out: the oldest units are treated as sold first."
+  },
+  {
+    "id": "f-accounting-policies-templates-4",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "front": "LIFO status",
+    "back": "Prohibited under IFRS, FRS 102, FRS 105 and AASB."
+  },
+  {
+    "id": "f-accounting-policies-templates-5",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "front": "Straight-line depreciation",
+    "back": "(Cost − residual value) ÷ useful life, the same charge each year."
+  },
+  {
+    "id": "f-accounting-policies-templates-6",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "front": "Reducing balance depreciation",
+    "back": "A fixed % of the opening carrying amount each year."
+  },
+  {
+    "id": "f-accounting-policies-templates-7",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "front": "Carrying amount",
+    "back": "Cost less accumulated depreciation and impairment (net book value)."
+  },
+  {
+    "id": "f-accounting-policies-templates-8",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "front": "Prepayment",
+    "back": "An expense paid in advance: an asset released to expense over the period it covers."
+  },
+  {
+    "id": "f-accounting-policies-templates-9",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "front": "Accrual",
+    "back": "An expense incurred but not yet billed: Dr Expense, Cr Accrued Expenses."
+  },
+  {
+    "id": "f-accounting-policies-templates-10",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "front": "Allowance for credit losses",
+    "back": "A contra-asset estimating receivables that will not be collected."
+  },
+  {
+    "id": "f-month-end-close-checklist-1",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "front": "The four stages of a close",
+    "back": "Get everything in, reconcile, adjust, review and lock."
+  },
+  {
+    "id": "f-month-end-close-checklist-2",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "front": "Bank reconciliation formula",
+    "back": "Statement balance + deposits in transit − unpresented payments = ledger balance."
+  },
+  {
+    "id": "f-month-end-close-checklist-3",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "front": "Reversing journal",
+    "back": "An accrual reversed on day one of the next period so the real bill is not counted twice."
+  },
+  {
+    "id": "f-month-end-close-checklist-4",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "front": "Suspense account at month end",
+    "back": "Should be zero, or every item explained."
+  },
+  {
+    "id": "f-month-end-close-checklist-5",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "front": "Tax on an accrual",
+    "back": "Not claimed: GST/VAT is claimed when the tax invoice arrives."
+  },
+  {
+    "id": "f-month-end-close-checklist-6",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "front": "Why lock a period",
+    "back": "So nobody changes figures already reported."
+  },
+  {
+    "id": "f-month-end-close-checklist-7",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "front": "Control account check",
+    "back": "Aged receivables/payables reports must agree to the balance sheet accounts."
+  },
+  {
+    "id": "f-month-end-close-checklist-8",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "front": "Analytical review",
+    "back": "Comparing the P&L with prior months and budget to spot missing or odd items."
+  },
+  {
+    "id": "f-ifrs-ias-cheat-sheet-1",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "front": "IAS 1",
+    "back": "Presentation of financial statements (replaced by IFRS 18 from 2027)."
+  },
+  {
+    "id": "f-ifrs-ias-cheat-sheet-2",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "front": "IAS 2",
+    "back": "Inventories."
+  },
+  {
+    "id": "f-ifrs-ias-cheat-sheet-3",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "front": "IAS 7",
+    "back": "Statement of cash flows."
+  },
+  {
+    "id": "f-ifrs-ias-cheat-sheet-4",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "front": "IAS 16",
+    "back": "Property, plant and equipment."
+  },
+  {
+    "id": "f-ifrs-ias-cheat-sheet-5",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "front": "IFRS 15",
+    "back": "Revenue from contracts with customers: the five-step model."
+  },
+  {
+    "id": "f-ifrs-ias-cheat-sheet-6",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "front": "IFRS 16",
+    "back": "Leases: right-of-use asset and lease liability for lessees."
+  },
+  {
+    "id": "f-ifrs-ias-cheat-sheet-7",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "front": "The five steps of IFRS 15",
+    "back": "Contract → performance obligations → transaction price → allocate → recognise."
+  },
+  {
+    "id": "f-ifrs-ias-cheat-sheet-8",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "front": "Three cash flow activities",
+    "back": "Operating, investing, financing."
+  },
+  {
+    "id": "f-ifrs-ias-cheat-sheet-9",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "front": "IFRS 16 exemptions",
+    "back": "Short-term leases (12 months or less) and low-value assets."
+  },
+  {
+    "id": "f-ifrs-ias-cheat-sheet-10",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "front": "Component approach (IAS 16)",
+    "back": "Significant parts with different lives are depreciated separately."
+  },
+  {
+    "id": "f-uk-gaap-frs102-vs-ifrs-1",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "front": "FRS 102",
+    "back": "The main UK GAAP standard for private companies."
+  },
+  {
+    "id": "f-uk-gaap-frs102-vs-ifrs-2",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "front": "FRS 102 Section 1A",
+    "back": "Small-company version: same measurement, fewer disclosures."
+  },
+  {
+    "id": "f-uk-gaap-frs102-vs-ifrs-3",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "front": "FRS 105",
+    "back": "The micro-entity standard: cost-only, minimal notes."
+  },
+  {
+    "id": "f-uk-gaap-frs102-vs-ifrs-4",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "front": "FRS 101",
+    "back": "IFRS measurement with reduced disclosures, for subsidiaries in IFRS groups."
+  },
+  {
+    "id": "f-uk-gaap-frs102-vs-ifrs-5",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "front": "Goodwill under FRS 102",
+    "back": "Amortised; if the life cannot be estimated, over no more than 10 years."
+  },
+  {
+    "id": "f-uk-gaap-frs102-vs-ifrs-6",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "front": "2026 FRS 102 lease change",
+    "back": "Lessees put most leases on balance sheet (right-of-use asset + liability)."
+  },
+  {
+    "id": "f-uk-gaap-frs102-vs-ifrs-7",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "front": "2026 FRS 102 revenue change",
+    "back": "A five-step model based on IFRS 15."
+  },
+  {
+    "id": "f-uk-gaap-frs102-vs-ifrs-8",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "front": "Development costs under FRS 102",
+    "back": "Policy choice: capitalise (if criteria met) or expense."
+  },
+  {
+    "id": "f-aasb-standards-overview-1",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "front": "AASB numbering rule",
+    "back": "IAS n → AASB 1nn; IFRS n keeps its number."
+  },
+  {
+    "id": "f-aasb-standards-overview-2",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "front": "AASB 1058",
+    "back": "Income of not-for-profit entities."
+  },
+  {
+    "id": "f-aasb-standards-overview-3",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "front": "AASB 1060",
+    "back": "Simplified Disclosures (Tier 2)."
+  },
+  {
+    "id": "f-aasb-standards-overview-4",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "front": "Tier 1",
+    "back": "Full Australian Accounting Standards, for publicly accountable entities."
+  },
+  {
+    "id": "f-aasb-standards-overview-5",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "front": "Change in accounting estimate (AASB 108)",
+    "back": "Applied prospectively."
+  },
+  {
+    "id": "f-aasb-standards-overview-6",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "front": "Change in accounting policy (AASB 108)",
+    "back": "Applied retrospectively, restating comparatives."
+  },
+  {
+    "id": "f-aasb-standards-overview-7",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "front": "AASB 16 for NFP peppercorn leases",
+    "back": "Option to measure the right-of-use asset at cost."
+  },
+  {
+    "id": "f-aasb-standards-overview-8",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "front": "Do small proprietary companies lodge accounts?",
+    "back": "Usually not, unless directed or foreign-controlled."
+  },
+  {
+    "id": "f-bas-gst-guide-1",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "front": "GST in an inclusive price",
+    "back": "Divide by 11 (at 10%)."
+  },
+  {
+    "id": "f-bas-gst-guide-2",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "front": "Taxable vs GST-free vs input-taxed",
+    "back": "Taxable: GST + credits. GST-free: no GST, credits allowed. Input-taxed: no GST, no credits."
+  },
+  {
+    "id": "f-bas-gst-guide-3",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "front": "G1",
+    "back": "Total sales, including GST."
+  },
+  {
+    "id": "f-bas-gst-guide-4",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "front": "G10 / G11",
+    "back": "Capital purchases / non-capital purchases, including GST."
+  },
+  {
+    "id": "f-bas-gst-guide-5",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "front": "1A / 1B",
+    "back": "GST on sales / GST credits on purchases."
+  },
+  {
+    "id": "f-bas-gst-guide-6",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "front": "Tax invoice threshold",
+    "back": "Needed to claim a credit on purchases over $82.50 including GST."
+  },
+  {
+    "id": "f-bas-gst-guide-7",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "front": "Register for GST when",
+    "back": "GST turnover reaches $75,000 ($150,000 non-profit), within 21 days."
+  },
+  {
+    "id": "f-bas-gst-guide-8",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "front": "BAS excluded examples",
+    "back": "Wages, super, PAYG, loans, transfers, drawings, income tax."
+  },
+  {
+    "id": "f-bas-gst-guide-9",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "front": "Simpler BAS",
+    "back": "G1, 1A and 1B only; default under $10m GST turnover."
+  },
+  {
+    "id": "f-bas-gst-guide-10",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "front": "Quarterly BAS due dates",
+    "back": "28 Oct, 28 Feb, 28 Apr, 28 Jul."
+  },
+  {
+    "id": "f-payg-superannuation-1",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "front": "PAYG withholding",
+    "back": "Income tax the employer withholds from wages and sends to the ATO."
+  },
+  {
+    "id": "f-payg-superannuation-2",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "front": "PAYG instalments",
+    "back": "Prepayments of the business's own income tax."
+  },
+  {
+    "id": "f-payg-superannuation-3",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "front": "W1 / W2",
+    "back": "Total salary and wages / amounts withheld from them."
+  },
+  {
+    "id": "f-payg-superannuation-4",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "front": "Super guarantee rate",
+    "back": "12% (from 1 July 2025)."
+  },
+  {
+    "id": "f-payg-superannuation-5",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "front": "Payday Super",
+    "back": "From 1 July 2026, super is paid with each payday and must reach the fund within 7 business days."
+  },
+  {
+    "id": "f-payg-superannuation-6",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "front": "Single Touch Payroll",
+    "back": "Reporting pay, tax and super to the ATO every pay run."
+  },
+  {
+    "id": "f-payg-superannuation-7",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "front": "Super and GST",
+    "back": "Super and wages are BAS excluded."
+  },
+  {
+    "id": "f-payg-superannuation-8",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "front": "TPAR",
+    "back": "Taxable payments annual report for contractor payments in certain industries, due 28 August."
+  },
+  {
+    "id": "f-corporations-act-thresholds-1",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "front": "Large proprietary company test",
+    "back": "2 of 3: revenue $50m+, gross assets $25m+, 100+ employees."
+  },
+  {
+    "id": "f-corporations-act-thresholds-2",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "front": "Large proprietary lodgement",
+    "back": "Audited financial report to ASIC within 4 months (Form 388)."
+  },
+  {
+    "id": "f-corporations-act-thresholds-3",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "front": "Record keeping period",
+    "back": "7 years."
+  },
+  {
+    "id": "f-corporations-act-thresholds-4",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "front": "ASIC annual statement",
+    "back": "Check details, pay the review fee, pass a solvency resolution within 2 months."
+  },
+  {
+    "id": "f-corporations-act-thresholds-5",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "front": "Insolvent trading",
+    "back": "Incurring debts when the company cannot pay debts as they fall due."
+  },
+  {
+    "id": "f-corporations-act-thresholds-6",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "front": "Director ID",
+    "back": "A unique identifier every director must have."
+  },
+  {
+    "id": "f-corporations-act-thresholds-7",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "front": "AU size test timing",
+    "back": "Applied each year on that year's figures (no two-year rule)."
+  },
+  {
+    "id": "f-corporations-act-thresholds-8",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "front": "Consolidated test",
+    "back": "Revenue, assets and employees include controlled entities."
+  },
+  {
+    "id": "f-xero-qbo-au-setup-1",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "front": "Xero tax rate for taxable purchases",
+    "back": "GST on Expenses."
+  },
+  {
+    "id": "f-xero-qbo-au-setup-2",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "front": "Xero tax rate for capital purchases",
+    "back": "GST on Capital (G10)."
+  },
+  {
+    "id": "f-xero-qbo-au-setup-3",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "front": "Xero tax rate for bank fees",
+    "back": "GST Free Expenses."
+  },
+  {
+    "id": "f-xero-qbo-au-setup-4",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "front": "Xero tax rate for wages",
+    "back": "BAS Excluded."
+  },
+  {
+    "id": "f-xero-qbo-au-setup-5",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "front": "GST on Imports",
+    "back": "For GST paid to Customs on imported goods."
+  },
+  {
+    "id": "f-xero-qbo-au-setup-6",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "front": "AU financial year end",
+    "back": "30 June."
+  },
+  {
+    "id": "f-xero-qbo-au-setup-7",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "front": "After lodging a BAS",
+    "back": "Set the lock date and record the payment against the GST account."
+  },
+  {
+    "id": "f-xero-qbo-au-setup-8",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "front": "Default tax rate on an account",
+    "back": "Applied to every line coded there; set it carefully."
+  },
+  {
+    "id": "f-mtd-vat-guide-1",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "front": "UK VAT rates",
+    "back": "Standard 20%, reduced 5%, zero 0%; plus exempt and outside the scope."
+  },
+  {
+    "id": "f-mtd-vat-guide-2",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "front": "VAT in a gross price",
+    "back": "1/6 at 20%."
+  },
+  {
+    "id": "f-mtd-vat-guide-3",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "front": "Zero-rated vs exempt",
+    "back": "Zero-rated is taxable at 0% with input recovery; exempt is not taxable."
+  },
+  {
+    "id": "f-mtd-vat-guide-4",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "front": "Box 1",
+    "back": "VAT on sales, plus reverse-charge VAT."
+  },
+  {
+    "id": "f-mtd-vat-guide-5",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "front": "Box 4",
+    "back": "VAT reclaimed on purchases."
+  },
+  {
+    "id": "f-mtd-vat-guide-6",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "front": "Box 5",
+    "back": "Net VAT: box 3 − box 4."
+  },
+  {
+    "id": "f-mtd-vat-guide-7",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "front": "Boxes 6 and 7",
+    "back": "Net sales and net purchases, whole pounds."
+  },
+  {
+    "id": "f-mtd-vat-guide-8",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "front": "VAT return deadline",
+    "back": "1 month and 7 days after the period end."
+  },
+  {
+    "id": "f-mtd-vat-guide-9",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "front": "Construction reverse charge: customer",
+    "back": "Box 1, box 4 and box 7."
+  },
+  {
+    "id": "f-mtd-vat-guide-10",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "front": "MTD for VAT",
+    "back": "All VAT-registered businesses keep digital records and file through compatible software."
+  },
+  {
+    "id": "f-paye-cis-overview-1",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "front": "PAYE",
+    "back": "HMRC's system for collecting income tax and NIC through payroll."
+  },
+  {
+    "id": "f-paye-cis-overview-2",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "front": "Tax code 1257L",
+    "back": "Tells payroll how much tax-free pay to allow; always use HMRC's latest code."
+  },
+  {
+    "id": "f-paye-cis-overview-3",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "front": "RTI FPS",
+    "back": "Full Payment Submission sent on or before each payday."
+  },
+  {
+    "id": "f-paye-cis-overview-4",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "front": "Employer NIC",
+    "back": "15% above the £5,000 secondary threshold (2026–27)."
+  },
+  {
+    "id": "f-paye-cis-overview-5",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "front": "Employment Allowance",
+    "back": "Up to £10,500 off the employer NIC bill (not for sole-director companies)."
+  },
+  {
+    "id": "f-paye-cis-overview-6",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "front": "CIS rates",
+    "back": "20% registered, 30% unregistered or unverified, 0% gross payment status."
+  },
+  {
+    "id": "f-paye-cis-overview-7",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "front": "CIS applies to",
+    "back": "Labour only: not materials, VAT or the CITB levy."
+  },
+  {
+    "id": "f-paye-cis-overview-8",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "front": "CIS return deadline",
+    "back": "Monthly, by the 19th."
+  },
+  {
+    "id": "f-companies-act-2006-1",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "front": "Micro-entity limits (from April 2025)",
+    "back": "2 of 3: turnover ≤ £1m, balance sheet ≤ £500k, ≤ 10 employees."
+  },
+  {
+    "id": "f-companies-act-2006-2",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "front": "Small company limits (from April 2025)",
+    "back": "2 of 3: turnover ≤ £15m, balance sheet ≤ £7.5m, ≤ 50 employees."
+  },
+  {
+    "id": "f-companies-act-2006-3",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "front": "Medium company limits (from April 2025)",
+    "back": "2 of 3: turnover ≤ £54m, balance sheet ≤ £27m, ≤ 250 employees."
+  },
+  {
+    "id": "f-companies-act-2006-4",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "front": "The two-year rule",
+    "back": "Size changes only after two consecutive years in a different band."
+  },
+  {
+    "id": "f-companies-act-2006-5",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "front": "Balance sheet total",
+    "back": "Total assets, before liabilities."
+  },
+  {
+    "id": "f-companies-act-2006-6",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "front": "Private company accounts deadline",
+    "back": "9 months after the accounting reference date."
+  },
+  {
+    "id": "f-companies-act-2006-7",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "front": "PSC",
+    "back": "An individual with more than 25% of shares or votes, or control of the board, or significant influence."
+  },
+  {
+    "id": "f-companies-act-2006-8",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "front": "Confirmation statement",
+    "back": "At least once every 12 months."
+  },
+  {
+    "id": "f-xero-qbo-uk-setup-1",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "front": "Xero VAT rate for most purchases",
+    "back": "20% (VAT on Expenses)."
+  },
+  {
+    "id": "f-xero-qbo-uk-setup-2",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "front": "Xero VAT rate for insurance",
+    "back": "Exempt Expenses."
+  },
+  {
+    "id": "f-xero-qbo-uk-setup-3",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "front": "Xero VAT rate for salaries",
+    "back": "No VAT."
+  },
+  {
+    "id": "f-xero-qbo-uk-setup-4",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "front": "MTD connection",
+    "back": "Connect the organisation to HMRC so Xero pulls the VAT obligations and submits returns."
+  },
+  {
+    "id": "f-xero-qbo-uk-setup-5",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "front": "CIS suffered (subcontractor)",
+    "back": "An asset offset against PAYE, not an expense."
+  },
+  {
+    "id": "f-xero-qbo-uk-setup-6",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "front": "Directors' loan account overdrawn",
+    "back": "The director owes the company; tax charges can apply."
+  },
+  {
+    "id": "f-xero-qbo-uk-setup-7",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "front": "Before filing a VAT return",
+    "back": "Reconcile, review the VAT audit report, agree the VAT account to box 5."
+  },
+  {
+    "id": "f-xero-qbo-uk-setup-8",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "front": "QBO UK codes",
+    "back": "Shorter names (e.g. 20.0% S, 0.0% Z) mapped to the same boxes."
+  }
+]

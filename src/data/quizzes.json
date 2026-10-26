@@ -1,0 +1,2606 @@
+[
+  {
+    "id": "q-double-entry-rules-1",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "question": "Which side increases an expense account?",
+    "options": [
+      {
+        "text": "Debit",
+        "why": "Right: assets and expenses increase on the debit side."
+      },
+      {
+        "text": "Credit",
+        "why": "A credit decreases an expense. Expenses sit on the left side of the expanded equation."
+      },
+      {
+        "text": "It depends on whether cash was paid",
+        "why": "The side never depends on cash; it depends on the account type."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-double-entry-rules-2",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "question": "A business receives 500 cash from a customer who was invoiced last month. What is the entry?",
+    "options": [
+      {
+        "text": "Dr Bank 500, Cr Sales 500",
+        "why": "That would count the revenue twice: it was recognised when the invoice was raised."
+      },
+      {
+        "text": "Dr Bank 500, Cr Accounts Receivable 500",
+        "why": "Right: the asset changes form from a receivable to cash."
+      },
+      {
+        "text": "Dr Accounts Receivable 500, Cr Bank 500",
+        "why": "This is backwards: the receivable goes down (credit) and cash goes up (debit)."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-double-entry-rules-3",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "question": "Under the accruals basis, when is March electricity recognised if the bill arrives on 15 April?",
+    "options": [
+      {
+        "text": "April, when the bill arrives",
+        "why": "That is the cash or invoice view. The cost was incurred in March."
+      },
+      {
+        "text": "March, as an accrual",
+        "why": "Right: matching puts the expense in the period it was incurred."
+      },
+      {
+        "text": "When it is paid",
+        "why": "Payment timing is irrelevant on the accruals basis."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-double-entry-rules-4",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "question": "Which statement about a trial balance that balances is true?",
+    "options": [
+      {
+        "text": "The books are free of errors",
+        "why": "A balancing trial balance can still hide mis-postings and omissions."
+      },
+      {
+        "text": "Every entry had equal debits and credits",
+        "why": "Right: that is all a balanced trial balance proves."
+      },
+      {
+        "text": "The bank account is reconciled",
+        "why": "Reconciliation is a separate check against the bank statement."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-double-entry-rules-5",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "question": "What does the going concern assumption allow?",
+    "options": [
+      {
+        "text": "Valuing equipment at cost less depreciation rather than fire-sale value",
+        "why": "Right: assets are valued on the basis that the business keeps trading."
+      },
+      {
+        "text": "Ignoring liabilities due after 12 months",
+        "why": "Long-term liabilities are still recognised; they are just non-current."
+      },
+      {
+        "text": "Recognising revenue before it is earned",
+        "why": "Going concern has nothing to do with revenue timing."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-double-entry-rules-6",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "question": "An owner takes 1,000 from the business bank account for personal use. Which account is debited?",
+    "options": [
+      {
+        "text": "Wages",
+        "why": "Drawings are not wages. They are not an expense of the business."
+      },
+      {
+        "text": "Owner Drawings (equity)",
+        "why": "Right: drawings reduce equity."
+      },
+      {
+        "text": "Accounts Payable",
+        "why": "Nothing is owed to a supplier."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-double-entry-rules-7",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "question": "A loan repayment of 1,200 includes 200 of interest. How is it recorded?",
+    "options": [
+      {
+        "text": "Dr Interest Expense 1,200, Cr Bank 1,200",
+        "why": "Only the interest is an expense; the principal reduces the liability."
+      },
+      {
+        "text": "Dr Loan 1,000, Dr Interest Expense 200, Cr Bank 1,200",
+        "why": "Right: principal reduces the loan, interest is the expense."
+      },
+      {
+        "text": "Dr Loan 1,200, Cr Bank 1,200",
+        "why": "The interest part is an expense, not a reduction of the loan."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-double-entry-rules-8",
+    "doc": "core-accounting/double-entry-rules",
+    "jurisdiction": "INTL",
+    "question": "Which principle explains not recognising a lawsuit you might win?",
+    "options": [
+      {
+        "text": "Materiality",
+        "why": "Materiality is about whether an item could change a decision, not about uncertain gains."
+      },
+      {
+        "text": "Prudence",
+        "why": "Right: possible gains wait until they are virtually certain; likely losses are recognised now."
+      },
+      {
+        "text": "Consistency",
+        "why": "Consistency is about applying policies the same way each period."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-accounting-policies-templates-1",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "question": "Which inventory cost formula is NOT allowed under IFRS, FRS 102 or AASB?",
+    "options": [
+      {
+        "text": "FIFO",
+        "why": "FIFO is allowed everywhere this site covers."
+      },
+      {
+        "text": "Weighted average",
+        "why": "Weighted average is allowed."
+      },
+      {
+        "text": "LIFO",
+        "why": "Right: LIFO is prohibited under all of them."
+      }
+    ],
+    "answer": 2,
+    "facts": []
+  },
+  {
+    "id": "q-accounting-policies-templates-2",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "question": "Prices are rising. Compared with weighted average, FIFO gives…",
+    "options": [
+      {
+        "text": "Lower cost of sales and higher closing stock",
+        "why": "Right: FIFO charges the older, cheaper units to cost of sales."
+      },
+      {
+        "text": "Higher cost of sales and lower closing stock",
+        "why": "That would be the effect if prices were falling."
+      },
+      {
+        "text": "The same result",
+        "why": "Only true if prices never change."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-accounting-policies-templates-3",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "question": "A 3,000 computer, no residual value, 3-year life. Straight-line depreciation per year?",
+    "options": [
+      {
+        "text": "3,000",
+        "why": "That expenses it all in year one."
+      },
+      {
+        "text": "1,000",
+        "why": "Right: (3,000 − 0) ÷ 3."
+      },
+      {
+        "text": "1,200",
+        "why": "That is 40% reducing balance in year one."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-accounting-policies-templates-4",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "question": "What kind of account is Accumulated Depreciation?",
+    "options": [
+      {
+        "text": "An expense",
+        "why": "Depreciation (the charge) is the expense; accumulated depreciation is the running total against the asset."
+      },
+      {
+        "text": "A contra-asset with a credit balance",
+        "why": "Right: it reduces the carrying amount of the asset."
+      },
+      {
+        "text": "A liability",
+        "why": "Nothing is owed to anyone."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-accounting-policies-templates-5",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "question": "A 12-month insurance policy of 1,200 is paid on 1 January. What is the January expense?",
+    "options": [
+      {
+        "text": "1,200",
+        "why": "Expensing it all at once ignores the accruals basis."
+      },
+      {
+        "text": "100",
+        "why": "Right: 1/12 a month, with the rest held as a prepayment."
+      },
+      {
+        "text": "0",
+        "why": "Some of the cover was used in January."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-accounting-policies-templates-6",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "question": "Why is an accrual reversed on the first day of the next month?",
+    "options": [
+      {
+        "text": "To remove it from the tax return",
+        "why": "Reversal is about the ledger, not tax."
+      },
+      {
+        "text": "So the real bill, when posted, is not counted twice",
+        "why": "Right: the reversal cancels the bill out in the new month."
+      },
+      {
+        "text": "Because accruals are not allowed at year end",
+        "why": "Accruals are required at year end."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-accounting-policies-templates-7",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "question": "An Australian business buys a 4,000 tool. Its accounting policy expenses items under 1,000. How is it treated in the accounts?",
+    "options": [
+      {
+        "text": "Expensed, because the tax write-off allows it",
+        "why": "The tax write-off is a tax rule; the accounts follow the accounting policy."
+      },
+      {
+        "text": "Capitalised and depreciated under the accounting policy",
+        "why": "Right: it is above the policy threshold. The tax deduction is a separate question."
+      },
+      {
+        "text": "Ignored until the tax return",
+        "why": "Every purchase is recorded when incurred."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "au.depreciation.instantAssetWriteOff"
+    ]
+  },
+  {
+    "id": "q-accounting-policies-templates-8",
+    "doc": "core-accounting/accounting-policies-templates",
+    "jurisdiction": "INTL",
+    "question": "A customer will definitely not pay a 200 debt already covered by the allowance. The entry is…",
+    "options": [
+      {
+        "text": "Dr Bad Debts 200, Cr Accounts Receivable 200",
+        "why": "That double counts: the expense was taken when the allowance was raised."
+      },
+      {
+        "text": "Dr Allowance for Credit Losses 200, Cr Accounts Receivable 200",
+        "why": "Right: use the allowance, no new expense."
+      },
+      {
+        "text": "Dr Accounts Receivable 200, Cr Sales 200",
+        "why": "That would create revenue."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-month-end-close-checklist-1",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "question": "A bank reconciliation proves the ledger balance against…",
+    "options": [
+      {
+        "text": "The aged receivables report",
+        "why": "That proves accounts receivable, not the bank."
+      },
+      {
+        "text": "The bank statement closing balance",
+        "why": "Right: the statement is the independent evidence."
+      },
+      {
+        "text": "Last month's trial balance",
+        "why": "A trial balance is internal."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-month-end-close-checklist-2",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "question": "When accruing an estimated 330 electricity bill (including tax) at month end, how much tax is claimed?",
+    "options": [
+      {
+        "text": "30",
+        "why": "Tax is claimed only when the tax invoice arrives."
+      },
+      {
+        "text": "None: accrue the 300 net cost",
+        "why": "Right: the tax credit waits for the invoice."
+      },
+      {
+        "text": "330",
+        "why": "The accrual is for the cost, not the gross amount."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-month-end-close-checklist-3",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "question": "A credit balance on an expense account in the trial balance most likely means…",
+    "options": [
+      {
+        "text": "A refund or a mis-posting worth investigating",
+        "why": "Right: expenses normally carry debit balances."
+      },
+      {
+        "text": "The business is profitable",
+        "why": "Profitability is not shown by one account's side."
+      },
+      {
+        "text": "Everything is fine",
+        "why": "It is unusual and should be explained."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-month-end-close-checklist-4",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "question": "Why set a lock date after a period is reported?",
+    "options": [
+      {
+        "text": "To stop bank feeds",
+        "why": "Feeds continue; the lock stops edits to the closed period."
+      },
+      {
+        "text": "To stop changes to a period already reported",
+        "why": "Right."
+      },
+      {
+        "text": "It is required by the ATO and HMRC",
+        "why": "It is good practice, not a legal requirement in itself."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-month-end-close-checklist-5",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "question": "What should be at zero (or fully explained) at month end?",
+    "options": [
+      {
+        "text": "Suspense and clearing accounts",
+        "why": "Right: balances left there are unresolved errors."
+      },
+      {
+        "text": "Accounts payable",
+        "why": "Payables normally have a balance."
+      },
+      {
+        "text": "Retained earnings",
+        "why": "Retained earnings carries the accumulated profit."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-month-end-close-checklist-6",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "AU",
+    "question": "From 1 July 2026, when is Australian super paid?",
+    "options": [
+      {
+        "text": "Quarterly, 28 days after the quarter",
+        "why": "That was the rule up to 30 June 2026."
+      },
+      {
+        "text": "With each payday (Payday Super)",
+        "why": "Right: it must reach the fund within 7 business days."
+      },
+      {
+        "text": "Once a year at 30 June",
+        "why": "Super has never been annual."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "au.super.paydaySuperStart"
+    ]
+  },
+  {
+    "id": "q-month-end-close-checklist-7",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "question": "Which reconciliation catches a manual journal posted straight to the GST or VAT account?",
+    "options": [
+      {
+        "text": "Agreeing the tax account to the tax report",
+        "why": "Right: the report is built from tax codes, the account includes the journal."
+      },
+      {
+        "text": "The bank reconciliation",
+        "why": "The journal does not touch the bank."
+      },
+      {
+        "text": "The fixed asset register",
+        "why": "Unrelated."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-month-end-close-checklist-8",
+    "doc": "core-accounting/month-end-close-checklist",
+    "jurisdiction": "INTL",
+    "question": "Which month-end adjustment spreads an asset's cost over its useful life?",
+    "options": [
+      {
+        "text": "Accrual",
+        "why": "Accruals are for costs incurred but not billed."
+      },
+      {
+        "text": "Depreciation",
+        "why": "Right."
+      },
+      {
+        "text": "Deferred revenue",
+        "why": "That is about income billed in advance."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-ifrs-ias-cheat-sheet-1",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "question": "Which standard sets out the five-step revenue model?",
+    "options": [
+      {
+        "text": "IAS 18",
+        "why": "IAS 18 was the old revenue standard, replaced by IFRS 15."
+      },
+      {
+        "text": "IFRS 15",
+        "why": "Right."
+      },
+      {
+        "text": "IAS 16",
+        "why": "IAS 16 is property, plant and equipment."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-ifrs-ias-cheat-sheet-2",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "question": "Under IAS 7, where do lease principal repayments go in the cash flow statement?",
+    "options": [
+      {
+        "text": "Operating",
+        "why": "Under IFRS 16 they are not operating."
+      },
+      {
+        "text": "Investing",
+        "why": "Investing is buying and selling long-term assets."
+      },
+      {
+        "text": "Financing",
+        "why": "Right: they repay a liability."
+      }
+    ],
+    "answer": 2,
+    "facts": []
+  },
+  {
+    "id": "q-ifrs-ias-cheat-sheet-3",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "question": "Is recoverable GST or VAT part of the cost of a new machine under IAS 16?",
+    "options": [
+      {
+        "text": "Yes, always",
+        "why": "Recoverable tax is reclaimed, so it is not a cost."
+      },
+      {
+        "text": "No, only non-recoverable taxes are part of cost",
+        "why": "Right."
+      },
+      {
+        "text": "Only for capital purchases",
+        "why": "Capital or not, recoverable tax is excluded."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-ifrs-ias-cheat-sheet-4",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "question": "A lessee under IFRS 16 signs a 5-year office lease. What appears on the balance sheet?",
+    "options": [
+      {
+        "text": "Nothing; rent is expensed",
+        "why": "That was the old operating lease treatment."
+      },
+      {
+        "text": "A right-of-use asset and a lease liability",
+        "why": "Right."
+      },
+      {
+        "text": "Only a lease liability",
+        "why": "The asset side is recognised too."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-ifrs-ias-cheat-sheet-5",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "question": "Which lease can be expensed straight line under the IFRS 16 exemption?",
+    "options": [
+      {
+        "text": "A lease of 12 months or less with no purchase option",
+        "why": "Right: the short-term exemption."
+      },
+      {
+        "text": "Any lease under 5 years",
+        "why": "Only short-term (12 months or less) or low-value leases."
+      },
+      {
+        "text": "Any property lease",
+        "why": "Property leases are usually not low value."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "intl.ifrs16.shortTermMonths"
+    ]
+  },
+  {
+    "id": "q-ifrs-ias-cheat-sheet-6",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "question": "IAS 2 measures inventory at…",
+    "options": [
+      {
+        "text": "Selling price",
+        "why": "Stock is never held at selling price."
+      },
+      {
+        "text": "The lower of cost and net realisable value",
+        "why": "Right."
+      },
+      {
+        "text": "Replacement cost",
+        "why": "Replacement cost is not the IAS 2 measure."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-ifrs-ias-cheat-sheet-7",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "question": "Equipment cost 10,000, accumulated depreciation 7,000, sold for 2,500. Result?",
+    "options": [
+      {
+        "text": "Gain of 2,500",
+        "why": "The carrying amount was 3,000, not zero."
+      },
+      {
+        "text": "Loss of 500",
+        "why": "Right: proceeds 2,500 less carrying amount 3,000."
+      },
+      {
+        "text": "Loss of 7,500",
+        "why": "That ignores the accumulated depreciation."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-ifrs-ias-cheat-sheet-8",
+    "doc": "standards/ifrs-ias-cheat-sheet",
+    "jurisdiction": "INTL",
+    "question": "Which standard replaces IAS 1 from 2027?",
+    "options": [
+      {
+        "text": "IFRS 18",
+        "why": "Right: Presentation and Disclosure in Financial Statements."
+      },
+      {
+        "text": "IFRS 17",
+        "why": "IFRS 17 is insurance contracts."
+      },
+      {
+        "text": "IAS 8",
+        "why": "IAS 8 is accounting policies and errors."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-uk-gaap-frs102-vs-ifrs-1",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "question": "Under FRS 102, goodwill whose life cannot be reliably estimated is amortised over…",
+    "options": [
+      {
+        "text": "No more than 10 years",
+        "why": "Right."
+      },
+      {
+        "text": "It is never amortised",
+        "why": "That is the IFRS treatment."
+      },
+      {
+        "text": "Exactly 20 years",
+        "why": "The default cap is 10 years."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "uk.frs102.goodwillDefaultLife"
+    ]
+  },
+  {
+    "id": "q-uk-gaap-frs102-vs-ifrs-2",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "question": "When do the FRS 102 Periodic Review 2024 lease and revenue changes take effect?",
+    "options": [
+      {
+        "text": "Periods beginning on or after 1 January 2026",
+        "why": "Right (early adoption allowed)."
+      },
+      {
+        "text": "Periods beginning on or after 1 January 2024",
+        "why": "2024 is when the amendments were issued."
+      },
+      {
+        "text": "Only for listed companies",
+        "why": "Listed groups use IFRS, not FRS 102."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "uk.frs102.periodicReview2024Effective"
+    ]
+  },
+  {
+    "id": "q-uk-gaap-frs102-vs-ifrs-3",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "question": "Can a micro-entity using FRS 105 revalue its property?",
+    "options": [
+      {
+        "text": "Yes, at fair value each year",
+        "why": "FRS 105 is cost-only."
+      },
+      {
+        "text": "No: it must use FRS 102 if it wants to revalue",
+        "why": "Right."
+      },
+      {
+        "text": "Only with an audit",
+        "why": "An audit does not change what FRS 105 permits."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-uk-gaap-frs102-vs-ifrs-4",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "question": "How does FRS 102 treat development costs that meet the criteria?",
+    "options": [
+      {
+        "text": "Must capitalise",
+        "why": "That is IAS 38."
+      },
+      {
+        "text": "Policy choice: capitalise or expense",
+        "why": "Right."
+      },
+      {
+        "text": "Must expense",
+        "why": "That is FRS 105."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-uk-gaap-frs102-vs-ifrs-5",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "question": "Who would typically use FRS 101?",
+    "options": [
+      {
+        "text": "A UK subsidiary of a group reporting under IFRS",
+        "why": "Right: IFRS measurement, reduced disclosures."
+      },
+      {
+        "text": "A sole trader",
+        "why": "Sole traders are not required to use FRS 101."
+      },
+      {
+        "text": "A micro-entity",
+        "why": "Micro-entities use FRS 105 or FRS 102 Section 1A."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-uk-gaap-frs102-vs-ifrs-6",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "question": "After the 2026 FRS 102 changes, what happens to EBITDA for a company with big property leases?",
+    "options": [
+      {
+        "text": "It falls",
+        "why": "Rent leaves operating expenses, so EBITDA rises."
+      },
+      {
+        "text": "It rises",
+        "why": "Right: the cost becomes depreciation and interest, below EBITDA."
+      },
+      {
+        "text": "No change",
+        "why": "The change moves costs below EBITDA."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-uk-gaap-frs102-vs-ifrs-7",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "question": "Does a small company using FRS 102 Section 1A have to present a cash flow statement?",
+    "options": [
+      {
+        "text": "Yes",
+        "why": "Section 1A removes that requirement."
+      },
+      {
+        "text": "No",
+        "why": "Right."
+      },
+      {
+        "text": "Only if it is VAT registered",
+        "why": "VAT has nothing to do with it."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-uk-gaap-frs102-vs-ifrs-8",
+    "doc": "standards/uk-gaap-frs102-vs-ifrs",
+    "jurisdiction": "UK",
+    "question": "Which body sets UK GAAP?",
+    "options": [
+      {
+        "text": "HMRC",
+        "why": "HMRC is the tax authority."
+      },
+      {
+        "text": "The FRC",
+        "why": "Right: the Financial Reporting Council."
+      },
+      {
+        "text": "Companies House",
+        "why": "Companies House keeps the register."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-aasb-standards-overview-1",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "question": "AASB 102 is the Australian equivalent of…",
+    "options": [
+      {
+        "text": "IAS 2 Inventories",
+        "why": "Right: IAS n becomes AASB 1nn."
+      },
+      {
+        "text": "IFRS 2 Share-based payment",
+        "why": "IFRS 2 is AASB 2."
+      },
+      {
+        "text": "IAS 12 Income taxes",
+        "why": "IAS 12 is AASB 112."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-aasb-standards-overview-2",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "question": "A charity receives an unconditional donation. Under AASB 1058 it is generally recognised…",
+    "options": [
+      {
+        "text": "As income when received",
+        "why": "Right: no enforceable, specific obligation, so no deferral."
+      },
+      {
+        "text": "Over the next 12 months",
+        "why": "Deferral needs an enforceable obligation."
+      },
+      {
+        "text": "Only when spent",
+        "why": "Spending is not the trigger."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-aasb-standards-overview-3",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "question": "Does a for-profit company complying with AASB standards also comply with IFRS?",
+    "options": [
+      {
+        "text": "Yes",
+        "why": "Right: the for-profit standards are IFRS word for word."
+      },
+      {
+        "text": "No, AASB is a different framework",
+        "why": "Not for for-profit entities."
+      },
+      {
+        "text": "Only if listed",
+        "why": "Compliance does not depend on listing."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-aasb-standards-overview-4",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "question": "What is AASB 1060?",
+    "options": [
+      {
+        "text": "Simplified Disclosures for Tier 2 entities",
+        "why": "Right."
+      },
+      {
+        "text": "The Australian leases standard",
+        "why": "That is AASB 16."
+      },
+      {
+        "text": "The not-for-profit income standard",
+        "why": "That is AASB 1058."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-aasb-standards-overview-5",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "question": "Must every small proprietary company lodge financial statements with ASIC?",
+    "options": [
+      {
+        "text": "Yes, every year",
+        "why": "Most small proprietary companies do not."
+      },
+      {
+        "text": "No, usually only if directed by shareholders or ASIC, or foreign-controlled",
+        "why": "Right."
+      },
+      {
+        "text": "Only if GST registered",
+        "why": "GST registration is irrelevant."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-aasb-standards-overview-6",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "question": "Under AASB 108, a change in an asset's estimated useful life is applied…",
+    "options": [
+      {
+        "text": "Retrospectively, restating comparatives",
+        "why": "That is for policy changes and errors."
+      },
+      {
+        "text": "Prospectively",
+        "why": "Right: a change in estimate affects current and future periods."
+      },
+      {
+        "text": "Not at all until disposal",
+        "why": "Estimates are updated when they change."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-aasb-standards-overview-7",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "question": "A not-for-profit has a peppercorn lease. What option does AASB 16 give it?",
+    "options": [
+      {
+        "text": "Measure the right-of-use asset at cost",
+        "why": "Right: instead of fair value."
+      },
+      {
+        "text": "Keep the lease off balance sheet entirely",
+        "why": "The liability is still recognised."
+      },
+      {
+        "text": "Treat it as a donation of cash",
+        "why": "It is not cash."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-aasb-standards-overview-8",
+    "doc": "standards/aasb-standards-overview",
+    "jurisdiction": "AU",
+    "question": "Which Australian standard mirrors IFRS 18?",
+    "options": [
+      {
+        "text": "AASB 18",
+        "why": "Right."
+      },
+      {
+        "text": "AASB 118",
+        "why": "That number belonged to the old revenue standard (IAS 18)."
+      },
+      {
+        "text": "AASB 1018",
+        "why": "Not a current equivalent."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-bas-gst-guide-1",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "question": "How much GST is in a GST-inclusive price of 1,100?",
+    "options": [
+      {
+        "text": "110",
+        "why": "That is 10% of the inclusive price, which overstates the GST."
+      },
+      {
+        "text": "100",
+        "why": "Right: 1,100 ÷ 11."
+      },
+      {
+        "text": "90.91",
+        "why": "That is 1,000 ÷ 11."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "au.gst.rate"
+    ]
+  },
+  {
+    "id": "q-bas-gst-guide-2",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "question": "A business sells residential rent. What kind of supply is that for GST?",
+    "options": [
+      {
+        "text": "Taxable",
+        "why": "Residential rent is not taxable."
+      },
+      {
+        "text": "GST-free",
+        "why": "GST-free supplies still allow credits on costs; residential rent does not."
+      },
+      {
+        "text": "Input-taxed",
+        "why": "Right: no GST charged and no credits on related costs."
+      }
+    ],
+    "answer": 2,
+    "facts": []
+  },
+  {
+    "id": "q-bas-gst-guide-3",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "question": "When must a business register for GST?",
+    "options": [
+      {
+        "text": "When GST turnover reaches the threshold, within 21 days",
+        "why": "Right."
+      },
+      {
+        "text": "When it hires its first employee",
+        "why": "Employment is unrelated to GST registration."
+      },
+      {
+        "text": "Only when it starts exporting",
+        "why": "Exports are GST-free and count to turnover, but do not trigger registration on their own."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "au.gst.registrationThreshold"
+    ]
+  },
+  {
+    "id": "q-bas-gst-guide-4",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "question": "You buy a 60 item (including GST) and have only a receipt with no ABN. Can you claim the GST credit?",
+    "options": [
+      {
+        "text": "Yes: a tax invoice is only needed above the threshold",
+        "why": "Right: the threshold is 82.50 including GST."
+      },
+      {
+        "text": "No, never without a tax invoice",
+        "why": "Below the threshold other records will do."
+      },
+      {
+        "text": "Only on the next BAS",
+        "why": "Timing is not the issue."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "au.gst.taxInvoiceThreshold"
+    ]
+  },
+  {
+    "id": "q-bas-gst-guide-5",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "question": "Which BAS label holds capital purchases?",
+    "options": [
+      {
+        "text": "G1",
+        "why": "G1 is total sales."
+      },
+      {
+        "text": "G10",
+        "why": "Right."
+      },
+      {
+        "text": "G11",
+        "why": "G11 is non-capital purchases."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-bas-gst-guide-6",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "question": "Does G1 include GST?",
+    "options": [
+      {
+        "text": "Yes, G1 is reported including GST",
+        "why": "Right."
+      },
+      {
+        "text": "No, G1 is GST-exclusive",
+        "why": "G1 includes GST."
+      },
+      {
+        "text": "Only for exports",
+        "why": "Exports have no GST to include."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-bas-gst-guide-7",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "question": "1A is 8,000 and 1B is 3,000. What is the net amount?",
+    "options": [
+      {
+        "text": "11,000 payable",
+        "why": "You subtract credits, not add them."
+      },
+      {
+        "text": "5,000 payable to the ATO",
+        "why": "Right: 1A − 1B."
+      },
+      {
+        "text": "5,000 refund",
+        "why": "Positive means payable."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-bas-gst-guide-8",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "question": "Which item is BAS excluded?",
+    "options": [
+      {
+        "text": "Wages",
+        "why": "Right: wages are outside GST."
+      },
+      {
+        "text": "Office rent from a registered landlord",
+        "why": "Commercial rent is usually taxable."
+      },
+      {
+        "text": "Advertising",
+        "why": "Usually taxable."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-bas-gst-guide-9",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "question": "Up to what aggregated turnover can a business choose cash-basis GST?",
+    "options": [
+      {
+        "text": "Under $10 million",
+        "why": "Right."
+      },
+      {
+        "text": "Under $20 million",
+        "why": "$20 million is the monthly reporting threshold."
+      },
+      {
+        "text": "Under $75,000",
+        "why": "$75,000 is the registration threshold."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "au.gst.cashBasisTurnoverLimit"
+    ]
+  },
+  {
+    "id": "q-bas-gst-guide-10",
+    "doc": "australia/bas-gst-guide",
+    "jurisdiction": "AU",
+    "question": "When is the quarterly BAS for October–December due for a self-lodger?",
+    "options": [
+      {
+        "text": "28 January",
+        "why": "Q2 gets an extra month."
+      },
+      {
+        "text": "28 February",
+        "why": "Right."
+      },
+      {
+        "text": "21 January",
+        "why": "That is the monthly date."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "au.bas.quarterlyDueDates"
+    ]
+  },
+  {
+    "id": "q-payg-superannuation-1",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "question": "What is the super guarantee rate from 1 July 2025?",
+    "options": [
+      {
+        "text": "11.5%",
+        "why": "That applied in 2024–25."
+      },
+      {
+        "text": "12%",
+        "why": "Right."
+      },
+      {
+        "text": "10%",
+        "why": "Out of date."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "au.super.guaranteeRate"
+    ]
+  },
+  {
+    "id": "q-payg-superannuation-2",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "question": "Is super deducted from the employee's gross wage?",
+    "options": [
+      {
+        "text": "Yes",
+        "why": "Super guarantee is paid on top of wages."
+      },
+      {
+        "text": "No, the employer pays it on top",
+        "why": "Right (salary sacrifice is a separate arrangement)."
+      },
+      {
+        "text": "Only for casuals",
+        "why": "Casuals are treated the same."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-payg-superannuation-3",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "question": "Under Payday Super, how quickly must contributions reach the fund?",
+    "options": [
+      {
+        "text": "Within 7 business days of payday",
+        "why": "Right."
+      },
+      {
+        "text": "Within 28 days of the quarter end",
+        "why": "That was the old quarterly rule."
+      },
+      {
+        "text": "By 30 June",
+        "why": "Not annual."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "au.super.paydayDeadlineBusinessDays"
+    ]
+  },
+  {
+    "id": "q-payg-superannuation-4",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "question": "Which BAS label shows amounts withheld from wages?",
+    "options": [
+      {
+        "text": "W1",
+        "why": "W1 is total salary and wages."
+      },
+      {
+        "text": "W2",
+        "why": "Right."
+      },
+      {
+        "text": "1A",
+        "why": "1A is GST on sales."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-payg-superannuation-5",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "question": "A supplier does not quote an ABN. What must the business do?",
+    "options": [
+      {
+        "text": "Nothing",
+        "why": "Without an ABN, withholding applies."
+      },
+      {
+        "text": "Withhold at the top marginal rate and report at W4",
+        "why": "Right."
+      },
+      {
+        "text": "Refuse to pay",
+        "why": "Payment can be made with withholding."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-payg-superannuation-6",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "question": "What are PAYG instalments?",
+    "options": [
+      {
+        "text": "Tax withheld from wages",
+        "why": "That is PAYG withholding."
+      },
+      {
+        "text": "Prepayments of the business's own income tax",
+        "why": "Right."
+      },
+      {
+        "text": "Super contributions",
+        "why": "Super is separate."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-payg-superannuation-7",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "question": "What replaced payment summaries for employees?",
+    "options": [
+      {
+        "text": "Single Touch Payroll income statements in myGov",
+        "why": "Right."
+      },
+      {
+        "text": "Paper group certificates",
+        "why": "Those are long gone."
+      },
+      {
+        "text": "Nothing; employees work it out",
+        "why": "Employers report through STP."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-payg-superannuation-8",
+    "doc": "australia/payg-superannuation",
+    "jurisdiction": "AU",
+    "question": "Super of 240 is accrued on a pay run. What is the entry?",
+    "options": [
+      {
+        "text": "Dr Superannuation 240, Cr Superannuation Payable 240",
+        "why": "Right."
+      },
+      {
+        "text": "Dr Wages 240, Cr Bank 240",
+        "why": "Super is its own expense and is owed before it is paid."
+      },
+      {
+        "text": "Dr Superannuation 240, Cr GST 240",
+        "why": "Super has no GST."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-corporations-act-thresholds-1",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "question": "A Pty Ltd has revenue of $60m, gross assets of $10m and 80 employees. Large or small?",
+    "options": [
+      {
+        "text": "Large",
+        "why": "Only one of three tests is met."
+      },
+      {
+        "text": "Small",
+        "why": "Right: it needs two of three."
+      },
+      {
+        "text": "It depends on last year",
+        "why": "Australia applies the test each year on its own."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "au.corps.largePropRevenue"
+    ]
+  },
+  {
+    "id": "q-corporations-act-thresholds-2",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "question": "A Pty Ltd has revenue of $50m, gross assets of $25m and 20 employees. Large or small?",
+    "options": [
+      {
+        "text": "Large: two tests met (\"or more\")",
+        "why": "Right."
+      },
+      {
+        "text": "Small: it must exceed the thresholds",
+        "why": "The tests are \"or more\"."
+      },
+      {
+        "text": "Medium",
+        "why": "Australia has no medium category."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "au.corps.largePropAssets"
+    ]
+  },
+  {
+    "id": "q-corporations-act-thresholds-3",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "question": "Within how many months must a large proprietary company lodge its financial report?",
+    "options": [
+      {
+        "text": "4 months",
+        "why": "Right."
+      },
+      {
+        "text": "9 months",
+        "why": "Nine months is the UK private company filing deadline."
+      },
+      {
+        "text": "12 months",
+        "why": "Too late."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "au.corps.largePropLodgeMonths"
+    ]
+  },
+  {
+    "id": "q-corporations-act-thresholds-4",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "question": "Which form is used to lodge financial reports with ASIC?",
+    "options": [
+      {
+        "text": "Form 388",
+        "why": "Right."
+      },
+      {
+        "text": "Form 484",
+        "why": "Form 484 is for changes to company details."
+      },
+      {
+        "text": "BAS",
+        "why": "The BAS goes to the ATO."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-corporations-act-thresholds-5",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "question": "How long must a company keep its financial records?",
+    "options": [
+      {
+        "text": "7 years",
+        "why": "Right."
+      },
+      {
+        "text": "3 years",
+        "why": "Too short."
+      },
+      {
+        "text": "Until the next audit",
+        "why": "Not how the rule works."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-corporations-act-thresholds-6",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "question": "Are the size tests measured on the company alone?",
+    "options": [
+      {
+        "text": "Yes",
+        "why": "They include entities it controls."
+      },
+      {
+        "text": "No, on a consolidated basis",
+        "why": "Right."
+      },
+      {
+        "text": "Only on revenue",
+        "why": "All three tests count."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-corporations-act-thresholds-7",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "question": "What must a company do after receiving its ASIC annual statement?",
+    "options": [
+      {
+        "text": "Check details, pay the review fee, and pass a solvency resolution",
+        "why": "Right."
+      },
+      {
+        "text": "File a tax return with ASIC",
+        "why": "Tax returns go to the ATO."
+      },
+      {
+        "text": "Nothing",
+        "why": "Fees and the solvency resolution are required."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-corporations-act-thresholds-8",
+    "doc": "australia/corporations-act-thresholds",
+    "jurisdiction": "AU",
+    "question": "What is insolvent trading?",
+    "options": [
+      {
+        "text": "Incurring debts when the company cannot pay its debts as they fall due",
+        "why": "Right."
+      },
+      {
+        "text": "Trading without GST registration",
+        "why": "Unrelated."
+      },
+      {
+        "text": "Selling below cost",
+        "why": "Not insolvency in itself."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-au-setup-1",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "question": "In Xero AU, which tax rate do you use for a capital purchase with GST?",
+    "options": [
+      {
+        "text": "GST on Expenses",
+        "why": "That reports in G11, not G10."
+      },
+      {
+        "text": "GST on Capital",
+        "why": "Right: it reports in G10 and 1B."
+      },
+      {
+        "text": "BAS Excluded",
+        "why": "The GST is claimable."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-au-setup-2",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "question": "What is the standard financial year end in Australia?",
+    "options": [
+      {
+        "text": "30 June",
+        "why": "Right."
+      },
+      {
+        "text": "31 March",
+        "why": "That is common in the UK."
+      },
+      {
+        "text": "31 December",
+        "why": "Possible with approval, not standard."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-au-setup-3",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "question": "A bank fee is charged with no GST. Which tax rate?",
+    "options": [
+      {
+        "text": "GST on Expenses",
+        "why": "No GST was charged."
+      },
+      {
+        "text": "GST Free Expenses",
+        "why": "Right."
+      },
+      {
+        "text": "Input Taxed",
+        "why": "Use GST Free Expenses for a purchase with no GST to claim."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-au-setup-4",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "question": "Why set an account's default tax rate carefully?",
+    "options": [
+      {
+        "text": "It controls the account's colour",
+        "why": "Accounts have no colour setting; the default tax rate drives the BAS."
+      },
+      {
+        "text": "Every line coded there picks it up, and the BAS is built from tax rates",
+        "why": "Right."
+      },
+      {
+        "text": "It sets the account's balance",
+        "why": "Balances come from transactions, never from a setting."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-au-setup-5",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "question": "What should you do after lodging a BAS from Xero?",
+    "options": [
+      {
+        "text": "Set the lock date",
+        "why": "Right."
+      },
+      {
+        "text": "Delete the period's bank transactions",
+        "why": "Never."
+      },
+      {
+        "text": "Change the GST basis",
+        "why": "Not without reason."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-au-setup-6",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "question": "Which tax rate do wages and super use?",
+    "options": [
+      {
+        "text": "BAS Excluded",
+        "why": "Right."
+      },
+      {
+        "text": "GST Free Expenses",
+        "why": "They are not purchases with GST treatment at all."
+      },
+      {
+        "text": "GST on Expenses",
+        "why": "Wages carry no GST."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-au-setup-7",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "question": "A director lends the company money. Where does it go?",
+    "options": [
+      {
+        "text": "A loan liability account",
+        "why": "Right."
+      },
+      {
+        "text": "Sales",
+        "why": "It is not income."
+      },
+      {
+        "text": "Owner Drawings",
+        "why": "Drawings are money taken out, and companies use dividends or loans instead."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-au-setup-8",
+    "doc": "australia/xero-qbo-au-setup",
+    "jurisdiction": "AU",
+    "question": "Before lodging, the GST account balance should agree with…",
+    "options": [
+      {
+        "text": "The BAS net amount for the period",
+        "why": "Right."
+      },
+      {
+        "text": "The bank balance",
+        "why": "Unrelated."
+      },
+      {
+        "text": "Total sales",
+        "why": "Total sales is G1; the GST account holds only the GST, 1A less 1B."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-mtd-vat-guide-1",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "question": "How much VAT is in a gross price of £120 at the standard rate?",
+    "options": [
+      {
+        "text": "£24",
+        "why": "That is 20% of the gross."
+      },
+      {
+        "text": "£20",
+        "why": "Right: 1/6 of the gross."
+      },
+      {
+        "text": "£12",
+        "why": "That is 10%, which is not a UK VAT rate."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "uk.vat.standardRate"
+    ]
+  },
+  {
+    "id": "q-mtd-vat-guide-2",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "question": "What is the difference between zero-rated and exempt?",
+    "options": [
+      {
+        "text": "None",
+        "why": "Zero-rated is taxable at 0% and keeps input VAT recovery; exempt does not."
+      },
+      {
+        "text": "Zero-rated supplies are taxable at 0%; exempt supplies are not taxable",
+        "why": "Right."
+      },
+      {
+        "text": "Exempt is for exports only",
+        "why": "Exports of goods are zero-rated."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-mtd-vat-guide-3",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "question": "Which box shows net VAT to pay or reclaim?",
+    "options": [
+      {
+        "text": "Box 3",
+        "why": "Box 3 is total output VAT."
+      },
+      {
+        "text": "Box 5",
+        "why": "Right."
+      },
+      {
+        "text": "Box 6",
+        "why": "Box 6 is total sales."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-mtd-vat-guide-4",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "question": "A construction customer receives a £10,000 domestic reverse charge invoice. Which boxes?",
+    "options": [
+      {
+        "text": "Boxes 1, 4 and 7",
+        "why": "Right: VAT in 1 and 4, net in 7."
+      },
+      {
+        "text": "Boxes 4 and 7 only",
+        "why": "The customer must also account for the output VAT in box 1."
+      },
+      {
+        "text": "Box 6",
+        "why": "The customer does not put a purchase in box 6."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-mtd-vat-guide-5",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "question": "When is a quarterly VAT return for the quarter to 31 March due?",
+    "options": [
+      {
+        "text": "30 April",
+        "why": "It is one month and seven days."
+      },
+      {
+        "text": "7 May",
+        "why": "Right."
+      },
+      {
+        "text": "31 May",
+        "why": "Too late."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "uk.vat.returnDeadline"
+    ]
+  },
+  {
+    "id": "q-mtd-vat-guide-6",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "question": "What is the VAT registration threshold?",
+    "options": [
+      {
+        "text": "£85,000",
+        "why": "The old threshold before 1 April 2024."
+      },
+      {
+        "text": "£90,000",
+        "why": "Right."
+      },
+      {
+        "text": "£150,000",
+        "why": "Not a UK VAT figure; £150,000 is the AU non-profit GST threshold, in dollars."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "uk.vat.registrationThreshold"
+    ]
+  },
+  {
+    "id": "q-mtd-vat-guide-7",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "question": "Do wages appear on the VAT return?",
+    "options": [
+      {
+        "text": "Yes, in box 7",
+        "why": "Wages are outside the scope."
+      },
+      {
+        "text": "No",
+        "why": "Right."
+      },
+      {
+        "text": "Only for directors",
+        "why": "Directors' pay is outside the scope of VAT like any other wage."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-mtd-vat-guide-8",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "question": "Which businesses must file VAT returns through MTD software?",
+    "options": [
+      {
+        "text": "Only those over the threshold",
+        "why": "Voluntarily registered businesses too."
+      },
+      {
+        "text": "All VAT-registered businesses",
+        "why": "Right."
+      },
+      {
+        "text": "Only limited companies",
+        "why": "Sole traders too."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-mtd-vat-guide-9",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "question": "Can you reclaim VAT on entertaining clients?",
+    "options": [
+      {
+        "text": "Yes",
+        "why": "Business entertainment VAT is blocked."
+      },
+      {
+        "text": "No",
+        "why": "Right."
+      },
+      {
+        "text": "Only half",
+        "why": "There is no 50% rule for client entertaining; the VAT is blocked in full."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-mtd-vat-guide-10",
+    "doc": "uk/mtd-vat-guide",
+    "jurisdiction": "UK",
+    "question": "Box 6 is reported in…",
+    "options": [
+      {
+        "text": "Pounds and pence",
+        "why": "Boxes 6 to 9 are whole pounds."
+      },
+      {
+        "text": "Whole pounds",
+        "why": "Right."
+      },
+      {
+        "text": "Thousands of pounds",
+        "why": "Boxes 6 to 9 are whole pounds, not rounded to thousands."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-paye-cis-overview-1",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "question": "What is the employer NIC rate above the secondary threshold in 2026–27?",
+    "options": [
+      {
+        "text": "13.8%",
+        "why": "That applied before April 2025."
+      },
+      {
+        "text": "15%",
+        "why": "Right."
+      },
+      {
+        "text": "12%",
+        "why": "12% has never been the employer rate; it was 13.8% before April 2025."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "uk.nic.employerRate"
+    ]
+  },
+  {
+    "id": "q-paye-cis-overview-2",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "question": "What is the employer NIC secondary threshold for a year?",
+    "options": [
+      {
+        "text": "£9,100",
+        "why": "The old threshold before April 2025."
+      },
+      {
+        "text": "£5,000",
+        "why": "Right."
+      },
+      {
+        "text": "£12,570",
+        "why": "That is the income tax personal allowance."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "uk.nic.secondaryThresholdAnnual"
+    ]
+  },
+  {
+    "id": "q-paye-cis-overview-3",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "question": "A subcontractor invoices £2,000 labour and £500 materials. Verified at 20%. CIS deduction?",
+    "options": [
+      {
+        "text": "£500",
+        "why": "That deducts from materials too."
+      },
+      {
+        "text": "£400",
+        "why": "Right: 20% of labour only."
+      },
+      {
+        "text": "£0",
+        "why": "A verified registered subcontractor still suffers 20%."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "uk.cis.registeredRate"
+    ]
+  },
+  {
+    "id": "q-paye-cis-overview-4",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "question": "What rate applies to a subcontractor HMRC cannot verify?",
+    "options": [
+      {
+        "text": "30%",
+        "why": "Right."
+      },
+      {
+        "text": "20%",
+        "why": "That is for registered, verified subcontractors."
+      },
+      {
+        "text": "0%",
+        "why": "That is gross payment status."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "uk.cis.unregisteredRate"
+    ]
+  },
+  {
+    "id": "q-paye-cis-overview-5",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "question": "Can a company whose only paid employee is the director claim the Employment Allowance?",
+    "options": [
+      {
+        "text": "Yes",
+        "why": "Sole-director companies are excluded."
+      },
+      {
+        "text": "No",
+        "why": "Right."
+      },
+      {
+        "text": "Only in its first year",
+        "why": "There is no first-year exception for sole-director companies."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-paye-cis-overview-6",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "question": "What does an RTI Full Payment Submission do?",
+    "options": [
+      {
+        "text": "Reports each pay run to HMRC on or before payday",
+        "why": "Right."
+      },
+      {
+        "text": "Pays the pension provider",
+        "why": "Pension contributions go to the provider separately; the FPS reports pay to HMRC."
+      },
+      {
+        "text": "Files the VAT return",
+        "why": "VAT returns go through MTD for VAT; the FPS is payroll reporting."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-paye-cis-overview-7",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "question": "By when must PAYE be paid electronically?",
+    "options": [
+      {
+        "text": "22nd of the following month",
+        "why": "Right."
+      },
+      {
+        "text": "1st of the following month",
+        "why": "The electronic deadline is the 22nd (19th by post)."
+      },
+      {
+        "text": "31 January",
+        "why": "That is self assessment."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-paye-cis-overview-8",
+    "doc": "uk/paye-cis-overview",
+    "jurisdiction": "UK",
+    "question": "Where does gross pay go in the payroll journal?",
+    "options": [
+      {
+        "text": "Salaries (debit)",
+        "why": "Right."
+      },
+      {
+        "text": "Wages Payable (debit)",
+        "why": "Net pay is owed, as a credit."
+      },
+      {
+        "text": "PAYE & NIC Payable",
+        "why": "Deductions go there."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-companies-act-2006-1",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "question": "How many of the three conditions must a company meet to be small?",
+    "options": [
+      {
+        "text": "All three",
+        "why": "Two is enough."
+      },
+      {
+        "text": "At least two",
+        "why": "Right."
+      },
+      {
+        "text": "Just turnover",
+        "why": "All three conditions count; meeting any two is enough."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-companies-act-2006-2",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "question": "What is the small company turnover limit for periods from 6 April 2025?",
+    "options": [
+      {
+        "text": "£10.2m",
+        "why": "The old limit."
+      },
+      {
+        "text": "£15m",
+        "why": "Right."
+      },
+      {
+        "text": "£36m",
+        "why": "That was the old medium limit."
+      }
+    ],
+    "answer": 1,
+    "facts": [
+      "uk.ca.smallTurnover"
+    ]
+  },
+  {
+    "id": "q-companies-act-2006-3",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "question": "A small company has one year above the small limits. What is it the next year?",
+    "options": [
+      {
+        "text": "Still small: it needs two consecutive years to change",
+        "why": "Right."
+      },
+      {
+        "text": "Medium at once",
+        "why": "One year is not enough."
+      },
+      {
+        "text": "Large",
+        "why": "It would have to exceed medium limits too, and for two years."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-companies-act-2006-4",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "question": "What is a company's balance sheet total?",
+    "options": [
+      {
+        "text": "Total assets before liabilities",
+        "why": "Right."
+      },
+      {
+        "text": "Net assets",
+        "why": "Liabilities are not deducted."
+      },
+      {
+        "text": "Share capital",
+        "why": "Share capital is part of equity, not the balance sheet total."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-companies-act-2006-5",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "question": "A private company's accounts are due how long after its accounting reference date?",
+    "options": [
+      {
+        "text": "9 months",
+        "why": "Right."
+      },
+      {
+        "text": "6 months",
+        "why": "That is for public companies."
+      },
+      {
+        "text": "12 months",
+        "why": "Twelve months is the corporation tax return deadline, not the accounts deadline."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "uk.ca.accountsDeadlineMonths"
+    ]
+  },
+  {
+    "id": "q-companies-act-2006-6",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "question": "Which shareholding makes someone a PSC?",
+    "options": [
+      {
+        "text": "More than 25%",
+        "why": "Right."
+      },
+      {
+        "text": "25% exactly",
+        "why": "It must be more than 25%."
+      },
+      {
+        "text": "More than 50% only",
+        "why": "Above 25% is enough."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "uk.ca.pscThreshold"
+    ]
+  },
+  {
+    "id": "q-companies-act-2006-7",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "question": "How often must a company file a confirmation statement?",
+    "options": [
+      {
+        "text": "At least every 12 months",
+        "why": "Right."
+      },
+      {
+        "text": "Every quarter",
+        "why": "It is annual: at least once every 12 months."
+      },
+      {
+        "text": "Only when details change",
+        "why": "It is annual even with no changes."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-companies-act-2006-8",
+    "doc": "uk/companies-act-2006",
+    "jurisdiction": "UK",
+    "question": "When did Companies House identity verification for directors begin?",
+    "options": [
+      {
+        "text": "18 November 2025",
+        "why": "Right."
+      },
+      {
+        "text": "1 April 2024",
+        "why": "That is when the VAT threshold rose to £90,000, not identity verification."
+      },
+      {
+        "text": "It has not started",
+        "why": "It has."
+      }
+    ],
+    "answer": 0,
+    "facts": [
+      "uk.ca.idVerificationStart"
+    ]
+  },
+  {
+    "id": "q-xero-qbo-uk-setup-1",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "question": "Insurance premiums are usually coded with which VAT rate?",
+    "options": [
+      {
+        "text": "20% (VAT on Expenses)",
+        "why": "Insurance is exempt from VAT."
+      },
+      {
+        "text": "Exempt Expenses",
+        "why": "Right."
+      },
+      {
+        "text": "Zero Rated Expenses",
+        "why": "Exempt and zero-rated are different."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-uk-setup-2",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "question": "Where do CIS deductions suffered by a subcontractor company go?",
+    "options": [
+      {
+        "text": "An expense",
+        "why": "They are a credit against tax, not a cost."
+      },
+      {
+        "text": "An asset (CIS suffered), offset against PAYE",
+        "why": "Right."
+      },
+      {
+        "text": "Sales",
+        "why": "CIS suffered is tax withheld, not income of the period."
+      }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-uk-setup-3",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "question": "What must happen before Xero can file a VAT return?",
+    "options": [
+      {
+        "text": "Connect the organisation to HMRC for MTD",
+        "why": "Right."
+      },
+      {
+        "text": "Print it",
+        "why": "A printed return cannot be filed; MTD needs software submission."
+      },
+      {
+        "text": "Email HMRC",
+        "why": "HMRC does not accept returns by email."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-uk-setup-4",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "question": "Salaries use which VAT rate?",
+    "options": [
+      {
+        "text": "No VAT",
+        "why": "Right: outside the scope."
+      },
+      {
+        "text": "Exempt Expenses",
+        "why": "Exempt is a supply; wages are not a supply."
+      },
+      {
+        "text": "Zero Rated Expenses",
+        "why": "Zero-rated is a taxable supply at 0%; wages are not a supply at all."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-uk-setup-5",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "question": "The VAT account balance should agree with which box before filing?",
+    "options": [
+      {
+        "text": "Box 5",
+        "why": "Right."
+      },
+      {
+        "text": "Box 6",
+        "why": "Box 6 is sales."
+      },
+      {
+        "text": "Box 1",
+        "why": "Box 1 is output VAT only."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-uk-setup-6",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "question": "What is the usual risk of bank rules?",
+    "options": [
+      {
+        "text": "They code every matching line, including one-offs that should differ",
+        "why": "Right."
+      },
+      {
+        "text": "They delete transactions",
+        "why": "Rules code transactions; they do not delete them."
+      },
+      {
+        "text": "They file the VAT return",
+        "why": "Filing is a separate, deliberate step."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-uk-setup-7",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "question": "A Directors' Loan Account with a debit balance means…",
+    "options": [
+      {
+        "text": "The director owes the company",
+        "why": "Right: watch for tax charges."
+      },
+      {
+        "text": "The company owes the director",
+        "why": "That is a credit balance."
+      },
+      {
+        "text": "Nothing",
+        "why": "It matters."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  },
+  {
+    "id": "q-xero-qbo-uk-setup-8",
+    "doc": "uk/xero-qbo-uk-setup",
+    "jurisdiction": "UK",
+    "question": "Who must authorise the HMRC connection for MTD?",
+    "options": [
+      {
+        "text": "Someone with the business's Government Gateway credentials, or its agent",
+        "why": "Right."
+      },
+      {
+        "text": "Any staff member",
+        "why": "Only someone with the business's HMRC credentials, or its agent, can authorise."
+      },
+      {
+        "text": "Xero support",
+        "why": "Xero cannot authorise on the business's behalf."
+      }
+    ],
+    "answer": 0,
+    "facts": []
+  }
+]

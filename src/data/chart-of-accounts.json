@@ -1,0 +1,568 @@
+{
+  "INTL": [
+    {
+      "code": "1000",
+      "name": "Bank",
+      "type": "asset"
+    },
+    {
+      "code": "1100",
+      "name": "Accounts Receivable",
+      "type": "asset"
+    },
+    {
+      "code": "1150",
+      "name": "Allowance for Credit Losses",
+      "type": "asset"
+    },
+    {
+      "code": "1200",
+      "name": "Inventory",
+      "type": "asset"
+    },
+    {
+      "code": "1300",
+      "name": "Prepayments",
+      "type": "asset"
+    },
+    {
+      "code": "1500",
+      "name": "Equipment",
+      "type": "asset"
+    },
+    {
+      "code": "1510",
+      "name": "Accumulated Depreciation – Equipment",
+      "type": "asset"
+    },
+    {
+      "code": "1600",
+      "name": "Right-of-Use Asset",
+      "type": "asset"
+    },
+    {
+      "code": "2000",
+      "name": "Accounts Payable",
+      "type": "liability"
+    },
+    {
+      "code": "2100",
+      "name": "Accrued Expenses",
+      "type": "liability"
+    },
+    {
+      "code": "2200",
+      "name": "Deferred Revenue",
+      "type": "liability"
+    },
+    {
+      "code": "2300",
+      "name": "Lease Liability",
+      "type": "liability"
+    },
+    {
+      "code": "2400",
+      "name": "Loan",
+      "type": "liability"
+    },
+    {
+      "code": "3000",
+      "name": "Share Capital",
+      "type": "equity"
+    },
+    {
+      "code": "3100",
+      "name": "Retained Earnings",
+      "type": "equity"
+    },
+    {
+      "code": "3200",
+      "name": "Owner Drawings",
+      "type": "equity"
+    },
+    {
+      "code": "4000",
+      "name": "Sales",
+      "type": "revenue"
+    },
+    {
+      "code": "4100",
+      "name": "Interest Income",
+      "type": "revenue"
+    },
+    {
+      "code": "5000",
+      "name": "Cost of Goods Sold",
+      "type": "expense"
+    },
+    {
+      "code": "6000",
+      "name": "Rent",
+      "type": "expense"
+    },
+    {
+      "code": "6100",
+      "name": "Wages",
+      "type": "expense"
+    },
+    {
+      "code": "6200",
+      "name": "Depreciation",
+      "type": "expense"
+    },
+    {
+      "code": "6300",
+      "name": "Bad Debts",
+      "type": "expense"
+    },
+    {
+      "code": "6400",
+      "name": "Insurance",
+      "type": "expense"
+    },
+    {
+      "code": "6500",
+      "name": "Utilities",
+      "type": "expense"
+    },
+    {
+      "code": "6600",
+      "name": "Interest Expense",
+      "type": "expense"
+    },
+    {
+      "code": "6700",
+      "name": "Inventory Write-down",
+      "type": "expense"
+    },
+    {
+      "code": "6800",
+      "name": "Loss on Disposal",
+      "type": "expense"
+    }
+  ],
+  "AU": [
+    {
+      "code": "090",
+      "name": "Business Bank Account",
+      "type": "asset"
+    },
+    {
+      "code": "610",
+      "name": "Accounts Receivable",
+      "type": "asset"
+    },
+    {
+      "code": "620",
+      "name": "Prepayments",
+      "type": "asset"
+    },
+    {
+      "code": "630",
+      "name": "Inventory",
+      "type": "asset"
+    },
+    {
+      "code": "710",
+      "name": "Office Equipment",
+      "type": "asset"
+    },
+    {
+      "code": "720",
+      "name": "Computer Equipment",
+      "type": "asset"
+    },
+    {
+      "code": "721",
+      "name": "Accumulated Depreciation – Computer Equipment",
+      "type": "asset"
+    },
+    {
+      "code": "730",
+      "name": "Motor Vehicles",
+      "type": "asset"
+    },
+    {
+      "code": "800",
+      "name": "Accounts Payable",
+      "type": "liability"
+    },
+    {
+      "code": "820",
+      "name": "GST",
+      "type": "liability"
+    },
+    {
+      "code": "825",
+      "name": "PAYG Withholdings Payable",
+      "type": "liability"
+    },
+    {
+      "code": "826",
+      "name": "Superannuation Payable",
+      "type": "liability"
+    },
+    {
+      "code": "830",
+      "name": "Income Tax Payable",
+      "type": "liability"
+    },
+    {
+      "code": "850",
+      "name": "Accrued Expenses",
+      "type": "liability"
+    },
+    {
+      "code": "870",
+      "name": "Business Loan",
+      "type": "liability"
+    },
+    {
+      "code": "880",
+      "name": "Owner Drawings",
+      "type": "equity"
+    },
+    {
+      "code": "960",
+      "name": "Retained Earnings",
+      "type": "equity"
+    },
+    {
+      "code": "200",
+      "name": "Sales",
+      "type": "revenue"
+    },
+    {
+      "code": "270",
+      "name": "Interest Income",
+      "type": "revenue"
+    },
+    {
+      "code": "310",
+      "name": "Cost of Goods Sold",
+      "type": "expense"
+    },
+    {
+      "code": "400",
+      "name": "Advertising",
+      "type": "expense"
+    },
+    {
+      "code": "404",
+      "name": "Bank Fees",
+      "type": "expense"
+    },
+    {
+      "code": "408",
+      "name": "Cleaning",
+      "type": "expense"
+    },
+    {
+      "code": "412",
+      "name": "Consulting & Accounting",
+      "type": "expense"
+    },
+    {
+      "code": "416",
+      "name": "Depreciation",
+      "type": "expense"
+    },
+    {
+      "code": "420",
+      "name": "Entertainment",
+      "type": "expense"
+    },
+    {
+      "code": "425",
+      "name": "Freight & Courier",
+      "type": "expense"
+    },
+    {
+      "code": "433",
+      "name": "Insurance",
+      "type": "expense"
+    },
+    {
+      "code": "445",
+      "name": "Light, Power, Heating",
+      "type": "expense"
+    },
+    {
+      "code": "449",
+      "name": "Motor Vehicle Expenses",
+      "type": "expense"
+    },
+    {
+      "code": "453",
+      "name": "Office Expenses",
+      "type": "expense"
+    },
+    {
+      "code": "461",
+      "name": "Printing & Stationery",
+      "type": "expense"
+    },
+    {
+      "code": "469",
+      "name": "Rent",
+      "type": "expense"
+    },
+    {
+      "code": "473",
+      "name": "Repairs and Maintenance",
+      "type": "expense"
+    },
+    {
+      "code": "477",
+      "name": "Wages and Salaries",
+      "type": "expense"
+    },
+    {
+      "code": "478",
+      "name": "Superannuation",
+      "type": "expense"
+    },
+    {
+      "code": "485",
+      "name": "Subscriptions",
+      "type": "expense"
+    },
+    {
+      "code": "489",
+      "name": "Telephone & Internet",
+      "type": "expense"
+    },
+    {
+      "code": "493",
+      "name": "Travel – National",
+      "type": "expense"
+    },
+    {
+      "code": "494",
+      "name": "Travel – International",
+      "type": "expense"
+    },
+    {
+      "code": "505",
+      "name": "Income Tax Expense",
+      "type": "expense"
+    }
+  ],
+  "UK": [
+    {
+      "code": "090",
+      "name": "Business Current Account",
+      "type": "asset"
+    },
+    {
+      "code": "610",
+      "name": "Trade Debtors",
+      "type": "asset"
+    },
+    {
+      "code": "620",
+      "name": "Prepayments",
+      "type": "asset"
+    },
+    {
+      "code": "630",
+      "name": "Stock",
+      "type": "asset"
+    },
+    {
+      "code": "710",
+      "name": "Office Equipment",
+      "type": "asset"
+    },
+    {
+      "code": "720",
+      "name": "Computer Equipment",
+      "type": "asset"
+    },
+    {
+      "code": "721",
+      "name": "Accumulated Depreciation – Computer Equipment",
+      "type": "asset"
+    },
+    {
+      "code": "800",
+      "name": "Trade Creditors",
+      "type": "liability"
+    },
+    {
+      "code": "814",
+      "name": "Wages Payable – Payroll",
+      "type": "liability"
+    },
+    {
+      "code": "820",
+      "name": "VAT",
+      "type": "liability"
+    },
+    {
+      "code": "825",
+      "name": "PAYE & NIC Payable",
+      "type": "liability"
+    },
+    {
+      "code": "826",
+      "name": "Pensions Payable",
+      "type": "liability"
+    },
+    {
+      "code": "827",
+      "name": "CIS Deductions Payable",
+      "type": "liability"
+    },
+    {
+      "code": "830",
+      "name": "Corporation Tax",
+      "type": "liability"
+    },
+    {
+      "code": "840",
+      "name": "Accruals",
+      "type": "liability"
+    },
+    {
+      "code": "835",
+      "name": "Directors' Loan Account",
+      "type": "liability"
+    },
+    {
+      "code": "950",
+      "name": "Share Capital",
+      "type": "equity"
+    },
+    {
+      "code": "960",
+      "name": "Retained Earnings",
+      "type": "equity"
+    },
+    {
+      "code": "200",
+      "name": "Sales",
+      "type": "revenue"
+    },
+    {
+      "code": "270",
+      "name": "Interest Income",
+      "type": "revenue"
+    },
+    {
+      "code": "310",
+      "name": "Cost of Goods Sold",
+      "type": "expense"
+    },
+    {
+      "code": "320",
+      "name": "Subcontractors",
+      "type": "expense"
+    },
+    {
+      "code": "400",
+      "name": "Advertising & Marketing",
+      "type": "expense"
+    },
+    {
+      "code": "404",
+      "name": "Bank Charges",
+      "type": "expense"
+    },
+    {
+      "code": "412",
+      "name": "Accountancy Fees",
+      "type": "expense"
+    },
+    {
+      "code": "416",
+      "name": "Depreciation",
+      "type": "expense"
+    },
+    {
+      "code": "420",
+      "name": "Entertainment",
+      "type": "expense"
+    },
+    {
+      "code": "425",
+      "name": "Postage, Freight & Courier",
+      "type": "expense"
+    },
+    {
+      "code": "433",
+      "name": "Insurance",
+      "type": "expense"
+    },
+    {
+      "code": "445",
+      "name": "Light, Power, Heating",
+      "type": "expense"
+    },
+    {
+      "code": "449",
+      "name": "Motor Vehicle Expenses",
+      "type": "expense"
+    },
+    {
+      "code": "453",
+      "name": "Office Expenses",
+      "type": "expense"
+    },
+    {
+      "code": "461",
+      "name": "Printing & Stationery",
+      "type": "expense"
+    },
+    {
+      "code": "469",
+      "name": "Rent",
+      "type": "expense"
+    },
+    {
+      "code": "470",
+      "name": "Business Rates",
+      "type": "expense"
+    },
+    {
+      "code": "473",
+      "name": "Repairs & Maintenance",
+      "type": "expense"
+    },
+    {
+      "code": "477",
+      "name": "Salaries",
+      "type": "expense"
+    },
+    {
+      "code": "478",
+      "name": "Employer's NIC",
+      "type": "expense"
+    },
+    {
+      "code": "479",
+      "name": "Employer's Pensions",
+      "type": "expense"
+    },
+    {
+      "code": "485",
+      "name": "Subscriptions",
+      "type": "expense"
+    },
+    {
+      "code": "489",
+      "name": "Telephone & Internet",
+      "type": "expense"
+    },
+    {
+      "code": "493",
+      "name": "Travel – National",
+      "type": "expense"
+    },
+    {
+      "code": "494",
+      "name": "Travel – International",
+      "type": "expense"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "note": "Names follow the default tax rates in Xero's AU and UK organisations. QuickBooks Online uses different labels for the same treatments (for example 'GST' and 'GST free' in AU, '20.0% S' and '0.0% Z' in the UK). The names were not checked against a live file; check the tax rates list in your own organisation.",
+  "verifiedOn": null,
+  "AU": [
+    { "code": "OUTPUT", "name": "GST on Income", "direction": "sale", "rateFact": "au.gst.rate", "treatment": "taxable", "reportsIn": "G1 and 1A", "useFor": "Most sales of goods and services in Australia." },
+    { "code": "EXEMPTOUTPUT", "name": "GST Free Income", "direction": "sale", "rateFact": null, "treatment": "gst-free", "reportsIn": "G1 and G3 (exports go in G2)", "useFor": "GST-free sales: most basic food, some health and education, exports." },
+    { "code": "INPUTTAXED", "name": "Input Taxed", "direction": "either", "rateFact": null, "treatment": "input-taxed", "reportsIn": "G1 and G4 on a sale; no GST credit on a purchase", "useFor": "Financial supplies, residential rent. No GST charged and no GST credit claimable on related purchases." },
+    { "code": "INPUT", "name": "GST on Expenses", "direction": "purchase", "rateFact": "au.gst.rate", "treatment": "taxable", "reportsIn": "G11 and 1B", "useFor": "Everyday business purchases from a GST-registered supplier with a tax invoice." },
+    { "code": "CAPEXINPUT", "name": "GST on Capital", "direction": "purchase", "rateFact": "au.gst.rate", "treatment": "taxable", "reportsIn": "G10 and 1B", "useFor": "Purchases of capital items (equipment, vehicles) with GST." },
+    { "code": "EXEMPTEXPENSES", "name": "GST Free Expenses", "direction": "purchase", "rateFact": null, "treatment": "gst-free", "reportsIn": "G11 (or G10 for capital) with no 1B", "useFor": "Purchases with no GST: bank fees, some insurance and stamp duty, unregistered suppliers, overseas services." },
+    { "code": "BASEXCLUDED", "name": "BAS Excluded", "direction": "either", "rateFact": null, "treatment": "bas-excluded", "reportsIn": "Nowhere on the GST section", "useFor": "Wages, super, PAYG, loans, transfers between accounts, owner drawings and capital, income tax, dividends." },
+    { "code": "GSTONIMPORTS", "name": "GST on Imports", "direction": "purchase", "rateFact": "au.gst.rate", "treatment": "taxable", "reportsIn": "1B (GST paid to Customs on imported goods)", "useFor": "The GST line of an import declaration, paid to the Department of Home Affairs, not to the supplier." }
+  ],
+  "UK": [
+    { "code": "OUTPUT2", "name": "20% (VAT on Income)", "direction": "sale", "rateFact": "uk.vat.standardRate", "treatment": "standard", "reportsIn": "Box 1 and box 6", "useFor": "Most sales of goods and services." },
+    { "code": "RROUTPUT", "name": "5% (VAT on Income)", "direction": "sale", "rateFact": "uk.vat.reducedRate", "treatment": "reduced", "reportsIn": "Box 1 and box 6", "useFor": "Reduced-rate sales such as domestic fuel and power, children's car seats." },
+    { "code": "ZERORATEDOUTPUT", "name": "Zero Rated Income", "direction": "sale", "rateFact": null, "treatment": "zero", "reportsIn": "Box 6 only", "useFor": "Zero-rated sales: most food, books, children's clothes, exports of goods." },
+    { "code": "EXEMPTOUTPUT", "name": "Exempt Income", "direction": "sale", "rateFact": null, "treatment": "exempt", "reportsIn": "Box 6 only", "useFor": "Exempt sales: insurance, finance, most residential rent, some education and health." },
+    { "code": "INPUT2", "name": "20% (VAT on Expenses)", "direction": "purchase", "rateFact": "uk.vat.standardRate", "treatment": "standard", "reportsIn": "Box 4 and box 7", "useFor": "Most business purchases from a VAT-registered supplier with a VAT invoice." },
+    { "code": "RRINPUT", "name": "5% (VAT on Expenses)", "direction": "purchase", "rateFact": "uk.vat.reducedRate", "treatment": "reduced", "reportsIn": "Box 4 and box 7", "useFor": "Reduced-rate purchases such as business energy below the de minimis." },
+    { "code": "ZERORATEDINPUT", "name": "Zero Rated Expenses", "direction": "purchase", "rateFact": null, "treatment": "zero", "reportsIn": "Box 7 only", "useFor": "Zero-rated purchases: most food, books, public transport fares." },
+    { "code": "EXEMPTINPUT", "name": "Exempt Expenses", "direction": "purchase", "rateFact": null, "treatment": "exempt", "reportsIn": "Box 7 only", "useFor": "Exempt purchases: insurance premiums, bank interest, postage stamps (Royal Mail)." },
+    { "code": "NONE", "name": "No VAT", "direction": "either", "rateFact": null, "treatment": "outside-scope", "reportsIn": "Nowhere on the return", "useFor": "Outside the scope: wages, PAYE and NIC, VAT payments, dividends, loans, transfers, MOT certificates, statutory fees." },
+    { "code": "DRCHARGE", "name": "Domestic Reverse Charge @ 20% (VAT on Expenses)", "direction": "purchase", "rateFact": "uk.vat.standardRate", "treatment": "reverse-charge", "reportsIn": "Boxes 1, 4 and 7 for the customer", "useFor": "Construction services reported under CIS, received from a VAT-registered subcontractor, when you are not the end user." },
+    { "code": "DRCHARGESUPPLY", "name": "Domestic Reverse Charge @ 20% (VAT on Income)", "direction": "sale", "rateFact": null, "treatment": "reverse-charge-supply", "reportsIn": "Box 6 only for the supplier", "useFor": "Your own construction sales to a VAT-registered contractor who is not the end user: the invoice says 'reverse charge' and shows no VAT to pay." }
+  ]
+}

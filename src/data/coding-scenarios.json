@@ -1,0 +1,515 @@
+[
+  {
+    "id": "c-au-stationery",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "source": "bill",
+    "from": "Officeworks",
+    "date": "2026-10-03",
+    "description": "Printer paper and toner. Tax invoice, total includes GST $15.00.",
+    "amountCents": 16500,
+    "answer": {
+      "account": "461",
+      "taxCode": "INPUT"
+    },
+    "alsoAccepted": [],
+    "explanation": "A normal taxable purchase with a tax invoice: GST on Expenses claims the $15 at 1B."
+  },
+  {
+    "id": "c-au-bank-fee",
+    "jurisdiction": "AU",
+    "doc": "australia/xero-qbo-au-setup",
+    "source": "bank",
+    "from": "Commonwealth Bank",
+    "date": "2026-10-01",
+    "description": "Money out: monthly account keeping fee.",
+    "amountCents": 1000,
+    "answer": {
+      "account": "404",
+      "taxCode": "EXEMPTEXPENSES"
+    },
+    "alsoAccepted": [
+      {
+        "account": "404",
+        "taxCode": "INPUTTAXED"
+      }
+    ],
+    "explanation": "Bank fees are financial supplies with no GST charged, so there is nothing to claim: GST Free Expenses."
+  },
+  {
+    "id": "c-au-laptop",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "source": "bill",
+    "from": "JB Hi-Fi",
+    "date": "2026-10-08",
+    "description": "Business laptop, tax invoice, $2,499.00 including GST.",
+    "amountCents": 249900,
+    "answer": {
+      "account": "720",
+      "taxCode": "CAPEXINPUT"
+    },
+    "alsoAccepted": [
+      {
+        "account": "720",
+        "taxCode": "INPUT"
+      }
+    ],
+    "explanation": "Equipment is a capital purchase: GST on Capital puts it in G10 and claims the GST at 1B."
+  },
+  {
+    "id": "c-au-rent",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "source": "bill",
+    "from": "Harbour Property Trust",
+    "date": "2026-10-01",
+    "description": "October rent for the office. Tax invoice from a GST-registered landlord.",
+    "amountCents": 330000,
+    "answer": {
+      "account": "469",
+      "taxCode": "INPUT"
+    },
+    "alsoAccepted": [],
+    "explanation": "Commercial rent from a registered landlord is taxable. (Residential rent would be input-taxed.)"
+  },
+  {
+    "id": "c-au-super",
+    "jurisdiction": "AU",
+    "doc": "australia/payg-superannuation",
+    "source": "bank",
+    "from": "Super fund contribution",
+    "date": "2026-10-10",
+    "description": "Money out: super contributions for the 6 October pay run.",
+    "amountCents": 96000,
+    "answer": {
+      "account": "826",
+      "taxCode": "BASEXCLUDED"
+    },
+    "alsoAccepted": [],
+    "explanation": "Paying super clears the Superannuation Payable liability raised by payroll. Super is BAS excluded."
+  },
+  {
+    "id": "c-au-ato-bas",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "source": "bank",
+    "from": "ATO",
+    "date": "2026-10-28",
+    "description": "Money out: BAS payment for July–September (GST portion).",
+    "amountCents": 412000,
+    "answer": {
+      "account": "820",
+      "taxCode": "BASEXCLUDED"
+    },
+    "alsoAccepted": [],
+    "explanation": "Paying the BAS clears the GST liability account. The payment itself has no GST."
+  },
+  {
+    "id": "c-au-adobe",
+    "jurisdiction": "AU",
+    "doc": "australia/xero-qbo-au-setup",
+    "source": "bill",
+    "from": "Adobe Systems Software Ireland",
+    "date": "2026-10-12",
+    "description": "Creative Cloud subscription. ABN supplied, invoice shows no Australian GST.",
+    "amountCents": 7999,
+    "answer": {
+      "account": "485",
+      "taxCode": "EXEMPTEXPENSES"
+    },
+    "alsoAccepted": [
+      {
+        "account": "485",
+        "taxCode": "BASEXCLUDED"
+      }
+    ],
+    "explanation": "No GST was charged, so none can be claimed: GST Free Expenses. Coding it GST on Expenses would claim GST that was never paid."
+  },
+  {
+    "id": "c-au-insurance",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "source": "bill",
+    "from": "Allianz",
+    "date": "2026-10-15",
+    "description": "Public liability insurance. Tax invoice shows GST of $120.00 on a total of $1,320.00.",
+    "amountCents": 132000,
+    "answer": {
+      "account": "433",
+      "taxCode": "INPUT"
+    },
+    "alsoAccepted": [],
+    "explanation": "General insurance is taxable; the invoice shows the GST. (Stamp duty on a premium, where shown separately, has no GST.)"
+  },
+  {
+    "id": "c-au-fuel",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "source": "bill",
+    "from": "Ampol",
+    "date": "2026-10-16",
+    "description": "Fuel for the business ute, $88.00 including GST.",
+    "amountCents": 8800,
+    "answer": {
+      "account": "449",
+      "taxCode": "INPUT"
+    },
+    "alsoAccepted": [],
+    "explanation": "Fuel is taxable. Claim only the business-use share if the vehicle is also used privately."
+  },
+  {
+    "id": "c-au-client-lunch",
+    "jurisdiction": "AU",
+    "doc": "australia/xero-qbo-au-setup",
+    "source": "bill",
+    "from": "Rockpool",
+    "date": "2026-10-17",
+    "description": "Lunch with a prospective client, $132.00 including GST.",
+    "amountCents": 13200,
+    "answer": {
+      "account": "420",
+      "taxCode": "EXEMPTEXPENSES"
+    },
+    "alsoAccepted": [
+      {
+        "account": "420",
+        "taxCode": "BASEXCLUDED"
+      }
+    ],
+    "explanation": "Entertainment that is not income-tax deductible gives no GST credit. Many firms code it with no GST to claim; some use BAS Excluded. Check your firm's policy."
+  },
+  {
+    "id": "c-au-sale",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "source": "invoice",
+    "from": "Your sales invoice to Coastline Cafe",
+    "date": "2026-10-20",
+    "description": "Brand design work, $2,200.00 including GST.",
+    "amountCents": 220000,
+    "answer": {
+      "account": "200",
+      "taxCode": "OUTPUT"
+    },
+    "alsoAccepted": [],
+    "explanation": "A taxable sale: GST on Income reports $2,200 at G1 and $200 at 1A."
+  },
+  {
+    "id": "c-au-export",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "source": "invoice",
+    "from": "Your sales invoice to a Singapore customer",
+    "date": "2026-10-21",
+    "description": "Goods shipped from Melbourne to Singapore within 60 days.",
+    "amountCents": 540000,
+    "answer": {
+      "account": "200",
+      "taxCode": "EXEMPTOUTPUT"
+    },
+    "alsoAccepted": [],
+    "explanation": "Exported goods are GST-free: G1 and G2, no 1A."
+  },
+  {
+    "id": "c-au-drawings",
+    "jurisdiction": "AU",
+    "doc": "australia/xero-qbo-au-setup",
+    "source": "bank",
+    "from": "Transfer to owner",
+    "date": "2026-10-22",
+    "description": "Money out: sole trader transfers $5,000 to their personal account.",
+    "amountCents": 500000,
+    "answer": {
+      "account": "880",
+      "taxCode": "BASEXCLUDED"
+    },
+    "alsoAccepted": [],
+    "explanation": "Drawings are equity, not an expense, and are BAS excluded."
+  },
+  {
+    "id": "c-au-interest",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "source": "bank",
+    "from": "Commonwealth Bank",
+    "date": "2026-10-31",
+    "description": "Money in: interest on the business savings account.",
+    "amountCents": 4350,
+    "answer": {
+      "account": "270",
+      "taxCode": "INPUTTAXED"
+    },
+    "alsoAccepted": [
+      {
+        "account": "270",
+        "taxCode": "EXEMPTOUTPUT"
+      },
+      {
+        "account": "270",
+        "taxCode": "BASEXCLUDED"
+      }
+    ],
+    "explanation": "Interest is an input-taxed financial supply: it reports at G1 and G4 with no GST."
+  },
+  {
+    "id": "c-au-postage",
+    "jurisdiction": "AU",
+    "doc": "australia/bas-gst-guide",
+    "source": "bill",
+    "from": "Australia Post",
+    "date": "2026-10-23",
+    "description": "Domestic parcel postage, $22.00 including GST.",
+    "amountCents": 2200,
+    "answer": {
+      "account": "425",
+      "taxCode": "INPUT"
+    },
+    "alsoAccepted": [],
+    "explanation": "Domestic postage is taxable."
+  },
+  {
+    "id": "c-uk-stationery",
+    "jurisdiction": "UK",
+    "doc": "uk/mtd-vat-guide",
+    "source": "bill",
+    "from": "Staples",
+    "date": "2026-10-03",
+    "description": "Stationery, £60.00 including VAT. VAT invoice.",
+    "amountCents": 6000,
+    "answer": {
+      "account": "461",
+      "taxCode": "INPUT2"
+    },
+    "alsoAccepted": [],
+    "explanation": "A standard-rated purchase: £10 VAT reclaimed in box 4, £50 in box 7."
+  },
+  {
+    "id": "c-uk-bank-charges",
+    "jurisdiction": "UK",
+    "doc": "uk/xero-qbo-uk-setup",
+    "source": "bank",
+    "from": "Barclays",
+    "date": "2026-10-01",
+    "description": "Money out: monthly business account charge.",
+    "amountCents": 850,
+    "answer": {
+      "account": "404",
+      "taxCode": "EXEMPTINPUT"
+    },
+    "alsoAccepted": [
+      {
+        "account": "404",
+        "taxCode": "NONE"
+      }
+    ],
+    "explanation": "Bank charges are exempt financial services: no VAT to reclaim. Some firms use No VAT instead."
+  },
+  {
+    "id": "c-uk-insurance",
+    "jurisdiction": "UK",
+    "doc": "uk/xero-qbo-uk-setup",
+    "source": "bill",
+    "from": "Hiscox",
+    "date": "2026-10-05",
+    "description": "Professional indemnity insurance, £540.00 including Insurance Premium Tax.",
+    "amountCents": 54000,
+    "answer": {
+      "account": "433",
+      "taxCode": "EXEMPTINPUT"
+    },
+    "alsoAccepted": [],
+    "explanation": "Insurance is exempt from VAT; IPT is not VAT and cannot be reclaimed."
+  },
+  {
+    "id": "c-uk-train",
+    "jurisdiction": "UK",
+    "doc": "uk/mtd-vat-guide",
+    "source": "bill",
+    "from": "Avanti West Coast",
+    "date": "2026-10-07",
+    "description": "Return train ticket London to Manchester for a client visit.",
+    "amountCents": 9600,
+    "answer": {
+      "account": "493",
+      "taxCode": "ZERORATEDINPUT"
+    },
+    "alsoAccepted": [],
+    "explanation": "Passenger transport is zero-rated: box 7 only, no VAT to reclaim."
+  },
+  {
+    "id": "c-uk-client-dinner",
+    "jurisdiction": "UK",
+    "doc": "uk/mtd-vat-guide",
+    "source": "bill",
+    "from": "Hawksmoor",
+    "date": "2026-10-09",
+    "description": "Dinner with two clients, £180.00 including VAT.",
+    "amountCents": 18000,
+    "answer": {
+      "account": "420",
+      "taxCode": "NONE"
+    },
+    "alsoAccepted": [
+      {
+        "account": "420",
+        "taxCode": "EXEMPTINPUT"
+      }
+    ],
+    "explanation": "VAT on business entertainment of clients is blocked, so none is reclaimed. Many firms code it No VAT; others use a blocked-VAT rate. Check your firm's policy."
+  },
+  {
+    "id": "c-uk-laptop",
+    "jurisdiction": "UK",
+    "doc": "uk/mtd-vat-guide",
+    "source": "bill",
+    "from": "Currys Business",
+    "date": "2026-10-10",
+    "description": "Laptop for a new employee, £1,199.00 including VAT.",
+    "amountCents": 119900,
+    "answer": {
+      "account": "720",
+      "taxCode": "INPUT2"
+    },
+    "alsoAccepted": [],
+    "explanation": "Equipment with VAT: reclaim the £199.83 in box 4. Capitalise it if over the capitalisation policy."
+  },
+  {
+    "id": "c-uk-rates",
+    "jurisdiction": "UK",
+    "doc": "uk/xero-qbo-uk-setup",
+    "source": "bank",
+    "from": "Westminster City Council",
+    "date": "2026-10-01",
+    "description": "Money out: business rates, October instalment.",
+    "amountCents": 42000,
+    "answer": {
+      "account": "470",
+      "taxCode": "NONE"
+    },
+    "alsoAccepted": [],
+    "explanation": "Business rates are a local tax, outside the scope of VAT."
+  },
+  {
+    "id": "c-uk-hmrc-vat",
+    "jurisdiction": "UK",
+    "doc": "uk/mtd-vat-guide",
+    "source": "bank",
+    "from": "HMRC VAT",
+    "date": "2026-10-07",
+    "description": "Money out: VAT return payment for the quarter to 31 August.",
+    "amountCents": 683000,
+    "answer": {
+      "account": "820",
+      "taxCode": "NONE"
+    },
+    "alsoAccepted": [],
+    "explanation": "Paying HMRC clears the VAT control account; the payment is outside the scope."
+  },
+  {
+    "id": "c-uk-salaries",
+    "jurisdiction": "UK",
+    "doc": "uk/paye-cis-overview",
+    "source": "bank",
+    "from": "Payroll",
+    "date": "2026-10-25",
+    "description": "Money out: net salaries for October.",
+    "amountCents": 246000,
+    "answer": {
+      "account": "814",
+      "taxCode": "NONE"
+    },
+    "alsoAccepted": [],
+    "explanation": "The payroll journal already expensed gross pay; the bank payment clears Wages Payable. Payroll is outside the scope of VAT."
+  },
+  {
+    "id": "c-uk-plasterer",
+    "jurisdiction": "UK",
+    "doc": "uk/paye-cis-overview",
+    "source": "bill",
+    "from": "A. Khan Plastering Ltd",
+    "date": "2026-10-14",
+    "description": "Plastering on a client's refurbishment, £4,000.00 net. Invoice says \"reverse charge: customer to account for VAT to HMRC\". VAT registered, CIS verified.",
+    "amountCents": 400000,
+    "answer": {
+      "account": "320",
+      "taxCode": "DRCHARGE"
+    },
+    "alsoAccepted": [],
+    "explanation": "Construction services under CIS between VAT-registered businesses, and you are not the end user: the domestic reverse charge applies. Boxes 1, 4 and 7."
+  },
+  {
+    "id": "c-uk-sale",
+    "jurisdiction": "UK",
+    "doc": "uk/mtd-vat-guide",
+    "source": "invoice",
+    "from": "Your sales invoice to Northwind Ltd",
+    "date": "2026-10-15",
+    "description": "Consultancy, £2,400.00 including VAT.",
+    "amountCents": 240000,
+    "answer": {
+      "account": "200",
+      "taxCode": "OUTPUT2"
+    },
+    "alsoAccepted": [],
+    "explanation": "A standard-rated sale: £400 in box 1, £2,000 in box 6."
+  },
+  {
+    "id": "c-uk-books",
+    "jurisdiction": "UK",
+    "doc": "uk/mtd-vat-guide",
+    "source": "invoice",
+    "from": "Your sales invoice to a school",
+    "date": "2026-10-16",
+    "description": "Printed books, £300.00.",
+    "amountCents": 30000,
+    "answer": {
+      "account": "200",
+      "taxCode": "ZERORATEDOUTPUT"
+    },
+    "alsoAccepted": [],
+    "explanation": "Printed books are zero-rated: box 6 only."
+  },
+  {
+    "id": "c-uk-stamps",
+    "jurisdiction": "UK",
+    "doc": "uk/xero-qbo-uk-setup",
+    "source": "bill",
+    "from": "Royal Mail",
+    "date": "2026-10-18",
+    "description": "First class stamps (universal service).",
+    "amountCents": 3000,
+    "answer": {
+      "account": "425",
+      "taxCode": "EXEMPTINPUT"
+    },
+    "alsoAccepted": [
+      {
+        "account": "425",
+        "taxCode": "NONE"
+      }
+    ],
+    "explanation": "Royal Mail universal service postage is exempt from VAT."
+  },
+  {
+    "id": "c-uk-interest",
+    "jurisdiction": "UK",
+    "doc": "uk/xero-qbo-uk-setup",
+    "source": "bank",
+    "from": "Barclays",
+    "date": "2026-10-31",
+    "description": "Money in: interest on the business deposit account.",
+    "amountCents": 2875,
+    "answer": {
+      "account": "270",
+      "taxCode": "EXEMPTOUTPUT"
+    },
+    "alsoAccepted": [
+      {
+        "account": "270",
+        "taxCode": "NONE"
+      }
+    ],
+    "explanation": "Interest received is an exempt financial supply: box 6 only. Some firms use No VAT."
+  }
+]

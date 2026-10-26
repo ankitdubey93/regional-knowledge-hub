@@ -1,0 +1,98 @@
+{
+  "frameworks": [
+    { "id": "ifrs", "name": "IFRS / IAS", "issuer": "IASB", "appliesTo": "Listed groups in the UK and many other countries; the base the others are built from." },
+    { "id": "frs102", "name": "FRS 102", "issuer": "FRC (UK & Ireland)", "appliesTo": "Most UK private companies; small companies use its Section 1A with fewer disclosures." },
+    { "id": "frs105", "name": "FRS 105", "issuer": "FRC (UK & Ireland)", "appliesTo": "Micro-entities that choose the micro-entity regime." },
+    { "id": "aasb", "name": "AASB (Australian standards)", "issuer": "AASB", "appliesTo": "Australian entities that must report; for-profit standards mirror IFRS word for word, with extra paragraphs for not-for-profits." }
+  ],
+  "topics": [
+    {
+      "id": "leases",
+      "topic": "Leases (lessee)",
+      "group": "Assets & liabilities",
+      "ifrs": { "summary": "One model: almost every lease goes on the balance sheet as a right-of-use asset and a lease liability. Optional exemptions for short-term leases (12 months or less) and low-value assets.", "ref": "IFRS 16" },
+      "frs102": { "summary": "From periods beginning on or after 1 January 2026 the lessee model follows IFRS 16: right-of-use asset and lease liability, with short-term and low-value exemptions. Before that, operating leases were expensed straight-line and only finance leases were capitalised.", "ref": "FRS 102 Section 20 (Periodic Review 2024)" },
+      "frs105": { "summary": "Keeps the old split: finance leases on the balance sheet, operating lease payments expensed. Check the current FRS 105 text before relying on this, as the Periodic Review 2024 also amended FRS 105.", "ref": "FRS 105 Section 15" },
+      "aasb": { "summary": "Same as IFRS 16, word for word.", "ref": "AASB 16" },
+      "changed2026": true,
+      "takeaway": "A UK client moving onto the 2026 FRS 102 will see new assets, new liabilities, higher EBITDA and lease payments split between interest and principal."
+    },
+    {
+      "id": "revenue",
+      "topic": "Revenue",
+      "group": "Income",
+      "ifrs": { "summary": "Five steps: identify the contract, identify the performance obligations, set the price, allocate it, recognise revenue as each obligation is satisfied (at a point in time or over time).", "ref": "IFRS 15" },
+      "frs102": { "summary": "From 2026, a five-step model based on IFRS 15, with simplifications. Before that, revenue was recognised on transfer of the risks and rewards of ownership, or by stage of completion for services.", "ref": "FRS 102 Section 23 (Periodic Review 2024)" },
+      "frs105": { "summary": "A simplified revenue section. The Periodic Review 2024 aligned it with the new FRS 102 approach in a simpler form; check the current FRS 105 text for detail.", "ref": "FRS 105 Section 18" },
+      "aasb": { "summary": "For-profit entities use AASB 15 (same as IFRS 15). Not-for-profits also apply AASB 1058 to income such as grants and donations where there is no enforceable obligation to transfer goods or services.", "ref": "AASB 15, AASB 1058" },
+      "changed2026": true,
+      "takeaway": "In practice the timing changes most for bundled contracts: a sale of hardware plus a year's support becomes two obligations."
+    },
+    {
+      "id": "goodwill",
+      "topic": "Goodwill",
+      "group": "Assets & liabilities",
+      "ifrs": { "summary": "Never amortised. Tested for impairment every year, and whenever there is an indicator.", "ref": "IFRS 3, IAS 36" },
+      "frs102": { "summary": "Amortised over its useful life. If the life cannot be reliably estimated, it must not exceed 10 years. Impairment tested when there is an indicator.", "ref": "FRS 102 Section 19" },
+      "frs105": { "summary": "Amortised, on the same 10-year default when the life cannot be estimated.", "ref": "FRS 105 Section 13" },
+      "aasb": { "summary": "Same as IFRS: no amortisation, annual impairment test.", "ref": "AASB 3, AASB 136" },
+      "changed2026": false,
+      "takeaway": "A UK subsidiary of an Australian group amortises goodwill locally, and the group reverses that amortisation on consolidation."
+    },
+    {
+      "id": "development-costs",
+      "topic": "Development costs",
+      "group": "Assets & liabilities",
+      "ifrs": { "summary": "Research is always expensed. Development must be capitalised once all six criteria are met (feasibility, intention, ability, future benefit, resources, reliable measurement).", "ref": "IAS 38" },
+      "frs102": { "summary": "Research is expensed. Development that meets the criteria may be capitalised or expensed: an accounting policy choice, applied consistently.", "ref": "FRS 102 Section 18" },
+      "frs105": { "summary": "Research and development are expensed; internally generated intangible assets are not recognised.", "ref": "FRS 105 Section 13" },
+      "aasb": { "summary": "Same as IAS 38: capitalise when the criteria are met.", "ref": "AASB 138" },
+      "changed2026": false,
+      "takeaway": "UK software companies often choose to expense development under FRS 102 to keep the books simple, then claim R&D tax relief separately."
+    },
+    {
+      "id": "inventory",
+      "topic": "Inventory",
+      "group": "Assets & liabilities",
+      "ifrs": { "summary": "Lower of cost and net realisable value. Cost by FIFO or weighted average (specific identification for unique items). LIFO is not allowed.", "ref": "IAS 2" },
+      "frs102": { "summary": "Lower of cost and estimated selling price less costs to complete and sell. FIFO or weighted average; LIFO is not allowed.", "ref": "FRS 102 Section 13" },
+      "frs105": { "summary": "Same measurement idea, simpler wording and disclosures. LIFO is not allowed.", "ref": "FRS 105 Section 9" },
+      "aasb": { "summary": "Same as IAS 2. Not-for-profits hold inventory for distribution at cost adjusted for loss of service potential.", "ref": "AASB 102" },
+      "changed2026": false,
+      "takeaway": "Everywhere this site covers, LIFO is prohibited. Use the Inventory tool to see FIFO and weighted average side by side."
+    },
+    {
+      "id": "ppe",
+      "topic": "Property, plant & equipment",
+      "group": "Assets & liabilities",
+      "ifrs": { "summary": "Cost model or revaluation model, by class of asset. Significant components depreciated separately. Residual value and useful life reviewed at least every year end.", "ref": "IAS 16" },
+      "frs102": { "summary": "Cost model or revaluation model. Components depreciated separately when they have very different lives. Residual value and life reviewed when there is an indication of change.", "ref": "FRS 102 Section 17" },
+      "frs105": { "summary": "Cost model only. Revaluation and fair value accounting are not allowed for micro-entities.", "ref": "FRS 105 Section 12" },
+      "aasb": { "summary": "Same as IAS 16, with not-for-profit paragraphs (e.g. assets received for nil consideration).", "ref": "AASB 116" },
+      "changed2026": false,
+      "takeaway": "A capitalisation threshold (e.g. 'items under $1,000 are expensed') is an internal materiality policy, not a rule of the standard. The tax write-off limit is a separate, tax-only rule."
+    },
+    {
+      "id": "borrowing-costs",
+      "topic": "Borrowing costs",
+      "group": "Assets & liabilities",
+      "ifrs": { "summary": "Interest that relates directly to building a qualifying asset must be capitalised into its cost.", "ref": "IAS 23" },
+      "frs102": { "summary": "Policy choice: capitalise borrowing costs on qualifying assets, or expense them all.", "ref": "FRS 102 Section 25" },
+      "frs105": { "summary": "All borrowing costs are expensed.", "ref": "FRS 105 Section 20" },
+      "aasb": { "summary": "Same as IAS 23: capitalise.", "ref": "AASB 123" },
+      "changed2026": false,
+      "takeaway": "Mostly relevant to property developers and businesses building their own premises."
+    },
+    {
+      "id": "presentation",
+      "topic": "The set of financial statements",
+      "group": "Presentation",
+      "ifrs": { "summary": "Statement of financial position, profit or loss and OCI, changes in equity, cash flows, and notes. IFRS 18 replaces IAS 1 for periods beginning on or after 1 January 2027, with new defined subtotals in profit or loss.", "ref": "IAS 1 (IFRS 18 from 2027), IAS 7" },
+      "frs102": { "summary": "The same statements, but small companies using Section 1A need not present a cash flow statement or statement of changes in equity and give far fewer notes.", "ref": "FRS 102 Sections 3–7, Section 1A" },
+      "frs105": { "summary": "A balance sheet and a profit and loss account with very few notes. No cash flow statement.", "ref": "FRS 105 Sections 4–6" },
+      "aasb": { "summary": "AASB 101 mirrors IAS 1, and AASB 18 mirrors IFRS 18. Entities that are not publicly accountable may use Simplified Disclosures (AASB 1060) instead of full disclosure.", "ref": "AASB 101, AASB 107, AASB 1060" },
+      "changed2026": false,
+      "takeaway": "The bookkeeping is the same everywhere; what changes is how much the year-end pack has to disclose."
+    }
+  ]
+}

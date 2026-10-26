@@ -1,0 +1,416 @@
+{
+  "au.gst.rate": {
+    "label": "GST rate",
+    "jurisdiction": "AU",
+    "unit": "bp",
+    "value": 1000,
+    "effectiveFrom": "2000-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/how-gst-works",
+    "verifiedOn": "2026-10-26"
+  },
+  "au.gst.registrationThreshold": {
+    "label": "GST registration turnover threshold (business)",
+    "jurisdiction": "AU",
+    "unit": "cents",
+    "value": 7500000,
+    "effectiveFrom": "2007-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/registering-for-gst",
+    "verifiedOn": "2026-10-26",
+    "note": "Register within 21 days of reaching it, on current or projected GST turnover."
+  },
+  "au.gst.registrationThresholdNfp": {
+    "label": "GST registration turnover threshold (non-profit)",
+    "jurisdiction": "AU",
+    "unit": "cents",
+    "value": 15000000,
+    "effectiveFrom": "2007-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/not-for-profit-organisations/your-organisation/gst-for-not-for-profits/gst-registration-for-not-for-profits",
+    "verifiedOn": "2026-10-26"
+  },
+  "au.gst.taxInvoiceThreshold": {
+    "label": "Tax invoice needed to claim a GST credit above",
+    "jurisdiction": "AU",
+    "unit": "cents",
+    "value": 8250,
+    "effectiveFrom": "2000-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/tax-invoices",
+    "verifiedOn": "2026-10-26",
+    "note": "GST-inclusive. A supplier must give a tax invoice within 28 days of a request above this amount."
+  },
+  "au.gst.taxInvoiceBuyerIdThreshold": {
+    "label": "Tax invoice must identify the buyer from",
+    "jurisdiction": "AU",
+    "unit": "cents",
+    "value": 100000,
+    "effectiveFrom": "2010-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/tax-invoices",
+    "verifiedOn": "2026-10-26"
+  },
+  "au.gst.cashBasisTurnoverLimit": {
+    "label": "Cash-basis GST allowed below aggregated turnover",
+    "jurisdiction": "AU",
+    "unit": "cents",
+    "value": 1000000000,
+    "effectiveFrom": "2016-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/accounting-for-gst-in-your-business/choosing-an-accounting-method",
+    "verifiedOn": "2026-10-26"
+  },
+  "au.gst.simplerBasTurnoverLimit": {
+    "label": "Simpler BAS (G1, 1A, 1B only) is the default below GST turnover",
+    "jurisdiction": "AU",
+    "unit": "cents",
+    "value": 1000000000,
+    "effectiveFrom": "2017-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/business-activity-statements-bas/goods-and-services-tax-gst/simpler-bas-gst-bookkeeping-guide",
+    "verifiedOn": "2026-10-26"
+  },
+  "au.gst.monthlyReportingThreshold": {
+    "label": "Monthly GST reporting required from GST turnover",
+    "jurisdiction": "AU",
+    "unit": "cents",
+    "value": 2000000000,
+    "effectiveFrom": "2000-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/lodging-your-bas-or-annual-gst-return/options-for-reporting-and-paying-gst/monthly-gst-reporting",
+    "verifiedOn": "2026-10-26"
+  },
+  "au.bas.quarterlyDueDates": {
+    "label": "Quarterly BAS due dates (self-lodger)",
+    "jurisdiction": "AU",
+    "unit": "text",
+    "value": "Q1 Jul–Sep: 28 Oct · Q2 Oct–Dec: 28 Feb · Q3 Jan–Mar: 28 Apr · Q4 Apr–Jun: 28 Jul",
+    "effectiveFrom": "2000-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/business-activity-statements-bas/due-dates-for-lodging-and-paying-your-bas",
+    "verifiedOn": "2026-10-26",
+    "note": "Registered agents may get later dates; a weekend or public holiday moves the date to the next business day."
+  },
+  "au.super.guaranteeRate": {
+    "label": "Super guarantee rate",
+    "jurisdiction": "AU",
+    "unit": "bp",
+    "value": 1200,
+    "effectiveFrom": "2025-07-01",
+    "source": "https://www.ato.gov.au/tax-rates-and-codes/key-superannuation-rates-and-thresholds/super-guarantee",
+    "verifiedOn": "2026-10-26"
+  },
+  "au.super.maxContributionBaseAnnual": {
+    "label": "Maximum contribution base (annual, 2026–27)",
+    "jurisdiction": "AU",
+    "unit": "cents",
+    "value": 27083000,
+    "effectiveFrom": "2026-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/super-for-employers/paying-super-on-payday/what-payments-are-qualifying-earnings/maximum-contributions-base",
+    "verifiedOn": "2026-10-26",
+    "note": "From Payday Super the base is annual (concessional cap x 100 / SG rate, rounded down to $10)."
+  },
+  "au.super.paydaySuperStart": {
+    "label": "Payday Super starts",
+    "jurisdiction": "AU",
+    "unit": "date",
+    "value": "2026-07-01",
+    "effectiveFrom": "2026-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/super-for-employers/payday-super/about-payday-super",
+    "verifiedOn": "2026-10-26",
+    "note": "Super is due with each payday and must reach the fund within 7 business days. The Small Business Superannuation Clearing House closed on 1 July 2026."
+  },
+  "au.super.paydayDeadlineBusinessDays": {
+    "label": "Payday Super: business days for contributions to reach the fund",
+    "jurisdiction": "AU",
+    "unit": "count",
+    "value": 7,
+    "effectiveFrom": "2026-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/super-for-employers/payday-super/about-payday-super",
+    "verifiedOn": "2026-10-26"
+  },
+  "au.depreciation.instantAssetWriteOff": {
+    "label": "Instant asset write-off limit (per asset, turnover under $10m)",
+    "jurisdiction": "AU",
+    "unit": "cents",
+    "value": 2000000,
+    "effectiveFrom": "2026-07-01",
+    "source": "https://www.ato.gov.au/about-ato/new-legislation/in-detail/businesses/20000-dollars-instant-asset-write-off",
+    "verifiedOn": "2026-10-26",
+    "note": "Made permanent from 1 July 2026. 'Less than $20,000'. A tax rule, not an accounting capitalisation policy."
+  },
+  "au.corps.largePropRevenue": {
+    "label": "Large proprietary company: consolidated revenue",
+    "jurisdiction": "AU",
+    "unit": "cents",
+    "value": 5000000000,
+    "effectiveFrom": "2019-07-01",
+    "source": "https://www.asic.gov.au/regulatory-resources/financial-reporting-and-audit/preparers-of-financial-reports/are-you-a-large-or-small-proprietary-company",
+    "verifiedOn": "2026-10-26"
+  },
+  "au.corps.largePropAssets": {
+    "label": "Large proprietary company: consolidated gross assets",
+    "jurisdiction": "AU",
+    "unit": "cents",
+    "value": 2500000000,
+    "effectiveFrom": "2019-07-01",
+    "source": "https://www.asic.gov.au/regulatory-resources/financial-reporting-and-audit/preparers-of-financial-reports/are-you-a-large-or-small-proprietary-company",
+    "verifiedOn": "2026-10-26"
+  },
+  "au.corps.largePropEmployees": {
+    "label": "Large proprietary company: employees at year end",
+    "jurisdiction": "AU",
+    "unit": "count",
+    "value": 100,
+    "effectiveFrom": "2019-07-01",
+    "source": "https://www.asic.gov.au/regulatory-resources/financial-reporting-and-audit/preparers-of-financial-reports/are-you-a-large-or-small-proprietary-company",
+    "verifiedOn": "2026-10-26",
+    "note": "Large if at least two of the three tests are met (each figure is 'or more')."
+  },
+  "au.corps.largePropLodgeMonths": {
+    "label": "Large proprietary company: months after year end to lodge its financial report",
+    "jurisdiction": "AU",
+    "unit": "count",
+    "value": 4,
+    "effectiveFrom": "2001-07-15",
+    "source": "https://www.asic.gov.au/regulatory-resources/financial-reporting-and-audit/preparers-of-financial-reports/are-you-a-large-or-small-proprietary-company",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.vat.standardRate": {
+    "label": "VAT standard rate",
+    "jurisdiction": "UK",
+    "unit": "bp",
+    "value": 2000,
+    "effectiveFrom": "2011-01-04",
+    "source": "https://www.gov.uk/vat-rates",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.vat.reducedRate": {
+    "label": "VAT reduced rate",
+    "jurisdiction": "UK",
+    "unit": "bp",
+    "value": 500,
+    "effectiveFrom": "1997-09-01",
+    "source": "https://www.gov.uk/vat-rates",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.vat.registrationThreshold": {
+    "label": "VAT registration threshold (rolling 12 months)",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 9000000,
+    "effectiveFrom": "2024-04-01",
+    "source": "https://www.gov.uk/register-for-vat",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.vat.deregistrationThreshold": {
+    "label": "VAT deregistration threshold",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 8800000,
+    "effectiveFrom": "2024-04-01",
+    "source": "https://www.gov.uk/register-for-vat/cancel-your-registration",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.vat.returnDeadline": {
+    "label": "VAT return and payment deadline",
+    "jurisdiction": "UK",
+    "unit": "text",
+    "value": "1 calendar month and 7 days after the end of the VAT period",
+    "effectiveFrom": "2010-04-01",
+    "source": "https://www.gov.uk/submit-vat-return",
+    "verifiedOn": "2026-10-26",
+    "note": "Example: quarter ending 31 March is due 7 May. Late returns earn penalty points (periods from 1 January 2023)."
+  },
+  "uk.mtd.itsaStart": {
+    "label": "MTD for Income Tax: first group (qualifying income over £50,000)",
+    "jurisdiction": "UK",
+    "unit": "date",
+    "value": "2026-04-06",
+    "effectiveFrom": "2026-04-06",
+    "source": "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax",
+    "verifiedOn": "2026-10-26",
+    "note": "Over £30,000 from 6 April 2027; over £20,000 from 6 April 2028."
+  },
+  "uk.nic.employerRate": {
+    "label": "Employer Class 1 NIC rate above the secondary threshold",
+    "jurisdiction": "UK",
+    "unit": "bp",
+    "value": 1500,
+    "effectiveFrom": "2025-04-06",
+    "source": "https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.nic.secondaryThresholdAnnual": {
+    "label": "Employer NIC secondary threshold (annual)",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 500000,
+    "effectiveFrom": "2025-04-06",
+    "source": "https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027",
+    "verifiedOn": "2026-10-26",
+    "note": "£96 a week, £417 a month. Fixed at £5,000 until 5 April 2028."
+  },
+  "uk.nic.employmentAllowance": {
+    "label": "Employment Allowance (2026–27)",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 1050000,
+    "effectiveFrom": "2025-04-06",
+    "source": "https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.cis.registeredRate": {
+    "label": "CIS deduction: registered subcontractor",
+    "jurisdiction": "UK",
+    "unit": "bp",
+    "value": 2000,
+    "effectiveFrom": "2007-04-06",
+    "source": "https://www.gov.uk/what-you-must-do-as-a-cis-subcontractor/get-paid",
+    "verifiedOn": "2026-10-26",
+    "note": "Deducted from labour only: not from materials, VAT or the CITB levy."
+  },
+  "uk.cis.unregisteredRate": {
+    "label": "CIS deduction: unregistered or unverified subcontractor",
+    "jurisdiction": "UK",
+    "unit": "bp",
+    "value": 3000,
+    "effectiveFrom": "2007-04-06",
+    "source": "https://www.gov.uk/what-you-must-do-as-a-cis-subcontractor/get-paid",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.ca.microTurnover": {
+    "label": "Micro-entity: turnover not more than",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 100000000,
+    "effectiveFrom": "2025-04-06",
+    "source": "https://www.gov.uk/government/publications/life-of-a-company-annual-requirements/life-of-a-company-part-1-accounts",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.ca.microBalanceSheet": {
+    "label": "Micro-entity: balance sheet total not more than",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 50000000,
+    "effectiveFrom": "2025-04-06",
+    "source": "https://www.gov.uk/government/publications/life-of-a-company-annual-requirements/life-of-a-company-part-1-accounts",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.ca.microEmployees": {
+    "label": "Micro-entity: average employees not more than",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 10,
+    "effectiveFrom": "2025-04-06",
+    "source": "https://www.gov.uk/government/publications/life-of-a-company-annual-requirements/life-of-a-company-part-1-accounts",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.ca.smallTurnover": {
+    "label": "Small company: turnover not more than",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 1500000000,
+    "effectiveFrom": "2025-04-06",
+    "source": "https://www.gov.uk/government/publications/life-of-a-company-annual-requirements/life-of-a-company-part-1-accounts",
+    "verifiedOn": "2026-10-26",
+    "note": "£10.2m for periods from 1 January 2016 to 5 April 2025."
+  },
+  "uk.ca.smallBalanceSheet": {
+    "label": "Small company: balance sheet total not more than",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 750000000,
+    "effectiveFrom": "2025-04-06",
+    "source": "https://www.gov.uk/government/publications/life-of-a-company-annual-requirements/life-of-a-company-part-1-accounts",
+    "verifiedOn": "2026-10-26",
+    "note": "£5.1m for periods from 1 January 2016 to 5 April 2025."
+  },
+  "uk.ca.smallEmployees": {
+    "label": "Small company: average employees not more than",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 50,
+    "effectiveFrom": "2016-01-01",
+    "source": "https://www.gov.uk/government/publications/life-of-a-company-annual-requirements/life-of-a-company-part-1-accounts",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.ca.mediumTurnover": {
+    "label": "Medium company: turnover not more than",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 5400000000,
+    "effectiveFrom": "2025-04-06",
+    "source": "https://www.gov.uk/government/publications/life-of-a-company-annual-requirements/life-of-a-company-part-1-accounts",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.ca.mediumBalanceSheet": {
+    "label": "Medium company: balance sheet total not more than",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 2700000000,
+    "effectiveFrom": "2025-04-06",
+    "source": "https://www.gov.uk/government/publications/life-of-a-company-annual-requirements/life-of-a-company-part-1-accounts",
+    "verifiedOn": "2026-10-26"
+  },
+  "uk.ca.mediumEmployees": {
+    "label": "Medium company: average employees not more than",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 250,
+    "effectiveFrom": "2016-01-01",
+    "source": "https://www.gov.uk/government/publications/life-of-a-company-annual-requirements/life-of-a-company-part-1-accounts",
+    "verifiedOn": "2026-10-26",
+    "note": "A rise to 500 has been consulted on; not in force as at the verification date."
+  },
+  "uk.ca.accountsDeadlineMonths": {
+    "label": "Private company: months after the accounting reference date to file accounts",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 9,
+    "effectiveFrom": "2008-04-06",
+    "source": "https://www.gov.uk/government/publications/life-of-a-company-annual-requirements/life-of-a-company-part-1-accounts",
+    "verifiedOn": "2026-10-26",
+    "note": "First accounts: 21 months from incorporation or 3 months from the ARD, whichever is longer."
+  },
+  "uk.ca.pscThreshold": {
+    "label": "Person with significant control: shares or votes held, more than",
+    "jurisdiction": "UK",
+    "unit": "bp",
+    "value": 2500,
+    "effectiveFrom": "2016-04-06",
+    "source": "https://www.gov.uk/guidance/people-with-significant-control-pscs",
+    "verifiedOn": "2026-10-26",
+    "note": "Also: the right to appoint or remove a majority of the board, or significant influence or control."
+  },
+  "uk.ca.idVerificationStart": {
+    "label": "Companies House identity verification for directors and PSCs",
+    "jurisdiction": "UK",
+    "unit": "date",
+    "value": "2025-11-18",
+    "effectiveFrom": "2025-11-18",
+    "source": "https://www.gov.uk/government/news/companies-house-confirms-identity-verification-rollout-from-18-november-2025",
+    "verifiedOn": "2026-10-26",
+    "note": "Existing directors supply a personal code with their next confirmation statement."
+  },
+  "uk.frs102.periodicReview2024Effective": {
+    "label": "FRS 102 Periodic Review 2024 (leases on balance sheet, five-step revenue) effective for periods beginning on or after",
+    "jurisdiction": "UK",
+    "unit": "date",
+    "value": "2026-01-01",
+    "effectiveFrom": "2026-01-01",
+    "source": "https://www.frc.org.uk/docs/9461/html/",
+    "verifiedOn": "2026-10-26",
+    "note": "Early adoption permitted. Supplier finance disclosures from 1 January 2025."
+  },
+  "intl.ifrs16.shortTermMonths": {
+    "label": "IFRS 16 / AASB 16 short-term lease exemption: lease term of",
+    "jurisdiction": "INTL",
+    "unit": "text",
+    "value": "12 months or less (with no purchase option)",
+    "effectiveFrom": "2019-01-01",
+    "source": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-16-leases/",
+    "verifiedOn": null
+  },
+  "uk.frs102.goodwillDefaultLife": {
+    "label": "FRS 102 goodwill: maximum life when it cannot be reliably estimated",
+    "jurisdiction": "UK",
+    "unit": "text",
+    "value": "not more than 10 years",
+    "effectiveFrom": "2015-01-01",
+    "source": "https://www.frc.org.uk/library/standards-codes-policy/accounting-and-reporting/uk-accounting-standards/frs-102/",
+    "verifiedOn": null
+  }
+}
