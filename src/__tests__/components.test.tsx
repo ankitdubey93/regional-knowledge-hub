@@ -7,6 +7,7 @@ import { Quiz } from '../components/Quiz';
 import { Topic } from '../pages/Topic';
 import { TaxCalculator } from '../components/TaxCalculator';
 import { CodingPage } from '../pages/practice/CodingPage';
+import { PracticeIndex } from '../pages/practice/PracticeIndex';
 import { CompanySizePage } from '../pages/tools/CompanySizePage';
 import { journalScenarios, quizzes } from '../data';
 import { STORAGE_KEY } from '../utils/progress';
@@ -71,12 +72,6 @@ describe('Topic page', () => {
     expect(rate[0]!.textContent).toContain('10%');
     expect(rate[0]!.getAttribute('href')).toMatch(/^https:\/\/www\.ato\.gov\.au\//);
   });
-  it('marks a topic as read', async () => {
-    const user = userEvent.setup();
-    renderAt('/learn/uk/mtd-vat-guide', '/learn/:section/:slug', <Topic />);
-    await user.click(screen.getByRole('button', { name: /Mark as read/ }));
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).read['uk/mtd-vat-guide']).toBeTruthy();
-  });
   it('shows not found for an unknown doc', () => {
     renderAt('/learn/uk/nope', '/learn/:section/:slug', <Topic />);
     expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
@@ -116,5 +111,19 @@ describe('Company size', () => {
   it('applies the UK two-year rule to the sample', () => {
     renderAt('/', '/', <CompanySizePage />);
     expect(screen.getAllByText(/two-year rule/)[0]).toBeInTheDocument();
+  });
+});
+
+describe('PracticeIndex', () => {
+  it('resets practice data from the Practice page', async () => {
+    const user = userEvent.setup();
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ version: 1, quiz: { 'uk/mtd-vat-guide': { best: 3, total: 5, last: '2026-10-26' } }, cards: {}, journal: {}, coding: {}, checklist: {} }),
+    );
+    renderAt('/practice', '/practice', <PracticeIndex />);
+    await user.click(screen.getByRole('button', { name: 'Reset practice data' }));
+    await user.click(screen.getByRole('button', { name: 'Yes, erase practice data' }));
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).quiz).toEqual({});
   });
 });

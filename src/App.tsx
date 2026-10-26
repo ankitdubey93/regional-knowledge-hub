@@ -21,7 +21,10 @@ const PracticeIndex = page(() => import('./pages/practice/PracticeIndex'), 'Prac
 const QuizPage = page(() => import('./pages/practice/QuizPage'), 'QuizPage');
 const FlashcardsPage = page(() => import('./pages/practice/FlashcardsPage'), 'FlashcardsPage');
 const CodingPage = page(() => import('./pages/practice/CodingPage'), 'CodingPage');
-const ProgressPage = page(() => import('./pages/ProgressPage'), 'ProgressPage');
+const SignIn = page(() => import('./pages/auth/SignIn'), 'SignIn');
+const SignUp = page(() => import('./pages/auth/SignUp'), 'SignUp');
+const FirmSetup = page(() => import('./pages/firm/FirmSetup'), 'FirmSetup');
+const Clients = page(() => import('./pages/firm/Clients'), 'Clients');
 
 export function App() {
   return (
@@ -42,7 +45,10 @@ export function App() {
           <Route path="practice/quiz/:section/:slug" element={<QuizPage />} />
           <Route path="practice/flashcards" element={<FlashcardsPage />} />
           <Route path="practice/coding" element={<CodingPage />} />
-          <Route path="progress" element={<ProgressPage />} />
+          <Route path="sign-in" element={<SignIn />} />
+          <Route path="sign-up" element={<SignUp />} />
+          <Route path="firm/new" element={<FirmSetup />} />
+          <Route path="clients" element={<Clients />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

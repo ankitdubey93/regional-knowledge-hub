@@ -32,4 +32,46 @@ Status words: **done** means built, tested and checked in a browser; **built** m
 ## Phase 3: maybe
 
 - PAYG withholding and PAYE calculators, only if built from the official formulas with tests against published examples (ATO Schedule 1 formulas, HMRC's PAYE specification). Until then the site says they do not exist.
-- An Express API for accounts and progress sync. Not planned: it adds hosting, auth and personal data for little learning value.
+- ~~An Express API for accounts and progress sync.~~ Superseded on 2026-10-26 by the platform track below.
+
+## Platform track: multi-tenant AI assistant (planned, decided 2026-10-26)
+
+Compliance Hub becomes an assistant for bookkeepers and accounting firms:
+- Firms are tenants. Chats are saved and grouped under client headings.
+- Users can upload client documents as context.
+- Answers come only from the knowledge base, with citations (CLAUDE.md Hard rule 12).
+- PII is redacted before anything reaches an AI provider (Hard rule 13).
+- Anthropic and Gemini are both available, using the owner's keys; local models come later.
+- The knowledge base is managed in an admin UI, backed by Postgres.
+
+Stack decisions:
+- Hono + Drizzle + Better Auth (email and password, organization plugin)
+- Postgres with pgvector in Docker Compose (host port 5437)
+- row-level security per firm
+- PII redaction by rules plus each client's list of names
+- open sign-up with rate limits and a global daily spend cap
+
+| Phase | Outcome | Status |
+|---|---|---|
+| **P0** | Reading-progress tracking removed (practice state kept); bundle-secret check; `.env.example` | done (2026-10-26) |
+| **P1** | `server/` workspace, Compose Postgres, Better Auth with firms, RLS, a `client` (client heading) API with cross-tenant tests, sign-in/sign-up/firm/clients pages | done (2026-10-26) |
+| **P2** | KB in the database (`kb_doc`, `kb_fact`, `kb_law`, `kb_chunk`, versions), seeded from `docs/` and `src/data/facts.json`; web reads KB from the API; `/laws` page; admin editor with draft → validate → publish | planned |
+| **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks | planned |
+| **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT) stored encrypted; PII redaction with placeholders kept per conversation | planned |
+| **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | planned |
+| Later | Local models, NER-based name detection, private KB per firm, 2FA/SSO, AU and UK data residency | maybe |
+
+### Gates
+
+| Phase | Needs |
+|---|---|
+| P1 | P0 |
+| P2 | P1 |
+| P3 | P2 (chat retrieves from the KB tables) |
+| P4 | P3 (uploads attach to conversations) |
+| P5 | P3 |
+
+### Owed to the platform track
+
+- P1 ships with `requireEmailVerification: false`; email verification is owed in P5 (needs SMTP).
+- The five content skills named in CLAUDE.md (`topic-author`, `fact-check`, `exercise-author`, `new-interactive`, `content-sync`) are not written; after P2 they should edit through the admin API or the seed fixtures.

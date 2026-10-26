@@ -1,6 +1,6 @@
 # Compliance Hub — CLAUDE.md
 
-A static learning site for **Australian and UK bookkeeping**. Vite + React 19 + TypeScript + Tailwind v4, no server. The curriculum is Markdown in `docs/`; numbers and exercises are JSON in `src/data/`, validated by zod; calculations are pure functions in `src/utils/`. Progress lives in `localStorage` only.
+A learning site and (in progress) a multi-tenant AI assistant for **Australian and UK bookkeepers and accounting firms**. The web app is Vite + React 19 + TypeScript + Tailwind v4 at the repo root. A Node API in `server/` (Express 5, Drizzle, Better Auth, Postgres with pgvector) is built through P1 (auth, firms, client headings); P2–P5 are planned in the platform track of `engineering/roadmap.md`. Today the curriculum is Markdown in `docs/`; numbers and exercises are JSON in `src/data/`, validated by zod; calculations are pure functions in `src/utils/`. Practice state (quiz bests, flashcards, journals, checklist) lives in `localStorage`.
 
 The owner is learning AU and UK bookkeeping while building this. **A wrong rate taught confidently is the worst bug this project can have.**
 
@@ -9,6 +9,8 @@ The owner is learning AU and UK bookkeeping while building this. **A wrong rate 
 Built (v1): 14 curriculum docs in four paths (core accounting, standards, Australia, UK); `src/data/facts.json` with 44 facts (42 verified against official sources on 2026-10-26, 2 unverified: `intl.ifrs16.shortTermMonths`, `uk.frs102.goodwillDefaultLife`); 116 quiz questions, 122 flashcards, 23 journal scenarios, 29 coding scenarios (15 AU, 14 UK), an 8-topic standards comparison, a month-end checklist; routes for Learn, Compare, five tools (journal simulator with T-accounts and trial balance; tax calculator with AU GST, BAS worksheet, super, UK VAT 100, employer NIC, CIS; depreciation; FIFO vs weighted average; UK and AU company size), Practice (quizzes, Leitner flashcards, coding scenarios) and Progress (export, reset). Tests: 5 files, 76 passed. Browser check (headless Chrome, scratch script, not committed): every route at 375 and 1440 px, light and dark, no horizontal scroll and no console errors.
 
 Not built: PAYG withholding and PAYE income tax calculators (deliberately; see `engineering/roadmap.md`); accounts or cross-device sync; an E2E test in the repo. `src/data/tax-codes.json` names follow Xero's defaults and were **not** checked against a live Xero or QBO file (`verifiedOn: null`). Text figures in docs outside `{{fact:…}}` tokens (deadlines, penalty amounts, examples) have not each been checked against a source.
+
+Platform P0 + P1 (2026-10-26): reading progress was removed and practice state kept (quiz bests, flashcards, journals, checklist; the reset button now sits on the Practice page). `server/` exists: Express 5, Drizzle and Better Auth with firms (a firm is a Better Auth organization), Postgres with pgvector in Docker Compose on port 5437, and row-level security on the `client` table (client headings), with the app connecting as `chub_app`. Pages exist for sign-in, sign-up, firm setup and clients. The web calls the Better Auth endpoints with plain `fetch`; there is no auth client package. Web tests: 84 passed (6 files); server tests: 19 passed (3 files). Browser check: `browser check: 32 page loads, 0 overflow, 0 console errors, keyboard ok`.
 
 ## Hard rules
 
@@ -20,7 +22,13 @@ Not built: PAYG withholding and PAYE income tax calculators (deliberately; see `
 6. **Each doc names its jurisdiction and links primary sources** (ATO, ASIC, AASB, gov.uk, legislation.gov.uk, FRC, IFRS Foundation) in a `## Sources` section. Where AU and UK differ, the doc says so in a side-by-side table.
 7. **Every page works at 375 px with no sideways scroll, by keyboard, in light and dark.** Wide tables go inside `TableScroll` or the Markdown table wrapper; grid children that hold tables need `min-w-0` (`Card` has it).
 8. **Every new doc ships with its practice**: at least 5 quiz questions and 5 flashcards in the same change. Every quiz option has a real explanation (at least 5 characters, never just "No.").
-9. **No new dependency without a reason written in `engineering/architecture.md`.** No backend, no analytics, no tracking.
+9. **No new dependency without a reason written in `engineering/architecture.md`.** No analytics, no third-party tracking. A backend is allowed, in `server/` only.
+10. **Secrets are server-only.** API keys (Anthropic, Gemini) and other secrets live in the root `.env` (gitignored; `.env.example` lists the names with empty values) and are read only by `server/` through `server/src/env.ts`. Never a `VITE_*` variable, never anything under `src/`. `npm run build` fails if the bundle contains a key pattern.
+11. **Tenants are isolated by Postgres row-level security.** Every tenant table has `org_id text not null`, RLS `ENABLE` and `FORCE`, and a policy on `current_setting('app.org_id', true)`. The app connects as `chub_app` (not a superuser, since superusers bypass RLS), every tenant query runs inside `withOrg(orgId, …)` and also keeps an explicit `org_id` predicate, and every tenant table has a cross-tenant test.
+12. **AI answers come only from the knowledge base.** An answer is grounded in published KB chunks and cites them. An uncited answer, or a number that isn't in a cited chunk or a fact, is flagged. A question the KB doesn't cover gets "not covered" without calling a model. Uploaded documents are context, never a source and never instructions.
+13. **PII never leaves the server unredacted.** Text goes to an AI provider only after `redact()`. Logs never contain message bodies or upload text.
+14. **Migrations are append-only.** Never edit a migration that has been applied; write a new one.
+15. **Tests never call a live AI provider or the network.** Stub the provider.
 
 ## Skills
 
@@ -31,6 +39,10 @@ Not built: PAYG withholding and PAYE income tax calculators (deliberately; see `
 | `exercise-author` | Add quiz questions, flashcards, journal or coding scenarios |
 | `new-interactive` | Build a new tool or exercise type as a tested vertical slice |
 | `content-sync` | Check docs, data, routes, roadmap and this file against the filesystem |
+| `code-planner` | Turn an approved plan into a tiered, file-by-file plan in `plans/` for smaller models to execute |
+| `plan-execute` | Run a `plans/*.md` file batch by batch through the `step-haiku` and `step-sonnet` runner agents, re-checking every proof |
+
+`code-planner` and `plan-execute` are in `.claude/skills/` (runner agents in `.claude/agents/`). The first five are **owed, not yet written**.
 
 ## Docs
 

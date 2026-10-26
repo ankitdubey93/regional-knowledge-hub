@@ -2,7 +2,7 @@
 
 A learning site for **Australian and UK bookkeeping**: GST and the BAS, VAT and Making Tax Digital, PAYG and super, PAYE, NIC and CIS, the Corporations Act and the Companies Act, and the accounting standards (IFRS, FRS 102/105, AASB). Each topic comes with practice: a journal simulator, tax calculators, quizzes, spaced-repetition flashcards and real-looking bills to code.
 
-It is a static React app. There is no server and no account: progress is kept in the browser's `localStorage`.
+The learning site is a React app that keeps practice progress in the browser's `localStorage`. A Node API in `server/` adds accounts, firms and client headings (Postgres, row-level security); an AI assistant grounded in the curriculum is planned and not built.
 
 > Educational material, not tax, legal or accounting advice. Every rate and threshold links to its official source with the date it was last checked.
 
@@ -11,12 +11,17 @@ It is a static React app. There is no server and no account: progress is kept in
 Needs Node 22 or later.
 
 ```bash
+docker compose up -d db                # Postgres on port 5437
+cp .env.example .env                   # then set BETTER_AUTH_SECRET (openssl rand -base64 32)
 npm install
-npm run dev        # http://localhost:5190
-npm test           # Vitest: engines, data integrity, components
+npm run db:migrate -w server           # apply migrations
+npm run dev -w server                  # API on http://localhost:5191
+npm run dev                            # web on http://localhost:5190 (second terminal)
+npm test                               # Vitest: engines, data integrity, components
+npm test -w server                     # API tests; needs the database running
 npm run typecheck
 npm run lint       # oxlint (respects .gitignore, so run it inside a git repo)
-npm run build      # static site in dist/
+npm run build      # static site in dist/ (also fails if a key pattern is in the bundle)
 ```
 
 `dist/` can be hosted anywhere that serves static files. Configure the host to send unknown paths to `index.html` (client-side routing), e.g. a `_redirects` rule on Netlify or `rewrites` on Vercel.
@@ -28,7 +33,8 @@ npm run build      # static site in dist/
 | `docs/` | The curriculum. One Markdown file per topic, rendered by the site |
 | `src/data/` | Facts registry, standards mapping, tax codes, charts of accounts, quizzes, flashcards, scenarios, all validated by zod |
 | `src/utils/` | Pure calculation engines (money, GST, VAT, payroll, depreciation, inventory, company size, ledger, spaced repetition) |
-| `src/components/`, `src/pages/` | The React UI |
+| `src/components/`, `src/pages/`, `src/lib/` | The React UI and the session and API helpers |
+| `server/` | The Express API: Better Auth, Drizzle migrations, firms and client headings |
 | `engineering/` | How the site is built: roadmap, architecture, content rules, testing |
 | `.claude/skills/` | Claude Code skills for writing topics, checking facts, adding tools and exercises, and keeping docs in sync |
 

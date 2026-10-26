@@ -1,12 +1,14 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { docs } from '../../content/docs';
 import { codingScenarios, flashcards, quizzes } from '../../data';
 import { useProgress } from '../../progress/ProgressContext';
 import { isDue, todayIso } from '../../utils/srs';
-import { Card, JurisdictionBadge, PageHeader } from '../../components/ui';
+import { Button, Card, JurisdictionBadge, PageHeader } from '../../components/ui';
 
 export function PracticeIndex() {
-  const { progress } = useProgress();
+  const { progress, reset } = useProgress();
+  const [confirming, setConfirming] = useState(false);
   const today = todayIso();
   const due = flashcards.filter((c) => isDue(progress.cards[c.id], today)).length;
   return (
@@ -46,6 +48,19 @@ export function PracticeIndex() {
           })}
         </ul>
       </Card>
+      <div className="flex flex-wrap items-center gap-3">
+        {confirming ? (
+          <>
+            <Button className="bg-bad text-white hover:bg-bad" onClick={() => { reset(); setConfirming(false); }}>
+              Yes, erase practice data
+            </Button>
+            <Button variant="ghost" onClick={() => setConfirming(false)}>Cancel</Button>
+          </>
+        ) : (
+          <Button variant="secondary" onClick={() => setConfirming(true)}>Reset practice data</Button>
+        )}
+        <p className="text-sm text-muted">Quiz scores, flashcard boxes, solved journals and checklist ticks are kept in this browser only.</p>
+      </div>
     </div>
   );
 }

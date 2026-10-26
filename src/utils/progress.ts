@@ -7,19 +7,17 @@ import type { CardState } from './srs';
  */
 export interface Progress {
   version: 1;
-  read: Record<string, string>; // doc id -> ISO date first marked read
   quiz: Record<string, { best: number; total: number; last: string }>; // doc id -> best score
   cards: Record<string, CardState>; // flashcard id -> Leitner state
   journal: Record<string, boolean>; // scenario id -> solved
   coding: Record<string, boolean>; // scenario id -> right first time or not
   checklist: Record<string, boolean>; // "checklistId:itemId" -> ticked
-  lastDoc: string | null;
 }
 
 export const STORAGE_KEY = 'rch.progress.v1';
 
 export function emptyProgress(): Progress {
-  return { version: 1, read: {}, quiz: {}, cards: {}, journal: {}, coding: {}, checklist: {}, lastDoc: null };
+  return { version: 1, quiz: {}, cards: {}, journal: {}, coding: {}, checklist: {} };
 }
 
 /** Parse stored JSON; anything malformed is dropped rather than crashing the app. */
@@ -28,7 +26,16 @@ export function parseProgress(raw: string | null): Progress {
   try {
     const p = JSON.parse(raw) as Partial<Progress>;
     if (p.version !== 1) return emptyProgress();
-    return { ...emptyProgress(), ...p };
+    // Keep only the keys we still use, so fields dropped in an update (read, lastDoc) are not saved back.
+    const base = emptyProgress();
+    return {
+      version: 1,
+      quiz: p.quiz ?? base.quiz,
+      cards: p.cards ?? base.cards,
+      journal: p.journal ?? base.journal,
+      coding: p.coding ?? base.coding,
+      checklist: p.checklist ?? base.checklist,
+    };
   } catch {
     return emptyProgress();
   }

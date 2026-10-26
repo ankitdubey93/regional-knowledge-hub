@@ -1,11 +1,8 @@
 import { Link } from 'react-router-dom';
 import { docsIn, SECTIONS } from '../content/docs';
 import { JurisdictionBadge, PageHeader } from '../components/ui';
-import { useProgress } from '../progress/ProgressContext';
-import { CheckCircle2 } from 'lucide-react';
 
 export function Learn() {
-  const { progress } = useProgress();
   return (
     <div>
       <PageHeader title="Learn" lead="Fourteen topics in four paths. Core accounting first if you are new to bookkeeping; then the country you will work in." />
@@ -25,11 +22,6 @@ export function Learn() {
                       <span className="text-xs text-muted">
                         {d.level} · {d.minutes} min
                       </span>
-                      {progress.read[d.id] && (
-                        <span className="inline-flex items-center gap-1 text-xs text-good">
-                          <CheckCircle2 size={14} aria-hidden /> Read
-                        </span>
-                      )}
                     </div>
                     <p className="mt-2 font-medium">{d.title}</p>
                     <p className="mt-1 text-sm text-muted">{d.summary}</p>

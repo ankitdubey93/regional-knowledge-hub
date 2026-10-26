@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calculator, GraduationCap, Scale, Shuffle } from 'lucide-react';
-import { docs, docsIn, findDoc, SECTIONS } from '../content/docs';
+import { docs, docsIn, SECTIONS } from '../content/docs';
 import { useProgress } from '../progress/ProgressContext';
-import { Card, cx } from '../components/ui';
+import { Card } from '../components/ui';
 import { flashcards } from '../data';
 import { isDue, todayIso } from '../utils/srs';
 
@@ -15,8 +15,6 @@ const quick = [
 
 export function Home() {
   const { progress } = useProgress();
-  const last = progress.lastDoc ? findDoc(progress.lastDoc) : undefined;
-  const readCount = Object.keys(progress.read).length;
   const today = todayIso();
   const due = flashcards.filter((c) => isDue(progress.cards[c.id], today)).length;
 
@@ -31,18 +29,15 @@ export function Home() {
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
-            to={last ? `/learn/${last.id}` : `/learn/${docs[0]?.id ?? ''}`}
+            to={`/learn/${docs[0]?.id ?? ''}`}
             className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-accent px-5 font-medium text-accent-fg hover:bg-accent-hover"
           >
-            {last ? `Continue: ${last.title}` : 'Start with double entry'} <ArrowRight size={16} aria-hidden />
+            Start with double entry <ArrowRight size={16} aria-hidden />
           </Link>
           <Link to="/practice/flashcards" className="inline-flex min-h-11 items-center rounded-lg border border-line bg-panel px-5 font-medium hover:bg-panel-2">
             {due} flashcards due
           </Link>
         </div>
-        <p className="mt-3 text-sm text-muted">
-          {readCount} of {docs.length} topics read
-        </p>
       </section>
 
       <section aria-labelledby="paths">
@@ -52,8 +47,6 @@ export function Home() {
         <div className="grid gap-4 sm:grid-cols-2">
           {SECTIONS.map((s) => {
             const items = docsIn(s.id);
-            const done = items.filter((d) => progress.read[d.id]).length;
-            const pct = items.length ? Math.round((done / items.length) * 100) : 0;
             return (
               <Card key={s.id}>
                 <div className="flex items-start justify-between gap-3">
@@ -62,18 +55,12 @@ export function Home() {
                       {s.title}
                     </Link>
                   </h3>
-                  <span className="num text-sm text-muted">
-                    {done}/{items.length}
-                  </span>
                 </div>
                 <p className="mt-1 text-sm text-muted">{s.blurb}</p>
-                <div className="mt-3 h-1.5 rounded-full bg-panel-2" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${s.title} progress`}>
-                  <div className="h-1.5 rounded-full bg-accent" style={{ width: `${pct}%` }} />
-                </div>
                 <ol className="mt-4 space-y-1 text-sm">
                   {items.map((d) => (
                     <li key={d.id}>
-                      <Link to={`/learn/${d.id}`} className={cx('hover:text-accent', progress.read[d.id] ? 'text-muted line-through decoration-1' : '')}>
+                      <Link to={`/learn/${d.id}`} className="hover:text-accent">
                         {d.title}
                       </Link>
                     </li>

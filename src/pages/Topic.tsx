@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { docs, findDoc, SECTIONS } from '../content/docs';
 import { isToolId, TOOLS } from '../content/tools';
 import { checklists, flashcards, quizzes } from '../data';
 import { Markdown } from '../components/Markdown';
 import { FactValue } from '../components/FactValue';
 import { Checklist } from '../components/Checklist';
-import { Button, Card, JurisdictionBadge, TextLink } from '../components/ui';
+import { Card, JurisdictionBadge, TextLink } from '../components/ui';
 import { useProgress } from '../progress/ProgressContext';
 import { fact } from '../data/facts';
 import { NotFound } from './NotFound';
@@ -16,21 +16,17 @@ export function Topic() {
   const { section, slug } = useParams();
   const id = `${section}/${slug}`;
   const doc = findDoc(id);
-  const { progress, update } = useProgress();
+  const { progress } = useProgress();
 
   useEffect(() => {
-    if (doc) {
-      document.title = `${doc.title} · Compliance Hub`;
-      update((p) => (p.lastDoc === doc.id ? p : { ...p, lastDoc: doc.id }));
-    }
-  }, [doc, update]);
+    if (doc) document.title = `${doc.title} · Compliance Hub`;
+  }, [doc]);
 
   if (!doc) return <NotFound />;
 
   const index = docs.findIndex((d) => d.id === id);
   const prev = docs[index - 1];
   const next = docs[index + 1];
-  const read = Boolean(progress.read[doc.id]);
   const quizCount = quizzes.filter((q) => q.doc === doc.id).length;
   const cardCount = flashcards.filter((c) => c.doc === doc.id).length;
   const best = progress.quiz[doc.id];
@@ -63,22 +59,6 @@ export function Topic() {
             <Checklist list={list} />
           </div>
         )}
-
-        <div className="mt-8 flex flex-wrap items-center gap-3">
-          <Button
-            variant={read ? 'secondary' : 'primary'}
-            onClick={() =>
-              update((p) => {
-                const readMap = { ...p.read };
-                if (readMap[doc.id]) delete readMap[doc.id];
-                else readMap[doc.id] = new Date().toISOString().slice(0, 10);
-                return { ...p, read: readMap };
-              })
-            }
-          >
-            <CheckCircle2 size={16} aria-hidden /> {read ? 'Marked as read (undo)' : 'Mark as read'}
-          </Button>
-        </div>
 
         <nav aria-label="Next and previous topics" className="mt-8 grid gap-3 border-t border-line pt-6 sm:grid-cols-2">
           {prev ? (

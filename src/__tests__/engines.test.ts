@@ -4,6 +4,7 @@ import { fifo, InsufficientStockError, weightedAverage, type StockEvent } from '
 import { auProprietarySize, ukBandForYear, ukSizeOverYears } from '../utils/companySize';
 import { checkEntry, compareEntries, trialBalance } from '../utils/ledger';
 import { addDays, isDue, review } from '../utils/srs';
+import { parseProgress } from '../utils/progress';
 
 describe('depreciation', () => {
   it('straight line ends exactly at residual', () => {
@@ -122,5 +123,15 @@ describe('spaced repetition', () => {
     expect(isDue(undefined, '2026-10-26')).toBe(true);
     expect(isDue({ box: 2, due: '2026-10-27' }, '2026-10-26')).toBe(false);
     expect(addDays('2026-12-31', 1)).toBe('2027-01-01');
+  });
+});
+
+describe('progress storage', () => {
+  it('parseProgress drops read and lastDoc from old data', () => {
+    const r = parseProgress(JSON.stringify({ version: 1, read: { a: '2026-01-01' }, lastDoc: 'a', quiz: { a: { best: 1, total: 2, last: '2026-01-01' } } }));
+    expect('read' in r).toBe(false);
+    expect('lastDoc' in r).toBe(false);
+    expect(r.quiz.a).toEqual({ best: 1, total: 2, last: '2026-01-01' });
+    expect(r.cards).toEqual({});
   });
 });

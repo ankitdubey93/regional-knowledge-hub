@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { BookOpen, Menu, Moon, Sun, X } from 'lucide-react';
 import { cx } from './ui';
 import { useProgress } from '../progress/ProgressContext';
+import { signOutUser, useSessionInfo } from '../lib/session';
 
 const NAV = [
   { to: '/learn', label: 'Learn' },
   { to: '/compare', label: 'Compare' },
   { to: '/tools', label: 'Tools' },
   { to: '/practice', label: 'Practice' },
-  { to: '/progress', label: 'Progress' },
 ];
 
 function currentTheme(): 'light' | 'dark' {
@@ -47,7 +47,10 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
 export function Layout() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { persisted } = useProgress();
+  const { session } = useSessionInfo();
+  const nav = session ? [...NAV, { to: '/clients', label: 'Clients' }] : NAV;
 
   useEffect(() => {
     setOpen(false);
@@ -73,13 +76,23 @@ export function Layout() {
             <span>Compliance Hub</span>
           </Link>
           <nav aria-label="Main" className="hidden flex-1 items-center gap-1 md:flex">
-            {NAV.map((n) => (
+            {nav.map((n) => (
               <NavLink key={n.to} to={n.to} className={linkClass}>
                 {n.label}
               </NavLink>
             ))}
           </nav>
           <div className="ml-auto flex items-center md:ml-0">
+            {session ? (
+              <>
+                <span className="hidden max-w-40 truncate px-2 text-sm text-muted sm:inline">{session.activeFirmName ?? 'No firm yet'}</span>
+                <button type="button" className="rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-panel-2 hover:text-ink" onClick={async () => { await signOutUser(); navigate('/'); }}>
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <Link to="/sign-in" className="rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-panel-2 hover:text-ink">Sign in</Link>
+            )}
             <ThemeToggle />
             <button
               type="button"
@@ -95,7 +108,7 @@ export function Layout() {
         </div>
         {open && (
           <nav id="mobile-nav" aria-label="Main" className="border-t border-line bg-panel px-4 py-2 md:hidden">
-            {NAV.map((n) => (
+            {nav.map((n) => (
               <NavLink key={n.to} to={n.to} className={({ isActive }) => cx(linkClass({ isActive }), 'block')}>
                 {n.label}
               </NavLink>
@@ -106,7 +119,7 @@ export function Layout() {
 
       <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:py-10">
         {!persisted && (
-          <p className="mb-4 rounded-lg bg-warn-soft p-3 text-sm">This browser is blocking storage, so your progress will be lost when you close the page.</p>
+          <p className="mb-4 rounded-lg bg-warn-soft p-3 text-sm">This browser is blocking storage, so your practice data will be lost when you close the page.</p>
         )}
         <Outlet />
       </main>

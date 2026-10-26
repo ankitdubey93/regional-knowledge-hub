@@ -1,0 +1,22 @@
+# Local development database. Credentials here are for local use only.
+name: compliance-hub
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: chub-db
+    environment:
+      POSTGRES_USER: chub
+      POSTGRES_PASSWORD: chub
+      POSTGRES_DB: chub
+    ports:
+      - "5437:5432"
+    volumes:
+      - chub-db-data:/var/lib/postgresql/data
+      - ./server/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chub -d chub"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  chub-db-data:
