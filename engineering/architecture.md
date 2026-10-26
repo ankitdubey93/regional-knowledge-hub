@@ -51,6 +51,8 @@ The curriculum and practice tools have no server: they are bundled at build time
 | Package | Why |
 |---|---|
 | react, react-dom, react-router-dom | UI and client-side routing |
+| vite, @vitejs/plugin-react | Dev server (with the `/api` proxy to the server), production build, and React fast refresh |
+| typescript, @types/react, @types/react-dom | Type-checking the web app (`tsc --noEmit` in `typecheck` and `build`) |
 | tailwindcss, @tailwindcss/vite | Styling; tokens in `src/index.css` |
 | lucide-react | Icons |
 | react-markdown, remark-gfm | Render the curriculum, including tables |
@@ -93,6 +95,7 @@ Copied from `.env.example`. All are server-only; never prefix one with `VITE_` (
 | pg, @types/pg | Postgres driver (node-postgres) |
 | @types/node, typescript | Type-checking the server (`tsc`, strict) |
 | tsx | Runs the TypeScript server in dev and the migration script |
+| zod | Validates the environment in `env.ts` and every request body before a service sees it |
 
 The server shares the root `vitest` (npm puts the root `node_modules/.bin` on the script path) and runs Better Auth's schema generator through `npx auth@1.7.13` instead of installing `vitest` or a CLI in `server/`: both crash npm 10.9.8's arborist (`Cannot read properties of null (reading 'edgesOut')`).
 
