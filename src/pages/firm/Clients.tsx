@@ -1,36 +1,22 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState } from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import { ClientForm } from '../../components/ClientForm';
+import { Card, JurisdictionBadge, PageHeader, TextLink } from '../../components/ui';
 import { ApiError, apiJson } from '../../lib/api';
+import { defaultProfile, profileSummary, type ClientBody, type ClientRecord } from '../../lib/entity';
 import { useSessionInfo } from '../../lib/session';
-import { Button, Card, Field, JurisdictionBadge, PageHeader, TextLink, inputClass } from '../../components/ui';
-
-interface ClientRow {
-  id: string;
-  name: string;
-  jurisdiction: 'AU' | 'UK' | 'AU+UK';
-  notes: string;
-  entities: string[];
-}
-
-function parseJurisdiction(value: string): ClientRow['jurisdiction'] {
-  if (value === 'UK') return 'UK';
-  if (value === 'AU+UK') return 'AU+UK';
-  return 'AU';
-}
 
 export function Clients() {
   const { session, pending } = useSessionInfo();
   const firmId = session?.activeFirmId ?? null;
-  const [clients, setClients] = useState<ClientRow[]>([]);
+  const [clients, setClients] = useState<ClientRecord[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [name, setName] = useState('');
-  const [jurisdiction, setJurisdiction] = useState<ClientRow['jurisdiction']>('AU');
-  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     if (firmId === null) return;
     let cancelled = false;
     setLoadError(null);
-    apiJson<{ clients: ClientRow[] }>('/clients')
+    apiJson<{ clients: ClientRecord[] }>('/clients')
       .then((body) => {
         if (!cancelled) setClients(body.clients);
       })
@@ -42,15 +28,13 @@ export function Clients() {
     };
   }, [firmId]);
 
-  async function onAdd(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setSaveError(null);
+  async function onAdd(body: ClientBody): Promise<string | null> {
     try {
-      const body = await apiJson<{ client: ClientRow }>('/clients', { method: 'POST', body: { name, jurisdiction } });
-      setClients((rows) => [...rows, body.client].sort((a, b) => a.name.localeCompare(b.name)));
-      setName('');
+      const res = await apiJson<{ client: ClientRecord }>('/clients', { method: 'POST', body });
+      setClients((rows) => [...rows, res.client].sort((a, b) => a.name.localeCompare(b.name)));
+      return null;
     } catch (err) {
-      setSaveError(err instanceof ApiError ? err.message : 'Could not add the client');
+      return err instanceof ApiError ? err.message : 'Could not add the client';
     }
   }
 
@@ -77,45 +61,27 @@ export function Clients() {
     return (
       <div className="space-y-6">
         <PageHeader title="Clients" lead="Group your work under a heading for each client." />
-        <p>Create a firm first.</p>
-        <TextLink to="/firm/new">Set up your firm</TextLink>
+        <p>Create a workspace first.</p>
+        <TextLink to="/workspace/new">Set up a workspace</TextLink>
       </div>
     );
+  }
+
+  if (session.activeWorkspaceKind === 'business') {
+    return <Navigate to="/business" replace />;
   }
 
   return (
     <div className="space-y-6">
       <PageHeader title="Clients" lead="Group your work under a heading for each client." />
       <Card>
-        <form onSubmit={onAdd} className="space-y-4">
-          <Field label="Client name">
-            <input
-              type="text"
-              required
-              maxLength={120}
-              className={inputClass}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </Field>
-          <Field label="Jurisdiction">
-            <select
-              className={inputClass}
-              value={jurisdiction}
-              onChange={(e) => setJurisdiction(parseJurisdiction(e.target.value))}
-            >
-              <option value="AU">Australia</option>
-              <option value="UK">United Kingdom</option>
-              <option value="AU+UK">Both</option>
-            </select>
-          </Field>
-          {saveError !== null && (
-            <p role="alert" className="text-sm text-bad">
-              {saveError}
-            </p>
-          )}
-          <Button type="submit">Add client</Button>
-        </form>
+        <ClientForm
+          initial={{ name: '', notes: '', profile: defaultProfile('AU') }}
+          nameLabel="Client name"
+          submitLabel="Add client"
+          resetOnSuccess
+          onSubmit={onAdd}
+        />
       </Card>
       {loadError !== null && (
         <p role="alert" className="text-sm text-bad">
@@ -127,9 +93,12 @@ export function Clients() {
       ) : (
         <ul className="divide-y divide-line">
           {clients.map((c) => (
-            <li key={c.id} className="flex items-center gap-3 py-3">
+            <li key={c.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-3">
               <JurisdictionBadge j={c.jurisdiction} />
-              {c.name}
+              <Link to={`/clients/${c.id}`} className="font-medium text-accent underline underline-offset-2">
+                {c.name}
+              </Link>
+              <span className="text-sm text-muted">{profileSummary(c)}</span>
             </li>
           ))}
         </ul>

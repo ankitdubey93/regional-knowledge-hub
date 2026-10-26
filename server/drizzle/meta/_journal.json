@@ -29,6 +29,20 @@
       "when": 1793007957617,
       "tag": "0003_client_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793011399242,
+      "tag": "0004_workspace_profile",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793011405687,
+      "tag": "0005_workspace_checks",
+      "breakpoints": true
     }
   ]
 }

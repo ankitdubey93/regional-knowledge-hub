@@ -28,8 +28,12 @@ clientRoutes.post('/', async (req, res) => {
     invalid(res, parsed.error.issues);
     return;
   }
-  const { orgId, userId } = firmOf(res);
-  const client = await createClient(orgId, userId, parsed.data);
+  const { orgId, userId, kind } = firmOf(res);
+  const client = await createClient(orgId, userId, kind, parsed.data);
+  if (!client) {
+    res.status(409).json({ error: 'This business is already set up' });
+    return;
+  }
   res.status(201).json({ client });
 });
 
@@ -58,12 +62,16 @@ clientRoutes.patch('/:id', async (req, res) => {
     invalid(res, parsed.error.issues);
     return;
   }
-  const client = await updateClient(orgId, req.params.id, parsed.data);
-  if (!client) {
+  const outcome = await updateClient(orgId, req.params.id, parsed.data);
+  if ('notFound' in outcome) {
     res.status(404).json({ error: 'Client not found' });
     return;
   }
-  res.status(200).json({ client });
+  if ('problems' in outcome) {
+    res.status(400).json({ error: 'Invalid input', issues: outcome.problems.map((message) => ({ message })) });
+    return;
+  }
+  res.status(200).json({ client: outcome.client });
 });
 
 clientRoutes.delete('/:id', async (req, res) => {
@@ -76,9 +84,13 @@ clientRoutes.delete('/:id', async (req, res) => {
     res.status(403).json({ error: 'Only firm owners and admins can delete clients' });
     return;
   }
-  const deleted = await deleteClient(orgId, req.params.id);
-  if (!deleted) {
+  const outcome = await deleteClient(orgId, req.params.id);
+  if (outcome === 'not_found') {
     res.status(404).json({ error: 'Client not found' });
+    return;
+  }
+  if (outcome === 'self') {
+    res.status(403).json({ error: 'The business entity cannot be deleted' });
     return;
   }
   res.status(204).end();

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { BookOpen, Menu, Moon, Sun, X } from 'lucide-react';
 import { cx } from './ui';
+import { WorkspaceSwitcher } from './WorkspaceSwitcher';
 import { useProgress } from '../progress/ProgressContext';
 import { signOutUser, useSessionInfo } from '../lib/session';
 
@@ -50,7 +51,13 @@ export function Layout() {
   const navigate = useNavigate();
   const { persisted } = useProgress();
   const { session } = useSessionInfo();
-  const nav = session ? [...NAV, { to: '/clients', label: 'Clients' }] : NAV;
+  const workspaceNav =
+    session?.activeWorkspaceKind === 'business'
+      ? { to: '/business', label: 'Business' }
+      : session?.activeWorkspaceKind === 'practice'
+        ? { to: '/clients', label: 'Clients' }
+        : null;
+  const nav = workspaceNav ? [...NAV, workspaceNav] : NAV;
 
   useEffect(() => {
     setOpen(false);
@@ -85,7 +92,9 @@ export function Layout() {
           <div className="ml-auto flex items-center md:ml-0">
             {session ? (
               <>
-                <span className="hidden max-w-40 truncate px-2 text-sm text-muted sm:inline">{session.activeFirmName ?? 'No firm yet'}</span>
+                <div className="hidden sm:block">
+                  <WorkspaceSwitcher />
+                </div>
                 <button type="button" className="rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-panel-2 hover:text-ink" onClick={async () => { await signOutUser(); navigate('/'); }}>
                   Sign out
                 </button>
@@ -108,6 +117,11 @@ export function Layout() {
         </div>
         {open && (
           <nav id="mobile-nav" aria-label="Main" className="border-t border-line bg-panel px-4 py-2 md:hidden">
+            {session && (
+              <div className="border-b border-line pb-2">
+                <WorkspaceSwitcher inline />
+              </div>
+            )}
             {nav.map((n) => (
               <NavLink key={n.to} to={n.to} className={({ isActive }) => cx(linkClass({ isActive }), 'block')}>
                 {n.label}

@@ -1,6 +1,6 @@
 # Compliance Hub — CLAUDE.md
 
-A learning site and (in progress) a multi-tenant AI assistant for **Australian and UK bookkeepers and accounting firms**. The web app is Vite + React 19 + TypeScript + Tailwind v4 at the repo root. A Node API in `server/` (Express 5, Drizzle, Better Auth, Postgres with pgvector) is built through P1 (auth, firms, client headings); P2–P5 are planned in the platform track of `engineering/roadmap.md`. Today the curriculum is Markdown in `docs/`; numbers and exercises are JSON in `src/data/`, validated by zod; calculations are pure functions in `src/utils/`. Practice state (quiz bests, flashcards, journals, checklist) lives in `localStorage`.
+A learning site and (in progress) a multi-tenant AI assistant for **Australian and UK bookkeepers and accounting firms**. The web app is Vite + React 19 + TypeScript + Tailwind v4 at the repo root. A Node API in `server/` (Express 5, Drizzle, Better Auth, Postgres with pgvector) is built through P1.1 (auth, business and practice workspaces, client headings); P2–P5 are planned in the platform track of `engineering/roadmap.md`. Today the curriculum is Markdown in `docs/`; numbers and exercises are JSON in `src/data/`, validated by zod; calculations are pure functions in `src/utils/`. Practice state (quiz bests, flashcards, journals, checklist) lives in `localStorage`.
 
 The owner is learning AU and UK bookkeeping while building this. **A wrong rate taught confidently is the worst bug this project can have.**
 
@@ -10,7 +10,7 @@ Built (v1): 14 curriculum docs in four paths (core accounting, standards, Austra
 
 Not built: PAYG withholding and PAYE income tax calculators (deliberately; see `engineering/roadmap.md`); accounts or cross-device sync; an E2E test in the repo. `src/data/tax-codes.json` names follow Xero's defaults and were **not** checked against a live Xero or QBO file (`verifiedOn: null`). Text figures in docs outside `{{fact:…}}` tokens (deadlines, penalty amounts, examples) have not each been checked against a source.
 
-Platform P0 + P1 (2026-10-26): reading progress was removed and practice state kept (quiz bests, flashcards, journals, checklist; the reset button now sits on the Practice page). `server/` exists: Express 5, Drizzle and Better Auth with firms (a firm is a Better Auth organization), Postgres with pgvector in Docker Compose on port 5437, and row-level security on the `client` table (client headings), with the app connecting as `chub_app`. Pages exist for sign-in, sign-up, firm setup and clients. The web calls the Better Auth endpoints with plain `fetch`; there is no auth client package. Web tests: 84 passed (6 files); server tests: 19 passed (3 files). Browser check: `browser check: 32 page loads, 0 overflow, 0 console errors, keyboard ok`.
+Platform P0 + P1 (2026-10-26): reading progress was removed and practice state kept (quiz bests, flashcards, journals, checklist; the reset button now sits on the Practice page). `server/` exists: Express 5, Drizzle and Better Auth with workspaces (a workspace, business or practice, is a Better Auth organization), Postgres with pgvector in Docker Compose on port 5437, and row-level security on the `client` table (client headings), with the app connecting as `chub_app`. Pages exist for sign-in, sign-up, `/workspace/new`, `/business`, `/clients` and `/clients/:id`, with a workspace switcher in the header. The web calls the Better Auth endpoints with plain `fetch`; there is no auth client package. Web tests: 100 passed (7 files); server tests: 38 passed (4 files). Browser check: `browser check: 24 page loads, 0 overflow, 0 console errors, keyboard ok`.
 
 ## Hard rules
 
@@ -42,7 +42,7 @@ Platform P0 + P1 (2026-10-26): reading progress was removed and practice state k
 | `code-planner` | Turn an approved plan into a tiered, file-by-file plan in `plans/` for smaller models to execute |
 | `plan-execute` | Run a `plans/*.md` file batch by batch through the `step-haiku` and `step-sonnet` runner agents, re-checking every proof |
 
-`code-planner` and `plan-execute` are in `.claude/skills/` (runner agents in `.claude/agents/`). The first five are **owed, not yet written**.
+`code-planner`, `plan-execute` and `content-sync` are in `.claude/skills/` (runner agents in `.claude/agents/`; `content-sync` runs `inventory.mjs` in its folder). The first four are **owed, not yet written**.
 
 ## Docs
 

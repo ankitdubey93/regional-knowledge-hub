@@ -1,5 +1,6 @@
 import { useEffect, useSyncExternalStore } from 'react';
 import { z } from 'zod';
+import type { WorkspaceKind } from './entity';
 
 export interface SessionInfo {
   userId: string;
@@ -7,6 +8,7 @@ export interface SessionInfo {
   name: string;
   activeFirmId: string | null;
   activeFirmName: string | null;
+  activeWorkspaceKind: WorkspaceKind | null;
 }
 
 interface Snapshot {
@@ -23,7 +25,9 @@ const sessionBody = z
     user: z.object({ id: z.string(), email: z.string(), name: z.string() }),
   })
   .nullable();
-const orgBody = z.object({ name: z.string() });
+const kindSchema = z.enum(['business', 'practice']);
+const orgBody = z.object({ name: z.string(), kind: kindSchema });
+const orgListBody = z.array(z.object({ id: z.string(), name: z.string(), kind: kindSchema }));
 const idBody = z.object({ id: z.string() });
 const errorBody = z.object({ message: z.string() });
 
@@ -73,19 +77,24 @@ async function refreshSession(): Promise<void> {
     const { session, user } = parsed.data;
     const activeFirmId = session.activeOrganizationId ?? null;
     let activeFirmName: string | null = null;
+    let activeWorkspaceKind: WorkspaceKind | null = null;
     if (activeFirmId) {
       try {
         const orgRes = await fetch(`${BASE}/organization/get-full-organization`, { credentials: 'include' });
         if (orgRes.ok) {
           const org = orgBody.safeParse(await orgRes.json());
-          if (org.success) activeFirmName = org.data.name;
+          if (org.success) {
+            activeFirmName = org.data.name;
+            activeWorkspaceKind = org.data.kind;
+          }
         }
       } catch {
         activeFirmName = null;
+        activeWorkspaceKind = null;
       }
     }
     setSnapshot({
-      session: { userId: user.id, email: user.email, name: user.name, activeFirmId, activeFirmName },
+      session: { userId: user.id, email: user.email, name: user.name, activeFirmId, activeFirmName, activeWorkspaceKind },
       pending: false,
     });
   } catch {
@@ -119,15 +128,42 @@ export async function signUpEmail(name: string, email: string, password: string)
   return null;
 }
 
-export async function createFirm(name: string): Promise<string | null> {
-  const fallback = 'Could not create the firm';
+export interface WorkspaceSummary {
+  id: string;
+  name: string;
+  kind: WorkspaceKind;
+}
+
+/** null on success, or the server's error message. Creates the workspace and makes it active. */
+export async function createWorkspace(name: string, kind: WorkspaceKind): Promise<string | null> {
+  const fallback = 'Could not create the workspace';
   const slug = `${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-${crypto.randomUUID().slice(0, 6)}`;
-  const created = await send('/organization/create', { name, slug });
+  const created = await send('/organization/create', { name, slug, kind });
   if (!created.ok) return messageOf(created, fallback);
   const org = idBody.safeParse(await created.json());
   if (!org.success) return fallback;
   const active = await send('/organization/set-active', { organizationId: org.data.id });
   if (!active.ok) return messageOf(active, fallback);
+  await refreshSession();
+  return null;
+}
+
+/** The signed-in user's workspaces, or [] if the request fails. */
+export async function listWorkspaces(): Promise<WorkspaceSummary[]> {
+  try {
+    const res = await fetch(`${BASE}/organization/list`, { credentials: 'include' });
+    if (!res.ok) return [];
+    const parsed = orgListBody.safeParse(await res.json());
+    return parsed.success ? parsed.data : [];
+  } catch {
+    return [];
+  }
+}
+
+/** null on success, or the server's error message. */
+export async function switchWorkspace(id: string): Promise<string | null> {
+  const res = await send('/organization/set-active', { organizationId: id });
+  if (!res.ok) return messageOf(res, 'Could not switch workspace');
   await refreshSession();
   return null;
 }

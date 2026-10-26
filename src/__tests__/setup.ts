@@ -8,7 +8,9 @@ vi.mock('../lib/session', () => ({
   useSessionInfo: vi.fn(() => ({ session: null, pending: false })),
   signInEmail: vi.fn(async () => null),
   signUpEmail: vi.fn(async () => null),
-  createFirm: vi.fn(async () => null),
+  createWorkspace: vi.fn(async () => null),
+  listWorkspaces: vi.fn(async () => []),
+  switchWorkspace: vi.fn(async () => null),
   signOutUser: vi.fn(async () => undefined),
 }));
 

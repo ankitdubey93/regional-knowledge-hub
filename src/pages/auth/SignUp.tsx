@@ -21,7 +21,7 @@ export function SignUp() {
       setError(message);
       return;
     }
-    navigate('/firm/new');
+    navigate('/workspace/new');
   }
 
   return (

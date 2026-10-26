@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { auth } from '../auth';
 import { pool } from '../db/client';
 import { client } from '../db/schema';
+import { PROFILE_MESSAGES } from '../types/clients';
 import { withOrg } from '../db/withOrg';
 import { call, createFirm, mergeCookies, signUp } from './helpers';
 import { stopApp } from './server';
@@ -62,7 +63,7 @@ describe('clients', () => {
   it('POST /api/clients creates a client → 201 and it is listed', async () => {
     const res = await call('POST', '/api/clients', {
       cookie: cookieA,
-      body: { name: 'Acme Pty Ltd', jurisdiction: 'AU', entities: ['Jane Citizen'] },
+      body: { name: 'Acme Pty Ltd', jurisdiction: 'AU', entityType: 'company', fyEndMonth: 6, entities: ['Jane Citizen'] },
     });
     expect(res.status).toBe(201);
     const body = (await res.json()) as ClientBody;
@@ -75,7 +76,7 @@ describe('clients', () => {
   });
 
   it('POST /api/clients with an empty name → 400', async () => {
-    const res = await call('POST', '/api/clients', { cookie: cookieA, body: { name: '', jurisdiction: 'AU' } });
+    const res = await call('POST', '/api/clients', { cookie: cookieA, body: { name: '', jurisdiction: 'AU', entityType: 'company', fyEndMonth: 6 } });
     expect(res.status).toBe(400);
     const body = (await res.json()) as { error: string };
     expect(body.error).toBe('Invalid input');
@@ -84,7 +85,7 @@ describe('clients', () => {
   it('POST /api/clients ignores orgId in the body', async () => {
     const res = await call('POST', '/api/clients', {
       cookie: cookieA,
-      body: { name: 'Beta Ltd', jurisdiction: 'UK', orgId: orgB },
+      body: { name: 'Beta Ltd', jurisdiction: 'UK', entityType: 'company', fyEndMonth: 3, orgId: orgB },
     });
     expect(res.status).toBe(201);
     const body = (await res.json()) as ClientBody;
@@ -137,7 +138,7 @@ describe('clients', () => {
   });
 
   it('the app role sees no client rows without app.org_id', async () => {
-    const res = await call('POST', '/api/clients', { cookie: cookieA, body: { name: 'Gamma Ltd', jurisdiction: 'AU' } });
+    const res = await call('POST', '/api/clients', { cookie: cookieA, body: { name: 'Gamma Ltd', jurisdiction: 'AU', entityType: 'company', fyEndMonth: 6 } });
     expect(res.status).toBe(201);
     const rows = await pool.query('select count(*)::int as n from client');
     expect(rows.rows[0].n).toBe(0);
@@ -159,5 +160,85 @@ describe('clients', () => {
   it('the app role is not a superuser and cannot bypass RLS', async () => {
     const rows = await pool.query('select rolsuper, rolbypassrls from pg_roles where rolname = current_user');
     expect(rows.rows[0]).toEqual({ rolsuper: false, rolbypassrls: false });
+  });
+});
+
+describe('client profile', () => {
+  const base = { notes: '', entityType: 'company', fyEndMonth: 6 };
+
+  async function postClient(body: Record<string, unknown>): Promise<Response> {
+    return call('POST', '/api/clients', { cookie: cookieA, body: { name: 'Profile Co', ...base, ...body } });
+  }
+
+  async function messages(res: Response): Promise<string[]> {
+    const body = (await res.json()) as { issues: { message: string }[] };
+    return body.issues.map((i) => i.message);
+  }
+
+  it('a trust in the UK → 400', async () => {
+    const res = await postClient({ jurisdiction: 'UK', entityType: 'trust', fyEndMonth: 3 });
+    expect(res.status).toBe(400);
+    expect(await messages(res)).toContain(PROFILE_MESSAGES.trustOutsideAu);
+  });
+
+  it('an LLP in Australia → 400', async () => {
+    const res = await postClient({ jurisdiction: 'AU', entityType: 'llp' });
+    expect(res.status).toBe(400);
+    expect(await messages(res)).toContain(PROFILE_MESSAGES.llpOutsideUk);
+  });
+
+  it('registered with no return period → 400', async () => {
+    const res = await postClient({ jurisdiction: 'AU', taxRegistered: true });
+    expect(res.status).toBe(400);
+    expect(await messages(res)).toContain(PROFILE_MESSAGES.periodMissing);
+  });
+
+  it('a return period without registration → 400', async () => {
+    const res = await postClient({ jurisdiction: 'AU', taxPeriod: 'quarterly' });
+    expect(res.status).toBe(400);
+    expect(await messages(res)).toContain(PROFILE_MESSAGES.periodWithoutRegistration);
+  });
+
+  it('fyEndMonth 13 → 400', async () => {
+    const res = await postClient({ jurisdiction: 'AU', fyEndMonth: 13 });
+    expect(res.status).toBe(400);
+    expect(((await res.json()) as { error: string }).error).toBe('Invalid input');
+  });
+
+  it('PATCH that makes a trust UK → 400 and the row is unchanged', async () => {
+    const created = await postClient({ jurisdiction: 'AU', entityType: 'trust' });
+    expect(created.status).toBe(201);
+    const { client: row } = (await created.json()) as ClientBody;
+    const patch = await call('PATCH', `/api/clients/${row.id}`, { cookie: cookieA, body: { jurisdiction: 'UK' } });
+    expect(patch.status).toBe(400);
+    expect(await messages(patch)).toContain(PROFILE_MESSAGES.trustOutsideAu);
+    const got = await call('GET', `/api/clients/${row.id}`, { cookie: cookieA });
+    const body = (await got.json()) as { client: { jurisdiction: string } };
+    expect(body.client.jurisdiction).toBe('AU');
+  });
+
+  it('the database rejects a UK trust even without the API', async () => {
+    const err: unknown = await withOrg(orgA, (tx) =>
+      tx.insert(client).values({ orgId: orgA, name: 'X', jurisdiction: 'UK', entityType: 'trust', createdBy: 'test' }),
+    ).then(
+      () => null,
+      (e: unknown) => e,
+    );
+    expect(err).toBeInstanceOf(Error);
+    expect(((err as Error).cause as Error).message).toMatch(/client_entity_jurisdiction_check/);
+  });
+
+  it('the database allows one self row per workspace', async () => {
+    const insertSelf = () =>
+      withOrg(orgA, (tx) =>
+        tx.insert(client).values({ orgId: orgA, name: 'Self', jurisdiction: 'AU', isSelf: true, createdBy: 'test' }),
+      );
+    await insertSelf();
+    const err: unknown = await insertSelf().then(
+      () => null,
+      (e: unknown) => e,
+    );
+    expect(err).toBeInstanceOf(Error);
+    expect(((err as Error).cause as { code?: string }).code).toBe('23505');
   });
 });

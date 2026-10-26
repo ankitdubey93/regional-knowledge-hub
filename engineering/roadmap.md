@@ -45,7 +45,7 @@ Compliance Hub becomes an assistant for bookkeepers and accounting firms:
 - The knowledge base is managed in an admin UI, backed by Postgres.
 
 Stack decisions:
-- Hono + Drizzle + Better Auth (email and password, organization plugin)
+- Hono + Drizzle + Better Auth (email and password, organization plugin); P1 was built on Express 5 instead of Hono
 - Postgres with pgvector in Docker Compose (host port 5437)
 - row-level security per firm
 - PII redaction by rules plus each client's list of names
@@ -55,6 +55,7 @@ Stack decisions:
 |---|---|---|
 | **P0** | Reading-progress tracking removed (practice state kept); bundle-secret check; `.env.example` | done (2026-10-26) |
 | **P1** | `server/` workspace, Compose Postgres, Better Auth with firms, RLS, a `client` (client heading) API with cross-tenant tests, sign-in/sign-up/firm/clients pages | done (2026-10-26) |
+| **P1.1** | Workspaces: business or practice kind, one self entity per business, entity profile (jurisdiction, entity type, GST/VAT registration and period, year end), workspace switcher | done (2026-10-26) |
 | **P2** | KB in the database (`kb_doc`, `kb_fact`, `kb_law`, `kb_chunk`, versions), seeded from `docs/` and `src/data/facts.json`; web reads KB from the API; `/laws` page; admin editor with draft → validate → publish | planned |
 | **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks | planned |
 | **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT) stored encrypted; PII redaction with placeholders kept per conversation | planned |
@@ -74,4 +75,4 @@ Stack decisions:
 ### Owed to the platform track
 
 - P1 ships with `requireEmailVerification: false`; email verification is owed in P5 (needs SMTP).
-- The five content skills named in CLAUDE.md (`topic-author`, `fact-check`, `exercise-author`, `new-interactive`, `content-sync`) are not written; after P2 they should edit through the admin API or the seed fixtures.
+- Four content skills named in CLAUDE.md (`topic-author`, `fact-check`, `exercise-author`, `new-interactive`) are not written; after P2 they should edit through the admin API or the seed fixtures. `content-sync` was written on 2026-10-26.

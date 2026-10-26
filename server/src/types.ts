@@ -3,7 +3,10 @@ import { z } from 'zod';
 
 export const firmRoleSchema = z.enum(['owner', 'admin', 'member']);
 export type FirmRole = z.infer<typeof firmRoleSchema>;
-export interface FirmContext { userId: string; orgId: string; role: FirmRole }
+
+export const workspaceKindSchema = z.enum(['business', 'practice']);
+export type WorkspaceKind = z.infer<typeof workspaceKindSchema>;
+export interface FirmContext { userId: string; orgId: string; role: FirmRole; kind: WorkspaceKind }
 
 declare global {
   namespace Express {

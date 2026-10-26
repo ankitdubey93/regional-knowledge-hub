@@ -1,5 +1,5 @@
 import { lazy, Suspense, type ComponentType } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Learn } from './pages/Learn';
@@ -23,8 +23,10 @@ const FlashcardsPage = page(() => import('./pages/practice/FlashcardsPage'), 'Fl
 const CodingPage = page(() => import('./pages/practice/CodingPage'), 'CodingPage');
 const SignIn = page(() => import('./pages/auth/SignIn'), 'SignIn');
 const SignUp = page(() => import('./pages/auth/SignUp'), 'SignUp');
-const FirmSetup = page(() => import('./pages/firm/FirmSetup'), 'FirmSetup');
+const WorkspaceSetup = page(() => import('./pages/workspace/WorkspaceSetup'), 'WorkspaceSetup');
+const Business = page(() => import('./pages/workspace/Business'), 'Business');
 const Clients = page(() => import('./pages/firm/Clients'), 'Clients');
+const ClientDetail = page(() => import('./pages/firm/ClientDetail'), 'ClientDetail');
 
 export function App() {
   return (
@@ -47,8 +49,11 @@ export function App() {
           <Route path="practice/coding" element={<CodingPage />} />
           <Route path="sign-in" element={<SignIn />} />
           <Route path="sign-up" element={<SignUp />} />
-          <Route path="firm/new" element={<FirmSetup />} />
+          <Route path="firm/new" element={<Navigate to="/workspace/new" replace />} />
+          <Route path="workspace/new" element={<WorkspaceSetup />} />
+          <Route path="business" element={<Business />} />
           <Route path="clients" element={<Clients />} />
+          <Route path="clients/:id" element={<ClientDetail />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

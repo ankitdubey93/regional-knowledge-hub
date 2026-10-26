@@ -36,10 +36,14 @@ export async function signUp(): Promise<{ cookie: string; userId: string; email:
   return { cookie: mergeCookies('', res), userId: body.user.id, email };
 }
 
-export async function createFirm(cookie: string, name: string): Promise<{ cookie: string; orgId: string }> {
+export async function createFirm(
+  cookie: string,
+  name: string,
+  kind: 'business' | 'practice' = 'practice',
+): Promise<{ cookie: string; orgId: string }> {
   const created = await call('POST', '/api/auth/organization/create', {
     cookie,
-    body: { name, slug: `firm-${randomUUID().slice(0, 8)}` },
+    body: { name, slug: `firm-${randomUUID().slice(0, 8)}`, kind },
   });
   if (created.status !== 200) throw new Error(`create firm failed: ${created.status} ${await created.text()}`);
   const org = (await created.json()) as { id: string };
@@ -49,4 +53,10 @@ export async function createFirm(cookie: string, name: string): Promise<{ cookie
   });
   if (active.status !== 200) throw new Error(`set-active failed: ${active.status} ${await active.text()}`);
   return { cookie: mergeCookies(mergeCookies(cookie, created), active), orgId: org.id };
+}
+
+export async function setActive(cookie: string, orgId: string): Promise<string> {
+  const res = await call('POST', '/api/auth/organization/set-active', { cookie, body: { organizationId: orgId } });
+  if (res.status !== 200) throw new Error(`set-active failed: ${res.status} ${await res.text()}`);
+  return mergeCookies(cookie, res);
 }
