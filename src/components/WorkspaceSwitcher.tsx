@@ -60,7 +60,7 @@ export function WorkspaceSwitcher({ inline = false }: { inline?: boolean }) {
       return;
     }
     setOpen(false);
-    navigate(w.kind === 'business' ? '/business' : '/clients');
+    navigate('/workspace');
   };
 
   const panelClass = inline

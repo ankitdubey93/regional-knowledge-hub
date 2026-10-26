@@ -21,7 +21,7 @@ export function SignUp() {
       setError(message);
       return;
     }
-    navigate('/workspace/new');
+    navigate('/workspace');
   }
 
   return (

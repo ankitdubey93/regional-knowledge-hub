@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { EntityFields } from '../../components/EntityFields';
 import { Button, Card, Field, PageHeader, inputClass } from '../../components/ui';
 import { apiJson } from '../../lib/api';
@@ -8,7 +8,8 @@ import { createWorkspace } from '../../lib/session';
 
 export function WorkspaceSetup() {
   const navigate = useNavigate();
-  const [kind, setKind] = useState<WorkspaceKind>('business');
+  const [params] = useSearchParams();
+  const [kind, setKind] = useState<WorkspaceKind>(params.get('kind') === 'practice' ? 'practice' : 'business');
   const [name, setName] = useState('');
   const [profile, setProfile] = useState<EntityProfile>(defaultProfile('AU'));
   const [busy, setBusy] = useState(false);
@@ -25,15 +26,16 @@ export function WorkspaceSetup() {
       return;
     }
     if (kind === 'practice') {
-      navigate('/clients');
+      navigate('/workspace');
       return;
     }
     try {
-      await apiJson('/clients', { method: 'POST', body: { name, notes: '', ...profile } });
+      const res = await apiJson<{ client: { id: string } }>('/clients', { method: 'POST', body: { name, notes: '', ...profile } });
+      navigate(`/entities/${res.client.id}`);
     } catch {
-      // /business shows the setup form, so nothing is stranded.
+      // /workspace shows the setup form, so nothing is stranded.
+      navigate('/workspace');
     }
-    navigate('/business');
   }
 
   return (

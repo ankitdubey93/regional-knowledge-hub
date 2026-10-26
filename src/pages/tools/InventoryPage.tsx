@@ -92,7 +92,7 @@ export function InventoryPage() {
         lead={
           <>
             The same purchases and sales, costed both ways. LIFO is not allowed under IFRS, FRS 102, FRS 105 or AASB, so it is not offered. Background in{' '}
-            <TextLink to="/learn/core-accounting/accounting-policies-templates">Accounting policies</TextLink>.
+            <TextLink to="/knowledge/learn/core-accounting/accounting-policies-templates">Accounting policies</TextLink>.
           </>
         }
       />

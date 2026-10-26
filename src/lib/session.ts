@@ -1,5 +1,6 @@
 import { useEffect, useSyncExternalStore } from 'react';
 import { z } from 'zod';
+import { clearActiveEntity } from './activeEntity';
 import type { WorkspaceKind } from './entity';
 
 export interface SessionInfo {
@@ -164,11 +165,13 @@ export async function listWorkspaces(): Promise<WorkspaceSummary[]> {
 export async function switchWorkspace(id: string): Promise<string | null> {
   const res = await send('/organization/set-active', { organizationId: id });
   if (!res.ok) return messageOf(res, 'Could not switch workspace');
+  clearActiveEntity();
   await refreshSession();
   return null;
 }
 
 export async function signOutUser(): Promise<void> {
   await send('/sign-out', {});
+  clearActiveEntity();
   setSnapshot({ session: null, pending: false });
 }

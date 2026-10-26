@@ -68,7 +68,7 @@ export function DepreciationPage() {
         title="Depreciation"
         lead={
           <>
-            Compare straight line with reducing balance for the same asset. Background in <TextLink to="/learn/core-accounting/accounting-policies-templates">Accounting policies</TextLink>.
+            Compare straight line with reducing balance for the same asset. Background in <TextLink to="/knowledge/learn/core-accounting/accounting-policies-templates">Accounting policies</TextLink>.
           </>
         }
       />

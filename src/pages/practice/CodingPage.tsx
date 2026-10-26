@@ -4,12 +4,15 @@ import { accountName, accountsFor, codingScenarios, taxCodes } from '../../data'
 import { useProgress } from '../../progress/ProgressContext';
 import { formatMoney } from '../../utils/money';
 import { Button, Callout, Card, cx, Field, inputClass, JurisdictionBadge, PageHeader, Tabs, TextLink } from '../../components/ui';
+import { useHubScope } from '../../lib/hubScope';
 
 type Region = 'AU' | 'UK';
 
 export function CodingPage() {
   const { progress, update } = useProgress();
-  const [region, setRegion] = useState<Region>('AU');
+  const [regionPick, setRegion] = useState<Region>('AU');
+  const { scope } = useHubScope();
+  const region: Region = scope === 'all' ? regionPick : scope;
   const list = codingScenarios.filter((s) => s.jurisdiction === region);
   const [index, setIndex] = useState(0);
   const [account, setAccount] = useState('');
@@ -17,7 +20,7 @@ export function CodingPage() {
   const [result, setResult] = useState<null | { exact: boolean; accountOk: boolean; taxOk: boolean }>(null);
   const [attempted, setAttempted] = useState(false);
 
-  const s = list[index]!;
+  const s = list[Math.min(index, list.length - 1)]!;
   const codes = taxCodes[region];
   const accounts = accountsFor(region);
   const nameOfTax = (code: string) => codes.find((t) => t.code === code)?.name ?? code;
@@ -52,23 +55,25 @@ export function CodingPage() {
         lead={
           <>
             Code each document the way you would in Xero: the account and the tax rate. Read{' '}
-            <TextLink to={region === 'AU' ? '/learn/australia/bas-gst-guide' : '/learn/uk/mtd-vat-guide'}>{region === 'AU' ? 'GST and the BAS' : 'VAT and MTD'}</TextLink> first.
+            <TextLink to={region === 'AU' ? '/knowledge/learn/australia/bas-gst-guide' : '/knowledge/learn/uk/mtd-vat-guide'}>{region === 'AU' ? 'GST and the BAS' : 'VAT and MTD'}</TextLink> first.
           </>
         }
       />
-      <Tabs
-        label="Country"
-        value={region}
-        onChange={(r) => {
-          setRegion(r);
-          setIndex(0);
-          resetPick();
-        }}
-        tabs={[
-          { id: 'AU', label: 'Australia' },
-          { id: 'UK', label: 'United Kingdom' },
-        ]}
-      />
+      {scope === 'all' && (
+        <Tabs
+          label="Country"
+          value={region}
+          onChange={(r) => {
+            setRegion(r);
+            setIndex(0);
+            resetPick();
+          }}
+          tabs={[
+            { id: 'AU', label: 'Australia' },
+            { id: 'UK', label: 'United Kingdom' },
+          ]}
+        />
+      )}
       <p className="text-sm text-muted">
         Scenario {index + 1} of {list.length} · {right} right first time
       </p>

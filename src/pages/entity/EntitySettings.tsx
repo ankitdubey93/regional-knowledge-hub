@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ClientForm } from '../../components/ClientForm';
 import { Button, Card, PageHeader, TextLink } from '../../components/ui';
+import { clearActiveEntity, ENTITY_KEY, parseActiveEntity } from '../../lib/activeEntity';
 import { ApiError, apiDelete, apiJson } from '../../lib/api';
 import { profileOf, profileSummary, type ClientBody, type ClientRecord } from '../../lib/entity';
+import { readStored } from '../../lib/stored';
 
 type LoadState =
   | { status: 'loading' }
@@ -11,7 +13,7 @@ type LoadState =
   | { status: 'error'; message: string }
   | { status: 'ready'; client: ClientRecord };
 
-export function ClientDetail() {
+export function EntitySettings() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const [state, setState] = useState<LoadState>({ status: 'loading' });
@@ -52,7 +54,8 @@ export function ClientDetail() {
     setDeleteError(null);
     try {
       await apiDelete(`/clients/${id}`);
-      navigate('/clients');
+      if (parseActiveEntity(readStored('local', ENTITY_KEY))?.id === id) clearActiveEntity();
+      navigate('/workspace');
     } catch (err) {
       setDeleteError(err instanceof ApiError ? err.message : 'Could not delete the client');
     }
@@ -60,12 +63,12 @@ export function ClientDetail() {
 
   return (
     <div className="space-y-6">
-      <TextLink to="/clients">Back to clients</TextLink>
+      <TextLink to={`/entities/${id}`}>Back to dashboard</TextLink>
       {state.status === 'loading' && <p className="text-muted">Loading…</p>}
       {state.status === 'missing' && (
         <>
           <p>Client not found.</p>
-          <TextLink to="/clients">Back to clients</TextLink>
+          <TextLink to="/workspace">Back to workspace</TextLink>
         </>
       )}
       {state.status === 'error' && (
@@ -75,7 +78,7 @@ export function ClientDetail() {
       )}
       {state.status === 'ready' && (
         <>
-          <PageHeader title={state.client.name} lead={profileSummary(state.client)} />
+          <PageHeader title={`${state.client.name}: details`} lead={profileSummary(state.client)} />
           <Card>
             <ClientForm
               initial={{ name: state.client.name, notes: state.client.notes, profile: profileOf(state.client) }}

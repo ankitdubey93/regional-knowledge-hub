@@ -3,15 +3,9 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-do
 import { BookOpen, Menu, Moon, Sun, X } from 'lucide-react';
 import { cx } from './ui';
 import { WorkspaceSwitcher } from './WorkspaceSwitcher';
+import { ActiveEntityChip } from './ActiveEntityChip';
 import { useProgress } from '../progress/ProgressContext';
 import { signOutUser, useSessionInfo } from '../lib/session';
-
-const NAV = [
-  { to: '/learn', label: 'Learn' },
-  { to: '/compare', label: 'Compare' },
-  { to: '/tools', label: 'Tools' },
-  { to: '/practice', label: 'Practice' },
-];
 
 function currentTheme(): 'light' | 'dark' {
   const forced = document.documentElement.getAttribute('data-theme');
@@ -51,13 +45,12 @@ export function Layout() {
   const navigate = useNavigate();
   const { persisted } = useProgress();
   const { session } = useSessionInfo();
-  const workspaceNav =
-    session?.activeWorkspaceKind === 'business'
-      ? { to: '/business', label: 'Business' }
-      : session?.activeWorkspaceKind === 'practice'
-        ? { to: '/clients', label: 'Clients' }
-        : null;
-  const nav = workspaceNav ? [...NAV, workspaceNav] : NAV;
+  const nav = session
+    ? [
+        { to: '/workspace', label: 'Workspace' },
+        { to: '/knowledge', label: 'Knowledge Hub' },
+      ]
+    : [{ to: '/knowledge', label: 'Knowledge Hub' }];
 
   useEffect(() => {
     setOpen(false);
@@ -78,7 +71,7 @@ export function Layout() {
       </a>
       <header className="sticky top-0 z-30 border-b border-line bg-panel/90 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4">
-          <Link to="/" className="mr-2 flex items-center gap-2 font-semibold">
+          <Link to={session ? '/workspace' : '/'} className="mr-2 flex items-center gap-2 font-semibold">
             <BookOpen size={20} className="text-accent" aria-hidden />
             <span>Compliance Hub</span>
           </Link>
@@ -92,7 +85,8 @@ export function Layout() {
           <div className="ml-auto flex items-center md:ml-0">
             {session ? (
               <>
-                <div className="hidden sm:block">
+                <div className="hidden items-center gap-2 sm:flex">
+                  <ActiveEntityChip />
                   <WorkspaceSwitcher />
                 </div>
                 <button type="button" className="rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-panel-2 hover:text-ink" onClick={async () => { await signOutUser(); navigate('/'); }}>
@@ -118,7 +112,8 @@ export function Layout() {
         {open && (
           <nav id="mobile-nav" aria-label="Main" className="border-t border-line bg-panel px-4 py-2 md:hidden">
             {session && (
-              <div className="border-b border-line pb-2">
+              <div className="space-y-2 border-b border-line pb-2">
+                <ActiveEntityChip />
                 <WorkspaceSwitcher inline />
               </div>
             )}

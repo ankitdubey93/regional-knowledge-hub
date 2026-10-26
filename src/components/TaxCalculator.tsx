@@ -8,6 +8,7 @@ import { formatMoney, formatRate, parseMoney } from '../utils/money';
 import { cents, MoneyInput } from './MoneyInput';
 import { FactValue } from './FactValue';
 import { Button, Card, cx, inputClass, Tabs, TableScroll } from './ui';
+import { inScope, type HubScope } from '../lib/scope';
 
 type TabId = 'gst' | 'bas' | 'vat' | 'super' | 'nic' | 'cis';
 const TABS: { id: TabId; label: string }[] = [
@@ -18,6 +19,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'nic', label: 'UK Employer NIC' },
   { id: 'cis', label: 'UK CIS' },
 ];
+const TAB_JURISDICTION: Record<TabId, 'AU' | 'UK'> = { gst: 'AU', bas: 'AU', super: 'AU', vat: 'UK', nic: 'UK', cis: 'UK' };
 
 const aud = (c: number) => formatMoney(c, 'AUD');
 const gbp = (c: number) => formatMoney(c, 'GBP');
@@ -416,17 +418,19 @@ function CisTab() {
   );
 }
 
-export function TaxCalculator({ initial = 'gst' }: { initial?: TabId }) {
+export function TaxCalculator({ initial = 'gst', scope = 'all' }: { initial?: TabId; scope?: HubScope }) {
+  const tabs = TABS.filter((t) => inScope(TAB_JURISDICTION[t.id], scope));
   const [tab, setTab] = useState<TabId>(initial);
+  const active = tabs.some((t) => t.id === tab) ? tab : tabs[0]!.id;
   return (
     <Card>
-      <Tabs label="Calculator" tabs={TABS} value={tab} onChange={setTab} />
-      {tab === 'gst' && <GstTab />}
-      {tab === 'bas' && <BasTab />}
-      {tab === 'vat' && <VatTab />}
-      {tab === 'super' && <SuperTab />}
-      {tab === 'nic' && <NicTab />}
-      {tab === 'cis' && <CisTab />}
+      <Tabs label="Calculator" tabs={tabs} value={active} onChange={setTab} />
+      {active === 'gst' && <GstTab />}
+      {active === 'bas' && <BasTab />}
+      {active === 'vat' && <VatTab />}
+      {active === 'super' && <SuperTab />}
+      {active === 'nic' && <NicTab />}
+      {active === 'cis' && <CisTab />}
     </Card>
   );
 }

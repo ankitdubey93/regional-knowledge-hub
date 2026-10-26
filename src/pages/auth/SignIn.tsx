@@ -20,7 +20,7 @@ export function SignIn() {
       setError(message);
       return;
     }
-    navigate('/clients');
+    navigate('/workspace');
   }
 
   return (

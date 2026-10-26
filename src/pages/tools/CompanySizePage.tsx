@@ -6,6 +6,7 @@ import { MoneyInput, cents } from '../../components/MoneyInput';
 import { Button, Callout, Card, cx, Field, inputClass, PageHeader, Tabs, TableScroll } from '../../components/ui';
 import { auProprietarySize, ukBandForYear, ukSizeOverYears, type SizeInputs, type UkSize } from '../../utils/companySize';
 import { formatMoney } from '../../utils/money';
+import { useHubScope } from '../../lib/hubScope';
 
 const ukLimits = () => ({
   micro: { turnoverCents: factCents('uk.ca.microTurnover'), balanceSheetCents: factCents('uk.ca.microBalanceSheet'), employees: count('uk.ca.microEmployees') },
@@ -144,20 +145,24 @@ function AuTab() {
 
 export function CompanySizePage() {
   const [tab, setTab] = useState<'uk' | 'au'>('uk');
+  const { scope } = useHubScope();
+  const active = scope === 'AU' ? 'au' : scope === 'UK' ? 'uk' : tab;
   return (
     <div>
       <PageHeader title="Company size" lead="Which reporting regime a company falls into, from its turnover, balance sheet and staff." />
       <Card>
-        <Tabs
-          label="Country"
-          value={tab}
-          onChange={setTab}
-          tabs={[
-            { id: 'uk', label: 'UK: Companies Act 2006' },
-            { id: 'au', label: 'Australia: Corporations Act 2001' },
-          ]}
-        />
-        {tab === 'uk' ? <UkTab /> : <AuTab />}
+        {scope === 'all' && (
+          <Tabs
+            label="Country"
+            value={tab}
+            onChange={setTab}
+            tabs={[
+              { id: 'uk', label: 'UK: Companies Act 2006' },
+              { id: 'au', label: 'Australia: Corporations Act 2001' },
+            ]}
+          />
+        )}
+        {active === 'uk' ? <UkTab /> : <AuTab />}
       </Card>
     </div>
   );

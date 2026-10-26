@@ -122,10 +122,10 @@ function TAccountsGrid({ entries, jurisdiction }: { entries: JournalLine[][]; ju
   );
 }
 
-function ScenarioMode() {
+function ScenarioMode({ scenarios }: { scenarios: JournalScenario[] }) {
   const { progress, update } = useProgress();
-  const [id, setId] = useState(journalScenarios[0]!.id);
-  const scenario = journalScenarios.find((s) => s.id === id)!;
+  const [id, setId] = useState(scenarios[0]!.id);
+  const scenario = scenarios.find((s) => s.id === id) ?? scenarios[0]!;
   const [rows, setRows] = useState<Row[]>(() => [blankRow(), blankRow()]);
   const [result, setResult] = useState<null | { problems: string[]; feedback: LineFeedback[]; correct: boolean }>(null);
   const [showHint, setShowHint] = useState(false);
@@ -154,17 +154,17 @@ function ScenarioMode() {
     if (cmp.correct) update((p) => ({ ...p, journal: { ...p.journal, [scenario.id]: true } }));
   };
 
-  const index = journalScenarios.findIndex((s) => s.id === id);
-  const nextScenario = journalScenarios[index + 1];
-  const solved = journalScenarios.filter((s) => progress.journal[s.id]).length;
+  const index = scenarios.findIndex((s) => s.id === id);
+  const nextScenario = scenarios[index + 1];
+  const solved = scenarios.filter((s) => progress.journal[s.id]).length;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
       <Card className="p-3 sm:p-3 lg:self-start">
         <label className="block lg:hidden">
           <span className="mb-1 block text-sm font-medium">Scenario</span>
-          <select className={inputClass} value={id} onChange={(e) => choose(journalScenarios.find((s) => s.id === e.target.value)!)}>
-            {journalScenarios.map((s, i) => (
+          <select className={inputClass} value={id} onChange={(e) => choose(scenarios.find((s) => s.id === e.target.value)!)}>
+            {scenarios.map((s, i) => (
               <option key={s.id} value={s.id}>
                 {i + 1}. {s.title} ({s.jurisdiction}){progress.journal[s.id] ? ' ✓' : ''}
               </option>
@@ -173,10 +173,10 @@ function ScenarioMode() {
         </label>
         <div className="hidden lg:block">
           <p className="px-2 pb-2 text-sm text-muted">
-            {solved}/{journalScenarios.length} solved
+            {solved}/{scenarios.length} solved
           </p>
           <ol className="max-h-[70vh] space-y-1 overflow-y-auto">
-            {journalScenarios.map((s, i) => (
+            {scenarios.map((s, i) => (
               <li key={s.id}>
                 <button
                   type="button"
@@ -385,7 +385,7 @@ function FreePlay() {
   );
 }
 
-export function JournalSimulator() {
+export function JournalSimulator({ scenarios = journalScenarios }: { scenarios?: JournalScenario[] } = {}) {
   const [mode, setMode] = useState<'scenarios' | 'free'>('scenarios');
   return (
     <div>
@@ -398,7 +398,7 @@ export function JournalSimulator() {
           { id: 'free', label: 'Free play' },
         ]}
       />
-      {mode === 'scenarios' ? <ScenarioMode /> : <FreePlay />}
+      {mode === 'scenarios' ? <ScenarioMode scenarios={scenarios} /> : <FreePlay />}
     </div>
   );
 }

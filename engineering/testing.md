@@ -1,7 +1,7 @@
 # Testing
 
 ```bash
-npm test            # all web Vitest files (100 tests, 7 files)
+npm test            # all web Vitest files (122 tests, 9 files)
 npm test -w server  # server tests (38 tests, 4 files); needs the database
 npx vitest run src/__tests__/tax.test.ts
 npm run typecheck
@@ -18,13 +18,15 @@ npm run lint        # inside a git repository (oxlint follows .gitignore)
 | `engines.test.ts` | Depreciation, FIFO and weighted average, UK two-year size rule, AU large proprietary test, ledger checks, spaced repetition |
 | `data.test.ts` | Every JSON file parses; doc frontmatter and `{{fact:…}}` keys exist; each doc has 5+ quiz questions and flashcards; journal scenarios balance on real accounts; coding answers are real accounts and tax codes |
 | `components.test.tsx` | Journal simulator feedback and progress, quiz scoring, topic rendering with fact links, tax calculator, coding scenarios, company size, resetting practice data from the Practice page |
-| `account.test.tsx` | Sign-in, sign-up, workspace setup, and the Clients, Business and client-detail pages, with `../lib/session` mocked in `setup.ts` and `fetch` stubbed per test |
+| `hub.test.ts` | Hub scope rules (`scope.ts`), `appendExchange` and `parseActiveEntity` |
+| `knowledge.test.tsx` | Knowledge Hub filtering by entity and by the signed-out switch, tax calculator scope, old-URL redirects, `ChatPanel` (not-connected reply, no `fetch`) |
+| `account.test.tsx` | Sign-in, sign-up, workspace setup, and the workspace home, entity dashboard and entity settings pages, with `../lib/session` mocked in `setup.ts` and `fetch` stubbed per test |
 
 ## Conventions
 
 - Engine tests use hand-worked numbers, written as integer cents, with the working in a comment when it is not obvious.
 - Component tests render through `renderAt` in `src/__tests__/render.tsx` (router + progress provider) and query by role and accessible name.
-- `setup.ts` runs RTL `cleanup()` and clears `localStorage` after every test.
+- `setup.ts` runs RTL `cleanup()` and clears `localStorage` and `sessionStorage` after every test.
 
 ## Server tests
 
@@ -41,3 +43,5 @@ npm test -w server
 ## Browser check (manual, owed as a committed test)
 
 Before calling a UI change done, open every changed route at **375 px** and **1440 px**, in light and dark: no sideways scroll, no console errors, keyboard reachable. In v1 this was run with a scratch `playwright-core` script against the system Chrome (it measures `scrollWidth - clientWidth` on every route). To commit it, add `@playwright/test` as a dev dependency and port the script to `e2e/`.
+
+The P1.2 browser check (scratch script, 2026-10-26) covered 15 routes at 375 and 1440 px, light and dark: `/workspace`, `/entities/<id>`, `/entities/<id>/settings`, `/knowledge`, `/knowledge/learn`, `/knowledge/learn/australia/bas-gst-guide`, `/knowledge/compare`, `/knowledge/tools`, `/knowledge/tools/tax`, `/knowledge/practice`, `/knowledge/practice/flashcards`, `/knowledge/practice/coding`, `/learn` (redirect), `/sign-in` and `/`. It also typed into the entity chat and signed out to see the jurisdiction switch.

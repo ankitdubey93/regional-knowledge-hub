@@ -1,18 +1,18 @@
 import { useMemo, useState } from 'react';
 import type { StandardsMapping } from '../data/schemas';
 import { cx } from './ui';
-
-type FrameworkId = StandardsMapping['frameworks'][number]['id'];
+import type { FrameworkId } from '../lib/scope';
 
 /**
  * Topic-by-topic comparison of the four frameworks. Each topic is a row of
  * cells that wraps on narrow screens instead of scrolling sideways.
  */
-export function ComparisonMatrix({ data }: { data: StandardsMapping }) {
+export function ComparisonMatrix({ data, frameworks: initialFrameworks }: { data: StandardsMapping; frameworks?: FrameworkId[] }) {
   const groups = useMemo(() => ['All', ...new Set(data.topics.map((t) => t.group))], [data]);
   const [group, setGroup] = useState('All');
   const [onlyChanged, setOnlyChanged] = useState(false);
-  const [shown, setShown] = useState<Record<FrameworkId, boolean>>({ ifrs: true, frs102: true, frs105: true, aasb: true });
+  const has = (id: FrameworkId) => initialFrameworks === undefined || initialFrameworks.includes(id);
+  const [shown, setShown] = useState<Record<FrameworkId, boolean>>({ ifrs: has('ifrs'), frs102: has('frs102'), frs105: has('frs105'), aasb: has('aasb') });
   const [query, setQuery] = useState('');
 
   const frameworks = data.frameworks.filter((f) => shown[f.id]);

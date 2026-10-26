@@ -5,17 +5,21 @@ import { flashcards } from '../../data';
 import { useProgress } from '../../progress/ProgressContext';
 import { BOX_INTERVAL_DAYS, isDue, review, todayIso } from '../../utils/srs';
 import { Button, Card, Field, inputClass, PageHeader } from '../../components/ui';
+import { useHubScope } from '../../lib/hubScope';
+import { inScope } from '../../lib/scope';
 
 export function FlashcardsPage() {
   const [params, setParams] = useSearchParams();
   const docFilter = params.get('doc') ?? '';
   const [includeAll, setIncludeAll] = useState(false);
   const { progress, update } = useProgress();
+  const { scope } = useHubScope();
+  const pool = flashcards.filter((c) => inScope(c.jurisdiction, scope));
   const today = todayIso();
 
   // The queue is built only when the deck or mode changes, so answering a card does not reshuffle the session.
   const build = (doc: string, all: boolean) =>
-    flashcards.filter((c) => (doc === '' || c.doc === doc) && (all || isDue(progress.cards[c.id], today))).map((c) => c.id);
+    pool.filter((c) => (doc === '' || c.doc === doc) && (all || isDue(progress.cards[c.id], today))).map((c) => c.id);
   const [queue, setQueue] = useState<string[]>(() => build(docFilter, false));
   const [position, setPosition] = useState(0);
   const [revealed, setRevealed] = useState(false);
@@ -27,7 +31,7 @@ export function FlashcardsPage() {
     setRevealed(false);
     setSessionRight(0);
   };
-  const card = flashcards.find((c) => c.id === queue[position]);
+  const card = pool.find((c) => c.id === queue[position]);
   const state = card ? progress.cards[card.id] : undefined;
 
   const grade = (correct: boolean) => {
@@ -38,7 +42,7 @@ export function FlashcardsPage() {
     setPosition((n) => n + 1);
   };
 
-  const deckSize = flashcards.filter((c) => docFilter === '' || c.doc === docFilter).length;
+  const deckSize = pool.filter((c) => docFilter === '' || c.doc === docFilter).length;
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
@@ -53,8 +57,8 @@ export function FlashcardsPage() {
               reset(e.target.value, includeAll);
             }}
           >
-            <option value="">All topics ({flashcards.length} cards)</option>
-            {docs.map((d) => (
+            <option value="">All topics ({pool.length} cards)</option>
+            {docs.filter((d) => inScope(d.jurisdiction, scope)).map((d) => (
               <option key={d.id} value={d.id}>
                 {d.title}
               </option>

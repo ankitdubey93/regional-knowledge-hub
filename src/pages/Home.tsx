@@ -7,10 +7,10 @@ import { flashcards } from '../data';
 import { isDue, todayIso } from '../utils/srs';
 
 const quick = [
-  { to: '/tools/journal', icon: Shuffle, title: 'Journal simulator', text: 'Post entries, see T-accounts' },
-  { to: '/tools/tax', icon: Calculator, title: 'Tax calculator', text: 'BAS, VAT return, super, NIC' },
-  { to: '/compare', icon: Scale, title: 'Compare frameworks', text: 'IFRS, FRS 102, FRS 105, AASB' },
-  { to: '/practice', icon: GraduationCap, title: 'Practice', text: 'Quizzes, flashcards, coding' },
+  { to: '/knowledge/tools/journal', icon: Shuffle, title: 'Journal simulator', text: 'Post entries, see T-accounts' },
+  { to: '/knowledge/tools/tax', icon: Calculator, title: 'Tax calculator', text: 'BAS, VAT return, super, NIC' },
+  { to: '/knowledge/compare', icon: Scale, title: 'Compare frameworks', text: 'IFRS, FRS 102, FRS 105, AASB' },
+  { to: '/knowledge/practice', icon: GraduationCap, title: 'Practice', text: 'Quizzes, flashcards, coding' },
 ];
 
 export function Home() {
@@ -29,12 +29,12 @@ export function Home() {
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
-            to={`/learn/${docs[0]?.id ?? ''}`}
+            to={`/knowledge/learn/${docs[0]?.id ?? ''}`}
             className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-accent px-5 font-medium text-accent-fg hover:bg-accent-hover"
           >
             Start with double entry <ArrowRight size={16} aria-hidden />
           </Link>
-          <Link to="/practice/flashcards" className="inline-flex min-h-11 items-center rounded-lg border border-line bg-panel px-5 font-medium hover:bg-panel-2">
+          <Link to="/knowledge/practice/flashcards" className="inline-flex min-h-11 items-center rounded-lg border border-line bg-panel px-5 font-medium hover:bg-panel-2">
             {due} flashcards due
           </Link>
         </div>
@@ -51,7 +51,7 @@ export function Home() {
               <Card key={s.id}>
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="text-lg font-semibold">
-                    <Link to={`/learn#${s.id}`} className="hover:text-accent">
+                    <Link to={`/knowledge/learn#${s.id}`} className="hover:text-accent">
                       {s.title}
                     </Link>
                   </h3>
@@ -60,7 +60,7 @@ export function Home() {
                 <ol className="mt-4 space-y-1 text-sm">
                   {items.map((d) => (
                     <li key={d.id}>
-                      <Link to={`/learn/${d.id}`} className="hover:text-accent">
+                      <Link to={`/knowledge/learn/${d.id}`} className="hover:text-accent">
                         {d.title}
                       </Link>
                     </li>

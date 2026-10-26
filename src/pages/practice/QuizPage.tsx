@@ -22,7 +22,7 @@ export function QuizPage() {
         title={`Quiz: ${doc.title}`}
         lead={
           <>
-            {questions.length} questions. <TextLink to={`/learn/${doc.id}`}>Read the topic</TextLink> first if you have not.
+            {questions.length} questions. <TextLink to={`/knowledge/learn/${doc.id}`}>Read the topic</TextLink> first if you have not.
             {best && ` Best so far: ${best.best}/${best.total}.`}
           </>
         }

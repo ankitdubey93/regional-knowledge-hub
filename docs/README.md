@@ -1,6 +1,6 @@
 # The curriculum
 
-These Markdown files are the course. The site renders them at `/learn/<section>/<slug>`, so a file here is a page there.
+These Markdown files are the course. The site renders them at `/knowledge/learn/<section>/<slug>`, so a file here is a page there.
 
 | Folder | What it covers |
 |---|---|

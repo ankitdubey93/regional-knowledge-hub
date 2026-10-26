@@ -65,7 +65,7 @@ describe('Quiz', () => {
 
 describe('Topic page', () => {
   it('renders a doc with its facts linked to the source', async () => {
-    renderAt('/learn/australia/bas-gst-guide', '/learn/:section/:slug', <Topic />);
+    renderAt('/knowledge/learn/australia/bas-gst-guide', '/knowledge/learn/:section/:slug', <Topic />);
     expect(screen.getByRole('heading', { level: 1, name: 'GST and the BAS' })).toBeInTheDocument();
     const rate = document.querySelectorAll('a[data-fact="au.gst.rate"]');
     expect(rate.length).toBeGreaterThan(0);
@@ -73,7 +73,7 @@ describe('Topic page', () => {
     expect(rate[0]!.getAttribute('href')).toMatch(/^https:\/\/www\.ato\.gov\.au\//);
   });
   it('shows not found for an unknown doc', () => {
-    renderAt('/learn/uk/nope', '/learn/:section/:slug', <Topic />);
+    renderAt('/knowledge/learn/uk/nope', '/knowledge/learn/:section/:slug', <Topic />);
     expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
   });
 });
@@ -121,7 +121,7 @@ describe('PracticeIndex', () => {
       STORAGE_KEY,
       JSON.stringify({ version: 1, quiz: { 'uk/mtd-vat-guide': { best: 3, total: 5, last: '2026-10-26' } }, cards: {}, journal: {}, coding: {}, checklist: {} }),
     );
-    renderAt('/practice', '/practice', <PracticeIndex />);
+    renderAt('/knowledge/practice', '/knowledge/practice', <PracticeIndex />);
     await user.click(screen.getByRole('button', { name: 'Reset practice data' }));
     await user.click(screen.getByRole('button', { name: 'Yes, erase practice data' }));
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).quiz).toEqual({});

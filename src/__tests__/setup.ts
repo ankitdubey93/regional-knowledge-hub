@@ -20,6 +20,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
   try {
     localStorage.clear();
+    sessionStorage.clear();
   } catch {
     /* jsdom always has storage; ignore elsewhere */
   }
