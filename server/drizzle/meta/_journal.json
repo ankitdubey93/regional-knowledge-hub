@@ -78,6 +78,20 @@
       "when": 1793024884793,
       "tag": "0010_kb_search",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793032539649,
+      "tag": "0011_ledger",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793032554700,
+      "tag": "0012_ledger_rls",
+      "breakpoints": true
     }
   ]
 }

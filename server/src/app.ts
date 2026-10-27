@@ -6,6 +6,7 @@ import { env } from './env';
 import { adminKbRoutes } from './routes/adminKb';
 import { adminRoutes } from './routes/admin';
 import { clientRoutes } from './routes/clients';
+import { ledgerRoutes } from './routes/ledger';
 
 export const app = express();
 
@@ -15,6 +16,7 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true });
 });
 app.all('/api/auth/*splat', toNodeHandler(auth));
+app.use('/api/clients/:clientId', ledgerRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/admin/kb', adminKbRoutes);
 app.use('/api/admin', adminRoutes);

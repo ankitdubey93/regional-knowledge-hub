@@ -79,3 +79,25 @@ Stack decisions:
 
 - P1 ships with `requireEmailVerification: false`; email verification is owed in P5 (needs SMTP).
 - Four content skills named in CLAUDE.md (`topic-author`, `fact-check`, `exercise-author`, `new-interactive`) are not written; after P2a they should edit through the admin API or the seed fixtures. `content-sync` was written on 2026-10-26.
+
+## Data track: the entity's own numbers (decided 2026-10-26)
+
+The goal is to give each entity its own numbers, so that answers can come from them, then reports, records and, later, document chasing. D1 imports a trial balance and builds reports from it.
+
+| Phase | Outcome | Status |
+|---|---|---|
+| D1 | TB CSV import, P&L, balance sheet | done (2026-10-26) |
+| D2 | GL transactions, record search, account drill-down, tax-code summary against `basWorksheet`/`vat100` using `tax-codes.json`, `parseLedgerDate` | planned |
+| D3 | XLSX import (needs a dependency decision under Hard rule 9) | planned |
+| D4 | Live Xero, then QBO, connection (OAuth, token storage, sync; check Xero's current API access terms) | planned |
+| D5 | Document requests and chasing | planned; needs P4 storage and P5 SMTP |
+
+Gates: D2 needs D1; D4 needs D1; D5 needs P4 and P5.
+
+P3 note: P3 will add a numbers tool. Answering from an entity's ledger needs an addition to Hard rule 12 (answers about its figures are grounded in ledger data computed by engines, and cite the report or account). That is decided in P3, not here.
+
+### Owed to the data track
+
+- Check `ACCOUNT_LABEL_CLASSES` and the header names in `suggestMapping` against real exports from the Xero AU, Xero UK, QBO and MYOB demo companies (same session as the `tax-codes.json` check), then set `ACCOUNT_LABELS_VERIFIED_ON`.
+- Deleting an import does not reactivate the one it superseded.
+- The D1 browser check is a scratch script; it is not committed (same debt as the platform track's).

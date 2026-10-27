@@ -1,8 +1,10 @@
 import { sql } from 'drizzle-orm';
 import {
   type AnyPgColumn,
+  bigint,
   boolean,
   date,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -10,10 +12,13 @@ import {
   smallint,
   text,
   timestamp,
+  unique,
   uniqueIndex,
   uuid,
   vector,
 } from 'drizzle-orm/pg-core';
+import { ACCOUNT_CLASSES } from '../../../src/utils/accountClasses';
+import type { ImportIssue } from '../../../src/utils/ledgerImport';
 import { organization } from './auth-schema';
 
 export * from './auth-schema';
@@ -39,7 +44,82 @@ export const client = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index('client_org_idx').on(t.orgId)],
+  (t) => [index('client_org_idx').on(t.orgId), unique('client_id_org_unique').on(t.id, t.orgId)],
+);
+
+// Tenant table: RLS is enabled and forced in migration 0012 (Hard rule 11).
+export const ledgerImport = pgTable(
+  'ledger_import',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    clientId: uuid('client_id').notNull(),
+    source: text('source', { enum: ['xero', 'qbo', 'myob', 'other'] }).notNull(),
+    currency: text('currency', { enum: ['AUD', 'GBP'] }).notNull(),
+    asAt: date('as_at', { mode: 'string' }).notNull(),
+    periodStart: date('period_start', { mode: 'string' }).notNull(),
+    originalName: text('original_name').notNull(),
+    sha256: text('sha256').notNull(),
+    rowCount: integer('row_count').notNull(),
+    totalDebitCents: bigint('total_debit_cents', { mode: 'number' }).notNull(),
+    status: text('status', { enum: ['active', 'superseded'] }).notNull().default('active'),
+    warnings: jsonb('warnings').$type<ImportIssue[]>().notNull().default(sql`'[]'::jsonb`),
+    createdBy: text('created_by').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'ledger_import_client_org_fk' }).onDelete('cascade'),
+    unique('ledger_import_id_org_unique').on(t.id, t.orgId),
+    index('ledger_import_org_idx').on(t.orgId),
+    index('ledger_import_client_idx').on(t.clientId),
+    uniqueIndex('ledger_import_one_active_per_date').on(t.clientId, t.asAt).where(sql`status = 'active'`),
+  ],
+);
+
+// Tenant table: RLS is enabled and forced in migration 0012 (Hard rule 11).
+export const ledgerAccount = pgTable(
+  'ledger_account',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    clientId: uuid('client_id').notNull(),
+    code: text('code').notNull(),
+    name: text('name').notNull(),
+    sourceType: text('source_type').notNull().default(''),
+    accountClass: text('account_class', { enum: ACCOUNT_CLASSES }).notNull(),
+    classSetBy: text('class_set_by', { enum: ['import', 'user'] }).notNull().default('import'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'ledger_account_client_org_fk' }).onDelete('cascade'),
+    unique('ledger_account_id_org_unique').on(t.id, t.orgId),
+    uniqueIndex('ledger_account_client_code_idx').on(t.clientId, t.code),
+  ],
+);
+
+// Tenant table: RLS is enabled and forced in migration 0012 (Hard rule 11).
+export const ledgerBalance = pgTable(
+  'ledger_balance',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    importId: uuid('import_id').notNull(),
+    accountId: uuid('account_id').notNull(),
+    debitCents: bigint('debit_cents', { mode: 'number' }).notNull(),
+    creditCents: bigint('credit_cents', { mode: 'number' }).notNull(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.importId, t.orgId], foreignColumns: [ledgerImport.id, ledgerImport.orgId], name: 'ledger_balance_import_org_fk' }).onDelete('cascade'),
+    foreignKey({ columns: [t.accountId, t.orgId], foreignColumns: [ledgerAccount.id, ledgerAccount.orgId], name: 'ledger_balance_account_org_fk' }).onDelete('restrict'),
+    uniqueIndex('ledger_balance_import_account_idx').on(t.importId, t.accountId),
+  ],
 );
 
 // Global, not a tenant table: the platform admin's actions. Append-only for chub_app (migration 0007).

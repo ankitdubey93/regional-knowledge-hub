@@ -46,6 +46,17 @@ function EntityView({ c }: { c: ClientRecord }) {
         </div>
         <aside className="space-y-4">
           <Card>
+            <h2 className="font-semibold">Books and reports</h2>
+            <ul className="mt-3 space-y-2 text-sm">
+              <li>
+                <TextLink to={`/entities/${c.id}/books`}>Import a trial balance</TextLink>
+              </li>
+              <li>
+                <TextLink to={`/entities/${c.id}/reports`}>View reports</TextLink>
+              </li>
+            </ul>
+          </Card>
+          <Card>
             <h2 className="font-semibold">Profile</h2>
             <dl className="mt-3 space-y-2 text-sm">
               <div>
