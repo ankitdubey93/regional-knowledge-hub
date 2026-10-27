@@ -2,6 +2,13 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach } from 'vitest';
 import { vi } from 'vitest';
+import { setFacts } from '../data/facts';
+import { setDocs } from '../content/docs';
+import { seedFacts, seedSiteDocs } from './seedData';
+
+// Every test starts with the facts and docs loaded, as the app does after /api/kb/site.
+setFacts(seedFacts);
+setDocs(seedSiteDocs);
 
 // No component test talks to the auth server; each test sets the session it needs.
 vi.mock('../lib/session', () => ({

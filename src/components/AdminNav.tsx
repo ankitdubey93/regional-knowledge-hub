@@ -5,6 +5,7 @@ const links = [
   { to: '/admin', label: 'Overview', end: true },
   { to: '/admin/users', label: 'Users', end: false },
   { to: '/admin/kb', label: 'Knowledge base', end: false },
+  { to: '/admin/facts', label: 'Facts', end: false },
   { to: '/admin/kb/search', label: 'Test search', end: false },
 ];
 

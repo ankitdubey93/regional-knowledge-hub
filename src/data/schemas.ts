@@ -22,7 +22,23 @@ export const factSchema = z
     message: 'bp, cents and count facts are integers; date and text facts are strings',
   })
   .refine((f) => f.unit !== 'date' || /^\d{4}-\d{2}-\d{2}$/.test(String(f.value)), { message: 'a date fact is yyyy-mm-dd' });
-export const factsSchema = z.record(z.string().regex(/^(au|uk|intl)\.[a-zA-Z0-9.]+$/), factSchema);
+export const factKeySchema = z.string().regex(/^(au|uk|intl)\.[a-zA-Z0-9.]+$/);
+export const sectionSchema = z.enum(['core-accounting', 'standards', 'australia', 'uk']);
+export const curriculumMetaSchema = z.object({
+  section: sectionSchema,
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  summary: z.string(),
+  jurisdiction: z.enum(['AU', 'UK', 'INTL', 'AU+UK']),
+  level: z.enum(['beginner', 'intermediate']),
+  order: z.number().int(),
+  facts: z.array(z.string()),
+  tools: z.array(z.string()),
+});
+export type CurriculumMeta = z.infer<typeof curriculumMetaSchema>;
+export const siteDocSchema = curriculumMetaSchema.extend({ id: z.string(), title: z.string(), body: z.string() });
+export type SiteDoc = z.infer<typeof siteDocSchema>;
+
+export const factsSchema = z.record(factKeySchema, factSchema);
 export type Fact = z.infer<typeof factSchema>;
 
 export const accountSchema = z.object({

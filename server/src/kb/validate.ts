@@ -5,6 +5,7 @@ import { hostOf, isOfficialUrl } from './officialSites';
 export interface ValidateInput {
   kind: KbSource['kind']; officialUrl: string | null; billStatus: KbSource['billStatus'];
   effectiveFrom: string | null; bodyMd: string; chunks: RawChunk[]; duplicateOfLabel: string | null;
+  unknownFacts: string[];
 }
 
 /** Blocking issues stop a version from being published (Hard rule 2). Warnings do not. Order is fixed. */
@@ -29,6 +30,9 @@ export function validateVersion(i: ValidateInput): KbIssue[] {
   }
   if (i.chunks.length === 0) {
     issues.push({ level: 'block', code: 'no_chunks', message: 'The text produced no chunks' });
+  }
+  if (i.unknownFacts.length > 0) {
+    issues.push({ level: 'block', code: 'unknown_fact', message: `Unknown fact key(s): ${i.unknownFacts.join(', ')}` });
   }
 
   const longCount = i.chunks.filter((c) => c.tokens > LONG_CHUNK_TOKENS).length;

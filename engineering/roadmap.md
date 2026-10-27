@@ -58,7 +58,7 @@ Stack decisions:
 | **P1.1** | Workspaces: business or practice kind, one self entity per business, entity profile (jurisdiction, entity type, GST/VAT registration and period, year end), workspace switcher | done (2026-10-26) |
 | **P1.2** | Workspace dashboard with entity tiles, entity dashboard, Knowledge Hub at /knowledge filtered by the selected entity's jurisdiction, chat UI (not connected) in the hub and on the entity dashboard | done (2026-10-26) |
 | **P2a** | A platform admin (one, promoted from the command line), a users page with ban and unban, and the knowledge base in Postgres (sources, versions, chunks; draft → preview → publish) fed by paste, file upload or an allowlisted official URL, with hybrid search and a "test a question" page; the 14 curriculum docs seeded | done (2026-10-26) |
-| **P2b** | `kb_fact` and facts editing in the admin, a `/laws` page, the web reading the KB from the API | planned |
+| **P2b** | `kb_fact` and facts editing in the admin, a `/laws` page, the web reading the KB from the API | built (2026-10-27); "done" waits on the admin-facts browser check below |
 | **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `src/lib/chat.ts` | planned |
 | **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT) stored encrypted; PII redaction with placeholders kept per conversation | planned |
 | **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | planned |
@@ -79,6 +79,8 @@ Stack decisions:
 
 - P1 ships with `requireEmailVerification: false`; email verification is owed in P5 (needs SMTP).
 - Four content skills named in CLAUDE.md (`topic-author`, `fact-check`, `exercise-author`, `new-interactive`) are not written; after P2a they should edit through the admin API or the seed fixtures. `content-sync` was written on 2026-10-26.
+- `/knowledge/laws` is empty until the admin publishes an Act, Bill or standard.
+- Browser-check `/admin/facts`, `/admin/facts/new` and `/admin/facts/:key` as the platform admin (P2b's check covered them only as a non-admin), and confirm that a signed-in non-admin sees Page not found at `/admin` every time (one run did not; believed timing).
 
 ## Data track: the entity's own numbers (decided 2026-10-26)
 

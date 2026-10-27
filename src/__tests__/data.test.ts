@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { accountsFor, chart, checklists, codingScenarios, facts, flashcards, journalScenarios, quizzes, standards, taxCodes } from '../data';
+import { accountsFor, chart, checklists, codingScenarios, flashcards, journalScenarios, quizzes, standards, taxCodes } from '../data';
 import { docs, factTokens } from '../content/docs';
+import { seedFacts as facts } from './seedData';
 import { checkEntry } from '../utils/ledger';
 
-// Vitest runs through Vite, so the docs are loaded by the same import.meta.glob the site uses.
+// The docs come from seedData.ts, which globs docs/ the same way the server seed reads it.
 const docIds = new Set(docs.map((d) => d.id));
 
 describe('curriculum docs', () => {

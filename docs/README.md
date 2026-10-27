@@ -9,4 +9,4 @@ These Markdown files are the course. The site renders them at `/knowledge/learn/
 | `australia/` | GST and BAS, PAYG and super, the Corporations Act, Xero/QBO AU setup |
 | `uk/` | VAT and MTD, PAYE and CIS, the Companies Act 2006, Xero/QBO UK setup |
 
-Rules for writing a doc are in `engineering/content-rules.md`. Every figure is written as `{{fact:key}}` and comes from `src/data/facts.json`.
+Rules for writing a doc are in `engineering/content-rules.md`. Every figure is written as `{{fact:key}}` and comes from the `kb_fact` table (seeded from `src/data/facts.json`, edited at `/admin/facts`).

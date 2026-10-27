@@ -11,6 +11,7 @@
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "kb:seed-curriculum": "node --env-file=../.env --import tsx scripts/seed-curriculum.ts",
+    "kb:seed-facts": "node --env-file=../.env --import tsx scripts/seed-facts.ts",
     "db:migrate": "node --env-file=../.env --import tsx scripts/migrate.ts"
   },
   "dependencies": {

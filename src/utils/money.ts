@@ -35,6 +35,21 @@ export function parseMoney(input: string): number | null {
   return negative ? -cents : cents;
 }
 
+/** "10" → 1000, "10.5" → 1050, "10.25%" → 1025, " 0.75 % " → 75. More than 2 decimals, negatives, empty, or > 100% → null. Digits only, no floats. */
+export function parseRateBp(input: string): number | null {
+  const m = /^\s*(\d{1,3})(?:\.(\d{1,2}))?\s*%?\s*$/.exec(input);
+  if (!m) return null;
+  const bp = Number(m[1]) * 100 + Number((m[2] ?? '').padEnd(2, '0'));
+  return bp > 10_000 ? null : bp;
+}
+
+/** 1000 → "10", 1050 → "10.5", 1025 → "10.25", 75 → "0.75". Integer maths only. */
+export function formatRateInput(bp: number): string {
+  const whole = Math.trunc(bp / 100);
+  const frac = String(bp % 100).padStart(2, '0').replace(/0+$/, '');
+  return frac === '' ? String(whole) : `${whole}.${frac}`;
+}
+
 const formatters: Record<Currency, Intl.NumberFormat> = {
   AUD: new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }),
   GBP: new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }),

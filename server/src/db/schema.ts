@@ -18,6 +18,7 @@ import {
   vector,
 } from 'drizzle-orm/pg-core';
 import { ACCOUNT_CLASSES } from '../../../src/utils/accountClasses';
+import type { CurriculumMeta, Fact } from '../../../src/data/schemas';
 import type { ImportIssue } from '../../../src/utils/ledgerImport';
 import { organization } from './auth-schema';
 
@@ -156,6 +157,7 @@ export const kbSource = pgTable('kb_source', {
   billStatus: text('bill_status', { enum: BILL_STATUSES }),
   enactedAsSourceId: uuid('enacted_as_source_id').references((): AnyPgColumn => kbSource.id, { onDelete: 'set null' }),
   sitePath: text('site_path'),
+  meta: jsonb('meta').$type<CurriculumMeta>(),
   createdBy: text('created_by').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -196,3 +198,28 @@ export const kbChunk = pgTable('kb_chunk', {
   embedModel: text('embed_model'),
   embeddedAt: timestamp('embedded_at', { withTimezone: true }),
 }, (t) => [uniqueIndex('kb_chunk_version_ordinal_idx').on(t.versionId, t.ordinal)]);
+
+export const FACT_UNITS = ['bp', 'cents', 'count', 'date', 'text'] as const;
+// Global (Hard rule 16): written only by requireAdmin routes and the seed. Checks live in 0014.
+export const kbFact = pgTable('kb_fact', {
+  key: text('key').primaryKey(),
+  label: text('label').notNull(),
+  jurisdiction: text('jurisdiction', { enum: KB_JURISDICTIONS }).notNull(),
+  unit: text('unit', { enum: FACT_UNITS }).notNull(),
+  valueNum: bigint('value_num', { mode: 'number' }),
+  valueText: text('value_text'),
+  effectiveFrom: date('effective_from', { mode: 'string' }).notNull(),
+  source: text('source').notNull(),
+  verifiedOn: date('verified_on', { mode: 'string' }),
+  note: text('note'),
+  updatedBy: text('updated_by').notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+export const kbFactHistory = pgTable('kb_fact_history', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  factKey: text('fact_key').notNull().references(() => kbFact.key, { onDelete: 'restrict' }),
+  fact: jsonb('fact').$type<Fact>().notNull(),
+  changeNote: text('change_note').notNull(),
+  changedBy: text('changed_by').notNull(),
+  changedAt: timestamp('changed_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index('kb_fact_history_key_idx').on(t.factKey, t.changedAt)]);

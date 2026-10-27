@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyRate, formatRate, parseMoney, roundDiv } from '../utils/money';
+import { applyRate, formatRate, formatRateInput, parseMoney, parseRateBp, roundDiv } from '../utils/money';
 
 describe('money', () => {
   it('rounds half away from zero', () => {
@@ -25,5 +25,29 @@ describe('money', () => {
     expect(formatRate(1000)).toBe('10%');
     expect(formatRate(1150)).toBe('11.5%');
     expect(formatRate(1225)).toBe('12.25%');
+  });
+});
+
+describe('rates', () => {
+  it('parses rates into basis points', () => {
+    expect(parseRateBp('10')).toBe(1000);
+    expect(parseRateBp('10.5')).toBe(1050);
+    expect(parseRateBp('10.25%')).toBe(1025);
+    expect(parseRateBp(' 0.75 % ')).toBe(75);
+    expect(parseRateBp('100')).toBe(10_000);
+  });
+  it('rejects bad rates', () => {
+    expect(parseRateBp('100.01')).toBeNull();
+    expect(parseRateBp('10.125')).toBeNull();
+    expect(parseRateBp('-1')).toBeNull();
+    expect(parseRateBp('')).toBeNull();
+    expect(parseRateBp('abc')).toBeNull();
+  });
+  it('formats basis points for an input box', () => {
+    expect(formatRateInput(1000)).toBe('10');
+    expect(formatRateInput(1050)).toBe('10.5');
+    expect(formatRateInput(1025)).toBe('10.25');
+    expect(formatRateInput(75)).toBe('0.75');
+    expect(formatRateInput(0)).toBe('0');
   });
 });

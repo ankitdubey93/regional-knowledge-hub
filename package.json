@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build && node scripts/check-bundle-secrets.mjs",
+    "build": "tsc --noEmit && vite build && node scripts/check-bundle-secrets.mjs && node scripts/check-bundle-content.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit && npm run typecheck -w server",
     "lint": "oxlint --deny-warnings",

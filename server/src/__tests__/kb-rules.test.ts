@@ -20,6 +20,7 @@ const clean = (over: Partial<ValidateInput> = {}): ValidateInput => ({
   bodyMd: LONG_BODY,
   chunks: [chunk()],
   duplicateOfLabel: null,
+  unknownFacts: [],
   ...over,
 });
 
@@ -43,7 +44,7 @@ describe('kb rules', () => {
   it('R3 an act with no URL, no effective date and no chunks has three blocking issues', () => {
     const issues = validateVersion({
       kind: 'act', officialUrl: null, billStatus: null, effectiveFrom: null,
-      bodyMd: 'Short.', chunks: [], duplicateOfLabel: null,
+      bodyMd: 'Short.', chunks: [], duplicateOfLabel: null, unknownFacts: [],
     });
     expect(issues.map((x) => x.code)).toEqual(['no_url', 'no_effective_date', 'no_chunks', 'short_text']);
     expect(issues.slice(0, 3).every((x) => x.level === 'block')).toBe(true);
@@ -64,7 +65,7 @@ describe('kb rules', () => {
   });
 
   it('R6 a curriculum version needs no URL or date', () => {
-    const curriculum = { kind: 'curriculum' as const, officialUrl: null, effectiveFrom: null, billStatus: null, duplicateOfLabel: null };
+    const curriculum = { kind: 'curriculum' as const, officialUrl: null, effectiveFrom: null, billStatus: null, duplicateOfLabel: null, unknownFacts: [] };
     expect(codes({ ...curriculum, bodyMd: 'Too short.', chunks: [chunk({ provisionRef: null })] })).toEqual(['short_text']);
     expect(validateVersion({ ...curriculum, bodyMd: 'A curriculum page. '.repeat(12), chunks: [chunk()] })).toEqual([]);
   });
@@ -82,6 +83,16 @@ describe('kb rules', () => {
 
     const duplicate = validateVersion(clean({ kind: 'guidance', duplicateOfLabel: 'v1' }));
     expect(duplicate).toEqual([{ level: 'warn', code: 'duplicate', message: 'This text is identical to version "v1"' }]);
+  });
+
+  it('V-unknown blocks a version with an unknown fact', () => {
+    const issues = validateVersion(clean({ unknownFacts: ['au.x.y'] }));
+    expect(issues.map((x) => x.code)).toContain('unknown_fact');
+    expect(issues.find((x) => x.code === 'unknown_fact')?.message).toBe('Unknown fact key(s): au.x.y');
+  });
+
+  it('V-known has no unknown_fact issue when the list is empty', () => {
+    expect(codes(clean({ unknownFacts: [] }))).not.toContain('unknown_fact');
   });
 
   it('R8 diffVersions finds added, changed and removed provisions', () => {

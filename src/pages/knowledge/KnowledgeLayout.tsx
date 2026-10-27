@@ -6,6 +6,7 @@ const HUB_NAV = [
   { to: '/knowledge', label: 'Overview', end: true },
   { to: '/knowledge/learn', label: 'Learn', end: false },
   { to: '/knowledge/compare', label: 'Compare', end: false },
+  { to: '/knowledge/laws', label: 'Laws', end: false },
   { to: '/knowledge/tools', label: 'Tools', end: false },
   { to: '/knowledge/practice', label: 'Practice', end: false },
 ];

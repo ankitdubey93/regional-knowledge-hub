@@ -3,7 +3,6 @@
  * schema once, at module load, so a malformed file fails loudly (and the
  * data tests fail before the build ships it).
  */
-import factsJson from './facts.json';
 import chartJson from './chart-of-accounts.json';
 import taxCodesJson from './tax-codes.json';
 import standardsJson from './standards-mapping.json';
@@ -16,7 +15,6 @@ import {
   chartSchema,
   checklistsSchema,
   codingScenariosSchema,
-  factsSchema,
   flashcardsSchema,
   journalScenariosSchema,
   quizSchema,
@@ -26,7 +24,6 @@ import {
   type Jurisdiction,
 } from './schemas';
 
-export const facts = factsSchema.parse(factsJson);
 export const chart = chartSchema.parse(chartJson);
 export const taxCodes = taxCodesSchema.parse(taxCodesJson);
 export const standards = standardsMappingSchema.parse(standardsJson);

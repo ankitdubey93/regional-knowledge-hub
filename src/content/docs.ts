@@ -1,7 +1,9 @@
+import { z } from 'zod';
 import { parseFrontmatter } from './frontmatter';
-import type { Jurisdiction } from '../data/schemas';
+import { curriculumMeta } from './curriculumMeta';
+import { sectionSchema, type Jurisdiction, type SiteDoc } from '../data/schemas';
 
-export type Section = 'core-accounting' | 'standards' | 'australia' | 'uk';
+export type Section = z.infer<typeof sectionSchema>;
 
 export interface Doc {
   id: string; // "australia/bas-gst-guide"
@@ -25,12 +27,12 @@ export const SECTIONS: { id: Section; title: string; blurb: string }[] = [
   { id: 'uk', title: 'United Kingdom', blurb: 'VAT and Making Tax Digital, PAYE and CIS, the Companies Act, and Xero or QBO setup.' },
 ];
 
-// Vite inlines every curriculum file at build time. The path is relative to this file.
-const files = import.meta.glob('../../docs/*/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+function minutesOf(body: string): number {
+  return Math.max(1, Math.round(body.split(/\s+/).length / 200));
+}
 
-function asList(v: string | string[] | undefined): string[] {
-  if (v === undefined) return [];
-  return Array.isArray(v) ? v : [v];
+export function withMinutes(d: SiteDoc): Doc {
+  return { ...d, minutes: minutesOf(d.body) };
 }
 
 export function buildDocs(source: Record<string, string>): Doc[] {
@@ -42,23 +44,21 @@ export function buildDocs(source: Record<string, string>): Doc[] {
     const { data, body } = parseFrontmatter(raw);
     docs.push({
       id: `${section}/${slug}`,
-      section: section as Section,
-      slug: slug!,
+      ...curriculumMeta(section!, slug!, data),
       title: String(data.title ?? slug),
-      summary: String(data.summary ?? ''),
-      jurisdiction: (data.jurisdiction ?? 'INTL') as Doc['jurisdiction'],
-      level: data.level === 'intermediate' ? 'intermediate' : 'beginner',
-      order: Number(data.order ?? 99),
-      minutes: Math.max(1, Math.round(body.split(/\s+/).length / 200)),
-      facts: asList(data.facts),
-      tools: asList(data.tools),
+      minutes: minutesOf(body),
       body,
     });
   }
   return docs.sort((a, b) => a.section.localeCompare(b.section) || a.order - b.order);
 }
 
-export const docs: Doc[] = buildDocs(files);
+export let docs: Doc[] = [];
+
+/** Replaces the registry; sorted by section then order, as buildDocs sorts. */
+export function setDocs(next: SiteDoc[]): void {
+  docs = next.map(withMinutes).sort((a, b) => a.section.localeCompare(b.section) || a.order - b.order);
+}
 
 export function docsIn(section: Section): Doc[] {
   return docs.filter((d) => d.section === section).sort((a, b) => a.order - b.order);

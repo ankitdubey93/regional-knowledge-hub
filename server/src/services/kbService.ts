@@ -1,8 +1,10 @@
 import { and, asc, count, desc, eq, ilike, inArray, ne, or, sql, type SQL } from 'drizzle-orm';
 import { db } from '../db/client';
-import { kbChunk, kbSource, kbVersion } from '../db/schema';
+import { kbChunk, kbFact, kbSource, kbVersion } from '../db/schema';
+import type { Fact } from '../../../src/data/schemas';
 import type { Tx } from '../db/withOrg';
 import { chunkText, type RawChunk } from '../kb/chunk';
+import { factKeysIn, renderFactForKb, renderFactTokens } from '../kb/curriculum';
 import { diffVersions } from '../kb/diff';
 import { normaliseText, sha256Hex } from '../kb/normalise';
 import { validateVersion } from '../kb/validate';
@@ -30,7 +32,7 @@ import { recordAudit } from './auditService';
 
 const INSERT_BATCH = 500;
 
-function likeEscape(q: string): string {
+export function likeEscape(q: string): string {
   return q.replace(/[\\%_]/g, '\\$&');
 }
 
@@ -161,6 +163,47 @@ async function insertChunks(tx: Tx, versionId: string, citation: string, chunks:
   }
 }
 
+/** A kb_fact row → the Fact shape of src/data/schemas.ts. */
+export function rowToFact(r: typeof kbFact.$inferSelect): Fact {
+  const value = r.valueNum !== null ? r.valueNum : (r.valueText ?? '');
+  return {
+    label: r.label,
+    jurisdiction: r.jurisdiction,
+    unit: r.unit,
+    value,
+    effectiveFrom: r.effectiveFrom,
+    source: r.source,
+    verifiedOn: r.verifiedOn,
+    ...(r.note !== null ? { note: r.note } : {}),
+  };
+}
+
+/** For a curriculum source: chunks of the body with tokens rendered from kb_fact, and the keys (tokens plus meta.facts) that kb_fact lacks. Other kinds: chunkText(body), []. */
+export async function curriculumChunks(
+  exec: Tx | typeof db,
+  source: KbSource,
+  body: string,
+): Promise<{ chunks: RawChunk[]; unknownFacts: string[] }> {
+  if (source.kind !== 'curriculum') return { chunks: chunkText(body), unknownFacts: [] };
+  const keys = [...new Set([...factKeysIn(body), ...(source.meta?.facts ?? [])])];
+  const rows = keys.length === 0 ? [] : await exec.select().from(kbFact).where(inArray(kbFact.key, keys));
+  const facts = new Map(rows.map((r) => [r.key, rowToFact(r)]));
+  const unknownFacts = keys.filter((k) => !facts.has(k));
+  const rendered = renderFactTokens(body, (key) => {
+    const f = facts.get(key);
+    return f ? renderFactForKb(f) : `[unknown fact ${key}]`;
+  });
+  return { chunks: chunkText(rendered), unknownFacts };
+}
+
+/** Deletes and re-inserts the chunks of one version (embeddings cleared). Returns the new chunk count. */
+export async function rechunkVersion(tx: Tx, versionId: string, source: KbSource, body: string): Promise<number> {
+  const { chunks } = await curriculumChunks(tx, source, body);
+  await tx.delete(kbChunk).where(eq(kbChunk.versionId, versionId));
+  await insertChunks(tx, versionId, source.citation, chunks);
+  return chunks.length;
+}
+
 export async function createDraft(actorId: string, sourceId: string, meta: VersionMeta, input: DraftText): Promise<DraftOutcome> {
   const id = await db.transaction(async (tx): Promise<string | null> => {
     const found = await tx.select().from(kbSource).where(eq(kbSource.id, sourceId)).limit(1);
@@ -169,7 +212,7 @@ export async function createDraft(actorId: string, sourceId: string, meta: Versi
 
     const body = normaliseText(input.text);
     const sha = sha256Hex(body);
-    const chunks = chunkText(body);
+    const { chunks, unknownFacts } = await curriculumChunks(tx, source, body);
     const dup = await tx
       .select({ label: kbVersion.label })
       .from(kbVersion)
@@ -183,6 +226,7 @@ export async function createDraft(actorId: string, sourceId: string, meta: Versi
       bodyMd: body,
       chunks,
       duplicateOfLabel: dup[0]?.label ?? null,
+      unknownFacts,
     });
 
     const rows = await tx
@@ -235,16 +279,16 @@ export async function updateDraft(actorId: string, id: string, patch: VersionPat
     const { bodyMd: newBody, ...metaPatch } = patch;
     let body = version.bodyMd;
     let sha = version.sha256;
-    let chunks: RawChunk[] | null = null;
+    let changed: { chunks: RawChunk[]; unknownFacts: string[] } | null = null;
     if (newBody !== undefined) {
       body = normaliseText(newBody);
       sha = sha256Hex(body);
-      chunks = chunkText(body);
+      changed = await curriculumChunks(tx, source, body);
       await tx.delete(kbChunk).where(eq(kbChunk.versionId, id));
-      await insertChunks(tx, id, source.citation, chunks);
+      await insertChunks(tx, id, source.citation, changed.chunks);
     }
     const effectiveFrom = metaPatch.effectiveFrom !== undefined ? metaPatch.effectiveFrom : version.effectiveFrom;
-    const raw = chunks ?? chunkText(body);
+    const { chunks: raw, unknownFacts } = changed ?? (await curriculumChunks(tx, source, body));
     const dup = await tx
       .select({ label: kbVersion.label })
       .from(kbVersion)
@@ -258,6 +302,7 @@ export async function updateDraft(actorId: string, id: string, patch: VersionPat
       bodyMd: body,
       chunks: raw,
       duplicateOfLabel: dup[0]?.label ?? null,
+      unknownFacts,
     });
 
     await tx

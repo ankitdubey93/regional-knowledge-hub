@@ -1,23 +1,35 @@
 export class ApiError extends Error {
   readonly status: number;
-  constructor(status: number, message: string) {
+  readonly issues: { level: string; code: string; message: string }[];
+  constructor(status: number, message: string, issues: ApiError['issues'] = []) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.issues = issues;
   }
 }
 
 async function failure(res: Response): Promise<ApiError> {
   let message = `Request failed (${res.status})`;
+  let issues: ApiError['issues'] = [];
   try {
     const body: unknown = await res.json();
     if (typeof body === 'object' && body !== null && 'error' in body && typeof body.error === 'string') {
       message = body.error;
     }
+    if (
+      typeof body === 'object' &&
+      body !== null &&
+      'issues' in body &&
+      Array.isArray(body.issues) &&
+      body.issues.every((i: unknown) => typeof i === 'object' && i !== null && 'message' in i && typeof i.message === 'string')
+    ) {
+      issues = body.issues;
+    }
   } catch {
     // Not JSON: keep the generic message.
   }
-  return new ApiError(res.status, message);
+  return new ApiError(res.status, message, issues);
 }
 
 export async function apiJson<T>(path: string, init?: { method?: 'GET' | 'POST' | 'PATCH'; body?: unknown }): Promise<T> {

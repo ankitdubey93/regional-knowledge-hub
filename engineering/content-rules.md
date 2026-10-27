@@ -14,7 +14,7 @@ A software help centre (Xero Central, QuickBooks support) is a fine source for *
 
 ## Figures
 
-- A figure that changes over time (a rate, threshold, cap, limit, effective date) is a fact in `src/data/facts.json`, written in a doc as `{{fact:key}}`.
+- A figure that changes over time (a rate, threshold, cap, limit, effective date) is a fact in the `kb_fact` table, edited at `/admin/facts` (a fact edited there is the source of truth) and written in a doc as `{{fact:key}}`. `src/data/facts.json` only seeds an empty or seed-owned database: an edit to it does not reach a database where an admin has changed that fact.
 - Fact keys: `<jurisdiction>.<area>.<name>`, e.g. `au.gst.rate`, `uk.ca.smallTurnover`, `intl.ifrs16.shortTermMonths`.
 - Units: `bp` (basis points, 10% = 1000), `cents` (cents or pence), `count`, `date` (`yyyy-mm-dd`), `text`.
 - `verifiedOn` is the date **you** read the figure on the official page. Not the date you wrote the entry, not the date someone else checked it. If you could not confirm it, `null`.
