@@ -9,7 +9,6 @@ import { WorkspaceSetup } from '../pages/workspace/WorkspaceSetup';
 import { WorkspaceHome } from '../pages/workspace/WorkspaceHome';
 import { EntityDashboard } from '../pages/entity/EntityDashboard';
 import { EntitySettings } from '../pages/entity/EntitySettings';
-import { NOT_CONNECTED_REPLY } from '../lib/chat';
 import * as session from '../lib/session';
 
 const signedIn = {
@@ -300,17 +299,20 @@ describe('EntityDashboard', () => {
     );
   });
 
-  it('answers with the not-connected notice', async () => {
+  it('the entity chat lists chats for this client', async () => {
     vi.mocked(session.useSessionInfo).mockReturnValue(signedIn);
-    const fetchMock = vi.fn(async () => jsonResponse(200, { client: acmeClient }));
+    const fetchMock = vi.fn(async (input: string) => {
+      if (input === '/api/clients/c1') return jsonResponse(200, { client: acmeClient });
+      if (input === '/api/chat/status') {
+        return jsonResponse(200, { configured: true, provider: 'stub', model: 'stub-model', embeddings: false });
+      }
+      if (input === '/api/conversations?clientId=c1') return jsonResponse(200, { conversations: [] });
+      return jsonResponse(404, { error: 'Not stubbed' });
+    });
     vi.stubGlobal('fetch', fetchMock);
-    const user = userEvent.setup();
     renderAt('/entities/c1', '/entities/:id', <EntityDashboard />);
     await screen.findByRole('heading', { name: 'Acme Pty Ltd' });
-    await user.type(screen.getByLabelText('Your question'), 'When is the BAS due?');
-    await user.click(screen.getByRole('button', { name: 'Send' }));
-    expect(await screen.findByText(NOT_CONNECTED_REPLY)).toBeInTheDocument();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(fetchMock.mock.calls.map(([url]) => url)).toContain('/api/conversations?clientId=c1'));
   });
 
   it('shows not found', async () => {

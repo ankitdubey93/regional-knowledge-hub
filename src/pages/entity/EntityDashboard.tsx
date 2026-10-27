@@ -42,6 +42,8 @@ function EntityView({ c }: { c: ClientRecord }) {
             {...(summary === '' ? {} : { contextLine: `Profile: ${summary}` })}
             placeholder={`Ask about ${c.name}`}
             suggestions={entitySuggestions(c.jurisdiction)}
+            clientId={c.id}
+            scope={null}
           />
         </div>
         <aside className="space-y-4">

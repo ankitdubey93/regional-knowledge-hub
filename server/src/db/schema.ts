@@ -20,6 +20,7 @@ import {
 import { ACCOUNT_CLASSES } from '../../../src/utils/accountClasses';
 import type { CurriculumMeta, Fact } from '../../../src/data/schemas';
 import type { ImportIssue } from '../../../src/utils/ledgerImport';
+import { CHAT_SCOPES, MESSAGE_ROLES, MESSAGE_STATUSES, type GroundingFlag } from '../../../src/lib/chatWire';
 import { organization } from './auth-schema';
 
 export * from './auth-schema';
@@ -120,6 +121,106 @@ export const ledgerBalance = pgTable(
     foreignKey({ columns: [t.importId, t.orgId], foreignColumns: [ledgerImport.id, ledgerImport.orgId], name: 'ledger_balance_import_org_fk' }).onDelete('cascade'),
     foreignKey({ columns: [t.accountId, t.orgId], foreignColumns: [ledgerAccount.id, ledgerAccount.orgId], name: 'ledger_balance_account_org_fk' }).onDelete('restrict'),
     uniqueIndex('ledger_balance_import_account_idx').on(t.importId, t.accountId),
+  ],
+);
+
+// Tenant table: RLS is enabled and forced in migration 0016 (Hard rule 11).
+export const conversation = pgTable(
+  'conversation',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    clientId: uuid('client_id'),
+    userId: text('user_id').notNull(),
+    title: text('title').notNull().default('New chat'),
+    scope: text('scope', { enum: CHAT_SCOPES }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'conversation_client_org_fk' }).onDelete('cascade'),
+    unique('conversation_id_org_unique').on(t.id, t.orgId),
+    index('conversation_org_client_idx').on(t.orgId, t.clientId, t.updatedAt),
+  ],
+);
+
+// Tenant table: RLS is enabled and forced in migration 0016 (Hard rule 11).
+export const chatMessage = pgTable(
+  'chat_message',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    conversationId: uuid('conversation_id').notNull(),
+    role: text('role', { enum: MESSAGE_ROLES }).notNull(),
+    body: text('body').notNull(),
+    status: text('status', { enum: MESSAGE_STATUSES }).notNull(),
+    flags: jsonb('flags').$type<GroundingFlag[]>().notNull().default([]),
+    provider: text('provider'),
+    model: text('model'),
+    createdBy: text('created_by').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.conversationId, t.orgId], foreignColumns: [conversation.id, conversation.orgId], name: 'chat_message_conversation_org_fk' }).onDelete('cascade'),
+    unique('chat_message_id_org_unique').on(t.id, t.orgId),
+    index('chat_message_conversation_idx').on(t.conversationId, t.createdAt),
+  ],
+);
+
+// Tenant table: RLS is enabled and forced in migration 0016 (Hard rule 11).
+export const chatCitation = pgTable(
+  'chat_citation',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    messageId: uuid('message_id').notNull(),
+    marker: integer('marker').notNull(),
+    sourceId: uuid('source_id').notNull(),
+    versionId: uuid('version_id').notNull(),
+    chunkId: uuid('chunk_id').notNull(),
+    title: text('title').notNull(),
+    citation: text('citation').notNull(),
+    kind: text('kind').notNull(),
+    jurisdiction: text('jurisdiction').notNull(),
+    billStatus: text('bill_status'),
+    headingPath: text('heading_path').array().notNull().default(sql`'{}'::text[]`),
+    provisionRef: text('provision_ref'),
+    sitePath: text('site_path'),
+    officialUrl: text('official_url'),
+    excerpt: text('excerpt').notNull(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.messageId, t.orgId], foreignColumns: [chatMessage.id, chatMessage.orgId], name: 'chat_citation_message_org_fk' }).onDelete('cascade'),
+    uniqueIndex('chat_citation_message_marker_idx').on(t.messageId, t.marker),
+  ],
+);
+
+// Global, not a tenant table: provider calls for the spend guard. No text. Append-only for chub_app (migration 0016).
+export const aiUsage = pgTable(
+  'ai_usage',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id').notNull(),
+    userId: text('user_id').notNull(),
+    provider: text('provider').notNull(),
+    model: text('model').notNull(),
+    inputTokens: integer('input_tokens').notNull(),
+    outputTokens: integer('output_tokens').notNull(),
+    cacheWriteTokens: integer('cache_write_tokens').notNull().default(0),
+    cacheReadTokens: integer('cache_read_tokens').notNull().default(0),
+    costMicroUsd: bigint('cost_micro_usd', { mode: 'number' }).notNull(),
+    estimated: boolean('estimated').notNull().default(false),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('ai_usage_created_idx').on(t.createdAt),
+    index('ai_usage_user_created_idx').on(t.userId, t.createdAt),
   ],
 );
 

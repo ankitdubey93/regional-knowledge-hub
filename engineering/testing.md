@@ -1,8 +1,8 @@
 # Testing
 
 ```bash
-npm test            # all web Vitest files (181 tests, 15 files)
-npm test -w server  # server tests (168 tests, 16 files); needs the database
+npm test            # all web Vitest files (194 tests, 17 files)
+npm test -w server  # server tests (249 tests, 20 files); needs the database
 npx vitest run src/__tests__/tax.test.ts
 npm run typecheck
 npm run lint        # inside a git repository (oxlint follows .gitignore)
@@ -18,15 +18,17 @@ npm run lint        # inside a git repository (oxlint follows .gitignore)
 | `engines.test.ts` | Depreciation, FIFO and weighted average, UK two-year size rule, AU large proprietary test, ledger checks, spaced repetition |
 | `data.test.ts` | Every JSON file parses; doc frontmatter and `{{fact:…}}` keys exist; each doc has 5+ quiz questions and flashcards; journal scenarios balance on real accounts; coding answers are real accounts and tax codes |
 | `components.test.tsx` | Journal simulator feedback and progress, quiz scoring, topic rendering with fact links, tax calculator, coding scenarios, company size, resetting practice data from the Practice page |
-| `hub.test.ts` | Hub scope rules (`scope.ts`), `appendExchange` and `parseActiveEntity` |
-| `knowledge.test.tsx` | Knowledge Hub filtering by entity and by the signed-out switch, tax calculator scope, old-URL redirects, `ChatPanel` (not-connected reply, no `fetch`) |
+| `hub.test.ts` | Hub scope rules (`scope.ts`), the chat helpers in `src/lib/chat.ts` (`linkMarkers`, `flagText`, `statusBadge`, suggestions) and `parseActiveEntity` |
+| `knowledge.test.tsx` | Knowledge Hub filtering by entity and by the signed-out switch, tax calculator scope, old-URL redirects, `ChatPanel` (hub chat signed-in only, the not-configured notice, no provider call) |
+| `chatWire.test.ts` | CW1 to CW6: `parseSse` (two events, an unfinished event, multi-line data, CRLF, no data) and the wire schemas |
+| `chat-panel.test.tsx` | CP1 to CP5: the chat panel with `fetch` stubbed: listing, sending and streaming, sources and citations, the not-configured callout, rename and delete |
 | `admin.test.tsx` | The admin pages with `../lib/session` mocked and `fetch` stubbed: U1 to U3 (a non-admin sees Page not found with no fetch; the users list; banning with a reason), N1 (the Admin link shows only to the platform admin), KW1 to KW5 (pasting a draft, Publish disabled by a blocking issue, the Bill badge and the keyword-only note, Embed now, uploading a file) |
 | `admin-facts.test.tsx` | AFW1 to AFW5: a non-admin sees Page not found, the list shows the formatted value and Unverified, a bad rate sends no request, a valid rate posts integer basis points with `verifiedOn: null`, the edit page shows the re-chunk message |
 | `laws.test.tsx` | The `/knowledge/laws` list and detail pages and the `/laws` redirect, with `fetch` stubbed |
 | `kb-store.test.tsx` | `loadKb` fills the registries; `KbGate` shows the error and Try again on a failure |
 | `ledger-engines.test.ts` | 25 cases: `parseCsv`, account classes and label suggestions, amount parsing, `suggestMapping`, `mapTrialBalance` (balance and duplicate checks), the P&L and balance sheet on the AU and UK fixtures in `fixtures/tb.ts`, variance rounding and `movementBetween` |
 | `ledger.test.tsx` | 9 cases: the dashboard links, the Books page and import wizard (file, columns, totals, import, an unset type blocks), the Reports page (P&L, comparison, empty state), with `fetch` stubbed |
-| `account.test.tsx` | Sign-in, sign-up, workspace setup, and the workspace home, entity dashboard and entity settings pages, with `../lib/session` mocked in `setup.ts` and `fetch` stubbed per test |
+| `account.test.tsx` | Sign-in, sign-up, workspace setup, and the workspace home, entity dashboard (including its chat panel with `fetch` stubbed) and entity settings pages, with `../lib/session` mocked in `setup.ts` and `fetch` stubbed per test |
 
 ## Conventions
 
@@ -48,11 +50,15 @@ npm test -w server
 - `ledger.test.ts` (19 cases): import, reports, superseding, a user's class surviving a re-import, currency checks, and the cross-tenant cases for `ledger_import`, `ledger_account` and `ledger_balance` (404 for firm B, RLS with no `app.org_id`, `withOrg` cannot insert for another firm, composite foreign keys refuse another firm's client).
 - P2a files (78 cases): `admin.test.ts` (A1 to A11: 404 for signed-out and ordinary users, listing and filtering, sign-up cannot set a role, one platform admin in the database, ban ends the session and is audited without the reason, unban, no self-ban, `chub_app` cannot delete from `admin_audit`); `kb-text.test.ts` (T1 to T9: normalising and chunking, no database); `kb-rules.test.ts` (R1 to R10: official URLs, validation, diff, rank fusion); `kb.test.ts` (K1 to K24: the admin KB routes against Postgres, including search, one published version per source, bills, withdraw, audit, embedding with a fake embedder, upload and fetch); `embed.test.ts` (E1 to E6: the Gemini client against a stubbed `fetch`); `kb-extract.test.ts` (X1 to X5: HTML, PDF and DOCX); `kb-fetch.test.ts` (F1 to F8: the allowlist, redirects, size and type limits); `kb-seed.test.ts` (S1 to S5: seeding the curriculum is idempotent and publishes a new version when a doc changes). `makePlatformAdmin` in `helpers.ts` demotes the earlier test admin, because the database allows one. The global KB and audit tables are not tenant tables, so they need no cross-tenant test.
 - P2b files: `fact-rules.test.ts` (8: `resolveVerifiedOn`, `checkFactSave`), `admin-facts.test.ts` (AF1 to AF10: 404 for non-admins, create, duplicate, non-official source, unit change, confirm, re-chunk of a published guide and not of a superseded one, history append-only for `chub_app`, nothing changed), `kb-public.test.ts` (the public routes: published only, no session; it deletes the rows it created in `afterAll` through the owner role so test order does not matter), and the rewritten `kb-seed.test.ts` (S1 to S8, F-S1, F-S2, plus the `unknown_fact` cases in `kb-rules.test.ts`).
+- P3 files (81 cases): `chat-text.test.ts` (35, no database: RD1 to RD12 `redact`, PR1 to PR5 the prompt, GR1 to GR9 grounding, CV1 and CV2 coverage, PC1 to PC5 pricing, SS1 and SS2 SSE); `chat-tables.test.ts` (T1 to T9: the three chat tables are invisible without `app.org_id` and to another firm, `withOrg` cannot insert for another firm, composite foreign keys, the scope and status checks, `chub_app` can insert but not update or delete `ai_usage`, deleting a client deletes its chats); `chat-providers.test.ts` (AN1 to AN6 the Anthropic client and GM1 to GM4 the Gemini client, both against a stubbed `fetch`); `chat.test.ts` (C1 to C27: the conversation and message routes over SSE with a stub provider and a fake embedder: grounded answers, flagged answers, not-covered answers that never reach the provider, redaction before the provider, the spend guard and per-user limit, a stopped stream, cross-firm 404s). `stubProvider.ts` and `kbFixtures.ts` are the helpers; `testEnv.ts` sets no AI keys.
 - No test calls an AI provider or any host other than loopback and the local database (Hard rule 15).
+- Not tested: a live Anthropic call, the Gemini request shape against a real endpoint, and the coverage thresholds against real questions.
 
 ## Browser check (manual, owed as a committed test)
 
 Before calling a UI change done, open every changed route at **375 px** and **1440 px**, in light and dark: no sideways scroll, no console errors, keyboard reachable. In v1 this was run with a scratch `playwright-core` script against the system Chrome (it measures `scrollWidth - clientWidth` on every route). To commit it, add `@playwright/test` as a dev dependency and port the script to `e2e/`.
+
+The P3 browser check (scratch script, 2026-10-27): `browser check: 12 page loads, 0 overflow, 0 console errors, keyboard ok`. It covered `/knowledge` signed out and signed in and `/entities/<id>` for an AU client, at 375 and 1440 px, light and dark, with `ANTHROPIC_API_KEY` unset so no provider was called, after creating a saved chat per page. `Send` was checked visible and disabled, not tabbed to, because it is disabled when no provider is configured. It checked layout, keyboard and console errors, not answers. It also confirmed a known issue: a signed-in user briefly sees the signed-out card on a cold load of `/knowledge`.
 
 The D1 browser check (scratch script, 2026-10-26): `browser check: 40 page loads, 0 overflow, 0 console errors, keyboard ok`. It imported the AU and UK fixtures through the wizard, then loaded Books and Reports (both tabs, and a comparison for AU) for an AU client, a UK client and a business entity at 375 and 1440 px, light and dark, checked the net profit on screen ($11,600.00 AU, £8,700.00 UK) and drove the wizard and the report selectors by keyboard. It found one overflow (the hidden "Actions" header cell on Books, fixed with `relative` on the cell).
 

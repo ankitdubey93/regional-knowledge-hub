@@ -59,7 +59,8 @@ Stack decisions:
 | **P1.2** | Workspace dashboard with entity tiles, entity dashboard, Knowledge Hub at /knowledge filtered by the selected entity's jurisdiction, chat UI (not connected) in the hub and on the entity dashboard | done (2026-10-26) |
 | **P2a** | A platform admin (one, promoted from the command line), a users page with ban and unban, and the knowledge base in Postgres (sources, versions, chunks; draft → preview → publish) fed by paste, file upload or an allowlisted official URL, with hybrid search and a "test a question" page; the 14 curriculum docs seeded | done (2026-10-26) |
 | **P2b** | `kb_fact` and facts editing in the admin, a `/laws` page, the web reading the KB from the API | built (2026-10-27); "done" waits on the admin-facts browser check below |
-| **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `src/lib/chat.ts` | planned |
+| **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `src/lib/chat.ts` | built (2026-10-27); "done" waits on the owner's live check below |
+| **P3b** | Numbers tool: answers from an entity's trial balance, computed by engines and cited to the report or account; amends Hard rule 12 | planned |
 | **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT) stored encrypted; PII redaction with placeholders kept per conversation | planned |
 | **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | planned |
 | Later | Local models, NER-based name detection, private KB per firm, 2FA/SSO, AU and UK data residency | maybe |
@@ -72,6 +73,7 @@ Stack decisions:
 | P2a | P1 |
 | P2b | P2a |
 | P3 | P2a (chat retrieves from the KB tables) |
+| P3b | P3, D1 |
 | P4 | P3 (uploads attach to conversations) |
 | P5 | P3 |
 
@@ -81,6 +83,15 @@ Stack decisions:
 - Four content skills named in CLAUDE.md (`topic-author`, `fact-check`, `exercise-author`, `new-interactive`) are not written; after P2a they should edit through the admin API or the seed fixtures. `content-sync` was written on 2026-10-26.
 - `/knowledge/laws` is empty until the admin publishes an Act, Bill or standard.
 - Browser-check `/admin/facts`, `/admin/facts/new` and `/admin/facts/:key` as the platform admin (P2b's check covered them only as a non-admin), and confirm that a signed-in non-admin sees Page not found at `/admin` every time (one run did not; believed timing).
+
+### Owed to P3
+
+- **The live check:** run one live Anthropic session (an AU GST question, an off-topic question, a question containing an email address) and record the result in CLAUDE.md. No test or browser check has called a real provider. P3 stays "built" until then.
+- Tune `MIN_SIMILARITY_BP` and `MIN_LEXEME_COVERAGE_BP` (`server/src/chat/coverage.ts`) on real questions; both are untuned guesses.
+- Add a sourced Gemini price row to `server/src/ai/pricing.ts` before Gemini chat can be configured, and check the Gemini request shape against a live call.
+- Re-check `PRICES` against Anthropic's pricing page (taken from a cached table on 2026-10-06).
+- A signed-in user briefly sees the signed-out card on a cold load of `/knowledge` (`KnowledgeHome` treats a pending session as no session). Owner's call.
+- The per-conversation placeholder map is P4; real rate limits are P5. Names not in a workspace's client list are not redacted.
 
 ## Data track: the entity's own numbers (decided 2026-10-26)
 
@@ -96,7 +107,7 @@ The goal is to give each entity its own numbers, so that answers can come from t
 
 Gates: D2 needs D1; D4 needs D1; D5 needs P4 and P5.
 
-P3 note: P3 will add a numbers tool. Answering from an entity's ledger needs an addition to Hard rule 12 (answers about its figures are grounded in ledger data computed by engines, and cite the report or account). That is decided in P3, not here.
+P3b note: the numbers tool is split from P3. Answering from an entity's ledger needs an addition to Hard rule 12 (answers about its figures are grounded in ledger data computed by engines, and cite the report or account). That is decided in P3b, not here.
 
 ### Owed to the data track
 

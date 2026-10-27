@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { appendExchange, NOT_CONNECTED_REPLY, type ChatMessage } from '../lib/chat';
+import { flagText, linkMarkers, statusBadge } from '../lib/chat';
 import { parseActiveEntity } from '../lib/activeEntity';
 import { frameworksFor, inScope, scopeFor, scopeName, type HubScope } from '../lib/scope';
 
@@ -38,19 +38,22 @@ describe('scope', () => {
   });
 });
 
-describe('appendExchange', () => {
-  it('ignores blank input', () => {
-    const before: ChatMessage[] = [];
-    expect(appendExchange(before, '   ', () => 'x')).toBe(before);
+describe('chat helpers', () => {
+  it('CH1 linkMarkers links single and grouped markers', () => {
+    expect(linkMarkers('A [1]. B [1, 2].', 'm1')).toBe('A [[1]](#cite-m1-1). B [[1]](#cite-m1-1) [[2]](#cite-m1-2).');
   });
 
-  it('appends the question and the not-connected reply', () => {
-    let n = 0;
-    const next = () => String(++n);
-    expect(appendExchange([], '  Hi  ', next)).toEqual([
-      { id: '1', role: 'user', text: 'Hi', notConnected: false },
-      { id: '2', role: 'assistant', text: NOT_CONNECTED_REPLY, notConnected: true },
-    ]);
+  it('CH2 linkMarkers leaves placeholders', () => {
+    expect(linkMarkers('Ask [NAME_1]', 'm1')).toBe('Ask [NAME_1]');
+  });
+
+  it('CH3 flagText', () => {
+    expect(flagText({ code: 'unsupported_number', detail: '12.5%' })).toBe('It uses a number not found in its sources: 12.5%.');
+  });
+
+  it('CH4 statusBadge', () => {
+    expect(statusBadge('flagged')).toBe('Check this answer');
+    expect(statusBadge('answered')).toBeNull();
   });
 });
 

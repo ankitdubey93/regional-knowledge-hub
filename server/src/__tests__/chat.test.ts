@@ -1,0 +1,477 @@
+import { randomUUID } from 'node:crypto';
+import pg from 'pg';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { setChatProviderForTests } from '../ai/chat';
+import { setEmbedderForTests, type Embedder } from '../ai/embed';
+import { costMicroUsd } from '../ai/pricing';
+import { auth } from '../auth';
+import { pool } from '../db/client';
+import { CHAT_MESSAGES } from '../types/chat';
+import { NOT_COVERED_REPLY, NOT_IN_SOURCES, parseSse, type ChatMessageView } from '../../../src/lib/chatWire';
+import { fakeEmbedder } from './fakeEmbedder';
+import { cleanupKb, draftFixture, publishFixture, snapshotKb } from './kbFixtures';
+import { call, createFirm, makePlatformAdmin, mergeCookies, signUp } from './helpers';
+import { startApp, stopApp } from './server';
+import { stubProvider, type StubProvider } from './stubProvider';
+import { testEnv } from './testEnv';
+
+const tag = randomUUID().slice(0, 8);
+const QUESTION = 'When does the zorbel levy apply to fennimore marmalade?';
+const PII_QUESTION =
+  'Acme Pty Ltd (jo@acme.com.au, TFN 123 456 782) asks when the zorbel levy applies to fennimore marmalade';
+
+let adminCookie = '';
+let cookieA = '';
+let orgA = '';
+let cookieB = '';
+let orgB = '';
+let memberCookie = '';
+let acmeId = '';
+let coveredChat = '';
+let stub: StubProvider;
+
+interface Asked {
+  status: number;
+  events: { event: string; data: unknown }[];
+  json: unknown;
+}
+
+async function ask(cookie: string, id: string, text: string): Promise<Asked> {
+  const res = await call('POST', `/api/conversations/${id}/messages`, { cookie, body: { text } });
+  const raw = await res.text();
+  if (!(res.headers.get('content-type') ?? '').includes('text/event-stream')) {
+    return { status: res.status, events: [], json: raw ? (JSON.parse(raw) as unknown) : null };
+  }
+  const parsed = parseSse(raw.endsWith('\n\n') ? raw : `${raw}\n\n`);
+  return {
+    status: res.status,
+    events: parsed.events.map((e) => ({ event: e.event, data: JSON.parse(e.data) as unknown })),
+    json: null,
+  };
+}
+
+async function newChat(cookie: string, body: unknown): Promise<string> {
+  const res = await call('POST', '/api/conversations', { cookie, body });
+  if (res.status !== 201) throw new Error(`create chat failed: ${res.status} ${await res.text()}`);
+  return ((await res.json()) as { conversation: { id: string } }).conversation.id;
+}
+
+function use(script: Parameters<typeof stubProvider>[0]): StubProvider {
+  stub = stubProvider(script);
+  setChatProviderForTests(stub);
+  return stub;
+}
+
+function doneMessage(a: Asked): ChatMessageView {
+  const d = a.events.find((e) => e.event === 'done');
+  if (!d) throw new Error('no done event');
+  return (d.data as { message: ChatMessageView }).message;
+}
+
+const names = (a: Asked) => a.events.map((e) => e.event);
+
+async function ownerQuery(sql: string, params: unknown[] = []): Promise<pg.QueryResult> {
+  const adminPool = new pg.Pool({ connectionString: testEnv.DATABASE_ADMIN_URL });
+  try {
+    return await adminPool.query(sql, params);
+  } finally {
+    await adminPool.end();
+  }
+}
+
+async function usageCount(org: string): Promise<number> {
+  return Number((await ownerQuery('select count(*)::int as n from ai_usage where org_id = $1', [org])).rows[0].n);
+}
+
+async function addMember(orgId: string): Promise<{ cookie: string; userId: string }> {
+  const m = await signUp();
+  await auth.api.addMember({ body: { userId: m.userId, organizationId: orgId, role: 'member' } });
+  const active = await call('POST', '/api/auth/organization/set-active', {
+    cookie: m.cookie,
+    body: { organizationId: orgId },
+  });
+  if (active.status !== 200) throw new Error(`member set-active failed: ${active.status}`);
+  return { cookie: mergeCookies(m.cookie, active), userId: m.userId };
+}
+
+beforeAll(async () => {
+  await snapshotKb();
+  setEmbedderForTests(null);
+  const admin = await signUp();
+  await makePlatformAdmin(admin.userId);
+  adminCookie = admin.cookie;
+  await publishFixture(
+    adminCookie,
+    { title: `Chat Test Act ${tag}`, citation: `Chat Test Act ${tag} (Cth)` },
+    'Section 7 Zorbel levy\n\nThe zorbel levy applies when a business sells fennimore marmalade. The zorbel levy rate is 3.5% of the sale price.\n',
+  );
+  await draftFixture(
+    adminCookie,
+    { title: `Chat Draft Act ${tag}`, citation: `Chat Draft Act ${tag} (Cth)` },
+    'Section 1 Glimmerwick duty\n\nGlimmerwick duty applies to every quillon.\n',
+  );
+
+  const a = await signUp();
+  const firmA = await createFirm(a.cookie, 'Chat Flow Firm A');
+  cookieA = firmA.cookie;
+  orgA = firmA.orgId;
+  const b = await signUp();
+  const firmB = await createFirm(b.cookie, 'Chat Flow Firm B');
+  cookieB = firmB.cookie;
+  orgB = firmB.orgId;
+
+  const created = await call('POST', '/api/clients', {
+    cookie: cookieA,
+    body: { name: 'Acme Pty Ltd', jurisdiction: 'AU', entityType: 'company', fyEndMonth: 6 },
+  });
+  if (created.status !== 201) throw new Error(`create client failed: ${created.status}`);
+  acmeId = ((await created.json()) as { client: { id: string } }).client.id;
+  memberCookie = (await addMember(orgA)).cookie;
+}, 120_000);
+
+afterAll(async () => {
+  setEmbedderForTests(undefined);
+  setChatProviderForTests(undefined);
+  await cleanupKb();
+  await ownerQuery('delete from ai_usage where org_id = any($1::text[])', [[orgA, orgB]]);
+  await stopApp();
+  await pool.end();
+});
+
+describe('chat', () => {
+  it('C1 no session → 401', async () => {
+    const res = await call('POST', '/api/conversations', { body: { clientId: acmeId, scope: null } });
+    expect(res.status).toBe(401);
+  });
+
+  it('C2 creates an entity chat → 201', async () => {
+    const res = await call('POST', '/api/conversations', { cookie: cookieA, body: { clientId: acmeId, scope: null } });
+    expect(res.status).toBe(201);
+    const body = (await res.json()) as { conversation: { title: string; clientId: string; scope: unknown } };
+    expect(body.conversation.title).toBe('New chat');
+    expect(body.conversation.clientId).toBe(acmeId);
+    expect(body.conversation.scope).toBeNull();
+  });
+
+  it('C3 both clientId and scope → 400', async () => {
+    const res = await call('POST', '/api/conversations', { cookie: cookieA, body: { clientId: acmeId, scope: 'AU' } });
+    expect(res.status).toBe(400);
+    expect(((await res.json()) as { error: string }).error).toBe('Invalid input');
+  });
+
+  it("C4 another firm's client → 404", async () => {
+    const res = await call('POST', '/api/conversations', { cookie: cookieB, body: { clientId: acmeId, scope: null } });
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: 'Client not found' });
+  });
+
+  it('C5 lists by client and hub separately', async () => {
+    const entityChat = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const hubChat = await newChat(cookieA, { clientId: null, scope: 'AU' });
+    const byClient = await call('GET', `/api/conversations?clientId=${acmeId}`, { cookie: cookieA });
+    const clientIds = ((await byClient.json()) as { conversations: { id: string }[] }).conversations.map((c) => c.id);
+    expect(clientIds).toContain(entityChat);
+    expect(clientIds).not.toContain(hubChat);
+    const hub = await call('GET', '/api/conversations?clientId=none', { cookie: cookieA });
+    const hubIds = ((await hub.json()) as { conversations: { id: string }[] }).conversations.map((c) => c.id);
+    expect(hubIds).toContain(hubChat);
+    expect(hubIds).not.toContain(entityChat);
+  });
+
+  it('C6 a covered question streams start, sources, deltas and done', async () => {
+    use({ chunks: ['The zorbel levy applies when a business sells fennimore marmalade ', '[1].'] });
+    coveredChat = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const a = await ask(cookieA, coveredChat, QUESTION);
+    expect(a.status).toBe(200);
+    expect(names(a)).toEqual(['start', 'sources', 'delta', 'delta', 'done']);
+    const m = doneMessage(a);
+    expect(m.status).toBe('answered');
+    expect(m.citations).toHaveLength(1);
+    expect(m.citations[0]?.marker).toBe(1);
+    expect(m.citations[0]?.title).toBe(`Chat Test Act ${tag}`);
+    expect(m.citations[0]?.excerpt.startsWith('Section 7')).toBe(true);
+    const got = await call('GET', `/api/conversations/${coveredChat}`, { cookie: cookieA });
+    expect(((await got.json()) as { conversation: { title: string } }).conversation.title).toBe(QUESTION);
+  });
+
+  it('C7 not covered: no provider call, no usage', async () => {
+    const s = use({ chunks: ['x'] });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const before = await usageCount(orgA);
+    const a = await ask(cookieA, id, 'zqxv flurble wibbet?');
+    expect(names(a)).toEqual(['start', 'done']);
+    const m = doneMessage(a);
+    expect(m.status).toBe('not_covered');
+    expect(m.body).toBe(NOT_COVERED_REPLY);
+    expect(s.calls.length).toBe(0);
+    expect(await usageCount(orgA)).toBe(before);
+  });
+
+  it('C8 a draft-only source is never retrieved', async () => {
+    const s = use({ chunks: ['x'] });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const a = await ask(cookieA, id, 'What is glimmerwick duty on a quillon?');
+    expect(doneMessage(a).status).toBe('not_covered');
+    expect(s.calls.length).toBe(0);
+  });
+
+  it('C9 a hub chat scoped to the UK does not see an AU Act', async () => {
+    const s = use({ chunks: ['x'] });
+    const id = await newChat(cookieA, { clientId: null, scope: 'UK' });
+    const a = await ask(cookieA, id, QUESTION);
+    expect(doneMessage(a).status).toBe('not_covered');
+    expect(s.calls.length).toBe(0);
+  });
+
+  it('C10 the provider never sees personal details', async () => {
+    const s = use({ chunks: ['The zorbel levy applies [1].'] });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const a = await ask(cookieA, id, PII_QUESTION);
+    expect(a.status).toBe(200);
+    expect(s.calls.length).toBe(1);
+    const sent = JSON.stringify(s.calls[0]);
+    for (const secret of ['Acme Pty Ltd', 'jo@acme.com.au', '123 456 782']) expect(sent).not.toContain(secret);
+    for (const placeholder of ['[NAME_1]', '[EMAIL_1]', '[TAXID_1]']) expect(sent).toContain(placeholder);
+    const got = await call('GET', `/api/conversations/${id}`, { cookie: cookieA });
+    const body = (await got.json()) as { messages: { role: string; body: string }[] };
+    expect(body.messages.find((m) => m.role === 'user')?.body).toBe(PII_QUESTION);
+  });
+
+  it('C11 the embedder gets the redacted question', async () => {
+    const seen: string[][] = [];
+    const inner = fakeEmbedder();
+    const recording: Embedder = {
+      model: inner.model,
+      embed: async (texts, task) => {
+        seen.push([...texts]);
+        return inner.embed(texts, task);
+      },
+    };
+    setEmbedderForTests(recording);
+    try {
+      use({ chunks: ['The zorbel levy applies [1].'] });
+      const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+      await ask(cookieA, id, PII_QUESTION);
+    } finally {
+      setEmbedderForTests(null);
+    }
+    expect(seen.length).toBeGreaterThan(0);
+    const all = seen.flat().join('\n');
+    for (const secret of ['jo@acme.com.au', 'Acme Pty Ltd', '123 456 782']) expect(all).not.toContain(secret);
+  });
+
+  it('C12 an uncited answer is flagged', async () => {
+    use({ chunks: ['The zorbel levy applies when a business sells fennimore marmalade.'] });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const m = doneMessage(await ask(cookieA, id, QUESTION));
+    expect(m.status).toBe('flagged');
+    expect(m.flags).toEqual(expect.arrayContaining([expect.objectContaining({ code: 'uncited' })]));
+  });
+
+  it('C13 a bad marker is flagged', async () => {
+    use({ chunks: ['See [9].'] });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const m = doneMessage(await ask(cookieA, id, QUESTION));
+    expect(m.flags).toEqual(expect.arrayContaining([{ code: 'bad_marker', detail: '[9]' }]));
+  });
+
+  it('C14 an untraced number is flagged', async () => {
+    use({ chunks: ['The rate is 12.5% [1].'] });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const m = doneMessage(await ask(cookieA, id, QUESTION));
+    expect(m.flags).toEqual(expect.arrayContaining([{ code: 'unsupported_number', detail: '12.5%' }]));
+    use({ chunks: ['The rate is 3.5% [1].'] });
+    const ok = doneMessage(await ask(cookieA, id, QUESTION));
+    expect(ok.status).toBe('answered');
+  });
+
+  it("C15 the model's refusal sentence → not_covered after a call", async () => {
+    const s = use({ chunks: [NOT_IN_SOURCES] });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const before = await usageCount(orgA);
+    const m = doneMessage(await ask(cookieA, id, QUESTION));
+    expect(m.status).toBe('not_covered');
+    expect(s.calls.length).toBe(1);
+    expect(await usageCount(orgA)).toBe(before + 1);
+  });
+
+  it('C16 refusal stop → refused', async () => {
+    use({ chunks: [], stop: 'refusal' });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const m = doneMessage(await ask(cookieA, id, QUESTION));
+    expect(m.status).toBe('refused');
+  });
+
+  it('C17 provider failure → error, partial kept', async () => {
+    use({ chunks: ['Half ', 'answer'], throwAfter: 1 });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const before = await ownerQuery('select count(*)::int as n from ai_usage where org_id = $1 and estimated', [orgA]);
+    const m = doneMessage(await ask(cookieA, id, QUESTION));
+    expect(m.status).toBe('error');
+    expect(m.body).toBe('Half ');
+    const after = await ownerQuery('select count(*)::int as n from ai_usage where org_id = $1 and estimated', [orgA]);
+    expect(Number(after.rows[0].n)).toBe(Number(before.rows[0].n) + 1);
+  });
+
+  it('C18 client disconnect → stopped', async () => {
+    const s = use({ chunks: ['Partial'], waitForAbort: true });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const ac = new AbortController();
+    const res = await fetch(`${await startApp()}/api/conversations/${id}/messages`, {
+      method: 'POST',
+      headers: { origin: 'http://localhost:5190', cookie: cookieA, 'content-type': 'application/json' },
+      body: JSON.stringify({ text: QUESTION }),
+      signal: ac.signal,
+    });
+    expect(res.status).toBe(200);
+    const reader = res.body?.getReader();
+    if (!reader) throw new Error('no body');
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let sawDelta = false;
+    while (!sawDelta) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const parsed = parseSse(buffer);
+      buffer = parsed.rest;
+      sawDelta = parsed.events.some((e) => e.event === 'delta');
+    }
+    expect(sawDelta).toBe(true);
+    ac.abort();
+    await reader.cancel().catch(() => undefined);
+
+    let last: { status: string; body: string } | undefined;
+    for (let i = 0; i < 20; i++) {
+      const got = await call('GET', `/api/conversations/${id}`, { cookie: cookieA });
+      const msgs = ((await got.json()) as { messages: { status: string; body: string }[] }).messages;
+      last = msgs[msgs.length - 1];
+      if (last?.status === 'stopped') break;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    expect(last?.status).toBe('stopped');
+    expect(last?.body).toBe('Partial');
+    expect(s.aborted).toBe(true);
+  });
+
+  it('C19 no provider → 503', async () => {
+    setChatProviderForTests(null);
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const a = await ask(cookieA, id, QUESTION);
+    expect(a.status).toBe(503);
+    expect(a.json).toEqual({ error: CHAT_MESSAGES.notConfigured });
+    const st = await call('GET', '/api/chat/status', { cookie: cookieA });
+    const body = (await st.json()) as { configured: boolean; model: string | null };
+    expect(body.configured).toBe(false);
+    expect(body.model).toBeNull();
+  });
+
+  it("C20 firm B gets 404 for firm A's chat", async () => {
+    use({ chunks: ['x'] });
+    const notFound = { error: 'Chat not found' };
+    const get = await call('GET', `/api/conversations/${coveredChat}`, { cookie: cookieB });
+    expect(get.status).toBe(404);
+    expect(await get.json()).toEqual(notFound);
+    const patch = await call('PATCH', `/api/conversations/${coveredChat}`, { cookie: cookieB, body: { title: 'hijack' } });
+    expect(patch.status).toBe(404);
+    expect(await patch.json()).toEqual(notFound);
+    const del = await call('DELETE', `/api/conversations/${coveredChat}`, { cookie: cookieB });
+    expect(del.status).toBe(404);
+    expect(await del.json()).toEqual(notFound);
+    const post = await ask(cookieB, coveredChat, QUESTION);
+    expect(post.status).toBe(404);
+    expect(post.json).toEqual(notFound);
+    const list = await call('GET', `/api/conversations?clientId=${acmeId}`, { cookie: cookieB });
+    expect(list.status).toBe(404);
+    expect(await list.json()).toEqual({ error: 'Client not found' });
+  });
+
+  it("C21 a member can't rename or delete someone else's chat, the creator and owner can", async () => {
+    const ownerChat = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const patch = await call('PATCH', `/api/conversations/${ownerChat}`, { cookie: memberCookie, body: { title: 'mine' } });
+    expect(patch.status).toBe(403);
+    expect(await patch.json()).toEqual({ error: CHAT_MESSAGES.notYours });
+    const del = await call('DELETE', `/api/conversations/${ownerChat}`, { cookie: memberCookie });
+    expect(del.status).toBe(403);
+    expect(await del.json()).toEqual({ error: CHAT_MESSAGES.notYours });
+
+    const mine = await newChat(memberCookie, { clientId: acmeId, scope: null });
+    const delMine = await call('DELETE', `/api/conversations/${mine}`, { cookie: memberCookie });
+    expect(delMine.status).toBe(204);
+
+    const theirs = await newChat(memberCookie, { clientId: acmeId, scope: null });
+    const delTheirs = await call('DELETE', `/api/conversations/${theirs}`, { cookie: cookieA });
+    expect(delTheirs.status).toBe(204);
+  });
+
+  it('C22 usage is recorded', async () => {
+    const rows = await ownerQuery(
+      `select provider, model, input_tokens, output_tokens, cost_micro_usd::text as cost
+       from ai_usage where org_id = $1 and provider = 'stub' and model = 'stub-model' and input_tokens = 100 and output_tokens = 50 limit 1`,
+      [orgA],
+    );
+    expect(rows.rows).toHaveLength(1);
+    const expected = costMicroUsd('stub-model', { inputTokens: 100, outputTokens: 50, cacheWriteTokens: 0, cacheReadTokens: 0 });
+    expect(expected).toBe(3500);
+    expect(Number(rows.rows[0].cost)).toBe(expected);
+  });
+
+  it('C23 history carries the previous exchange without markers', async () => {
+    const s = use({ chunks: ['The zorbel levy applies when a business sells fennimore marmalade ', '[1].'] });
+    await ask(cookieA, coveredChat, QUESTION);
+    const last = s.calls.at(-1);
+    expect(last?.messages).toHaveLength(3);
+    expect(last?.messages[1]?.role).toBe('assistant');
+    expect(last?.messages[1]?.text).not.toContain('[1]');
+  });
+
+  it('C24 GET returns messages with citations', async () => {
+    const got = await call('GET', `/api/conversations/${coveredChat}`, { cookie: cookieA });
+    const body = (await got.json()) as { messages: ChatMessageView[] };
+    // C23 adds a second exchange to C6's chat, so 4 messages; the first pair is checked.
+    expect(body.messages.length).toBe(4);
+    expect(body.messages[0]?.role).toBe('user');
+    expect(body.messages[1]?.citations).toHaveLength(1);
+  });
+
+  it('C25 per-user limit → 429 with no provider call', async () => {
+    const s = use({ chunks: ['x'] });
+    const m2 = await addMember(orgA);
+    const id = await newChat(m2.cookie, { clientId: acmeId, scope: null });
+    await ownerQuery(
+      `insert into ai_usage (org_id, user_id, provider, model, input_tokens, output_tokens, cost_micro_usd)
+       select $1, $2, 'stub', 'stub-model', 1, 1, 1 from generate_series(1, 50)`,
+      [orgA, m2.userId],
+    );
+    const a = await ask(m2.cookie, id, QUESTION);
+    expect(a.status).toBe(429);
+    expect(a.json).toEqual({ error: CHAT_MESSAGES.userLimit(50) });
+    expect(s.calls.length).toBe(0);
+  });
+
+  it('C27 status with a provider', async () => {
+    use({ chunks: ['x'] });
+    const st = await call('GET', '/api/chat/status', { cookie: cookieA });
+    expect(st.status).toBe(200);
+    expect(await st.json()).toEqual({ configured: true, provider: 'stub', model: 'stub-model', embeddings: false });
+  });
+
+  it('C26 global spend cap → 429', async () => {
+    const s = use({ chunks: ['x'] });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const marker = `cap-${randomUUID()}`;
+    await ownerQuery(
+      `insert into ai_usage (org_id, user_id, provider, model, input_tokens, output_tokens, cost_micro_usd)
+       values ($1, $2, 'stub', 'stub-model', 1, 1, 5000000)`,
+      [orgB, marker],
+    );
+    try {
+      const a = await ask(cookieA, id, QUESTION);
+      expect(a.status).toBe(429);
+      expect(a.json).toEqual({ error: CHAT_MESSAGES.spendCap });
+      expect(s.calls.length).toBe(0);
+    } finally {
+      await ownerQuery('delete from ai_usage where user_id = $1', [marker]);
+    }
+  });
+});

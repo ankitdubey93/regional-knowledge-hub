@@ -11,6 +11,13 @@ const schema = z.object({
   // An empty string in .env counts as unset. Server-only (Hard rule 10): sent in a header, never in a URL, never logged.
   GEMINI_API_KEY: z.string().optional().transform((v) => (v ? v : undefined)),
   GEMINI_EMBED_MODEL: z.string().optional().transform((v) => (v ? v : 'gemini-embedding-001')),
+  // Chat (P3). Same rules: server-only, keys only in headers, never logged.
+  ANTHROPIC_API_KEY: z.string().optional().transform((v) => (v ? v : undefined)),
+  ANTHROPIC_MODEL: z.string().optional().transform((v) => (v ? v : 'claude-opus-5-5')),
+  GEMINI_MODEL: z.string().optional().transform((v) => (v ? v : undefined)),
+  CHAT_PROVIDER: z.enum(['anthropic', 'gemini']).default('anthropic'),
+  DAILY_SPEND_CAP_USD: z.string().regex(/^\d{1,6}(\.\d{1,2})?$/).default('5'),
+  CHAT_DAILY_MESSAGES_PER_USER: z.coerce.number().int().positive().default(50),
 });
 
 export const env = schema.parse(process.env);

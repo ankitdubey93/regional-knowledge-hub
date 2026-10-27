@@ -6,18 +6,48 @@ import { Card, PageHeader } from '../../components/ui';
 import { hubSuggestions } from '../../lib/chat';
 import { useHubScope } from '../../lib/hubScope';
 import { inScope } from '../../lib/scope';
+import { useSessionInfo } from '../../lib/session';
 
 const order: ToolId[] = ['journal', 'tax', 'depreciation', 'inventory', 'company-size', 'compare'];
 
 export function KnowledgeHome() {
   const { scope } = useHubScope();
+  const { session } = useSessionInfo();
   const paths = SECTIONS.map((s) => ({ s, items: docsIn(s.id).filter((d) => inScope(d.jurisdiction, scope)) })).filter((p) => p.items.length > 0);
 
   return (
     <div className="space-y-10">
       <PageHeader title="Knowledge Hub" lead="Guides, framework comparisons, calculators and practice for bookkeeping in Australia and the UK." />
 
-      <ChatPanel title="Ask the Knowledge Hub" placeholder="Ask a bookkeeping or tax question" suggestions={hubSuggestions(scope)} />
+      {session === null ? (
+        <Card>
+          <h2 className="text-lg font-semibold">Ask the Knowledge Hub</h2>
+          <p className="mt-1 text-sm text-muted">Sign in to ask questions. Answers come only from the Knowledge Hub, with citations.</p>
+          <p className="mt-3 text-sm">
+            <Link to="/sign-in" className="hover:text-accent">
+              Sign in
+            </Link>
+          </p>
+        </Card>
+      ) : session.activeFirmId === null ? (
+        <Card>
+          <h2 className="text-lg font-semibold">Ask the Knowledge Hub</h2>
+          <p className="mt-1 text-sm text-muted">Set up a workspace to ask questions.</p>
+          <p className="mt-3 text-sm">
+            <Link to="/workspace/new" className="hover:text-accent">
+              Set up a workspace
+            </Link>
+          </p>
+        </Card>
+      ) : (
+        <ChatPanel
+          title="Ask the Knowledge Hub"
+          placeholder="Ask a bookkeeping or tax question"
+          suggestions={hubSuggestions(scope)}
+          clientId={null}
+          scope={scope === 'all' ? 'ALL' : scope}
+        />
+      )}
 
       <section aria-labelledby="paths">
         <h2 id="paths" className="mb-4 text-xl font-semibold">

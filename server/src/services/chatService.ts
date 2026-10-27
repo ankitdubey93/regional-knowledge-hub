@@ -1,0 +1,224 @@
+import { db } from '../db/client';
+import { kbFact } from '../db/schema';
+import { currentEmbedder, EmbeddingError } from '../ai/embed';
+import { MAX_ANSWER_TOKENS, type ChatProvider } from '../ai/chat';
+import type { UsageTokens } from '../ai/pricing';
+import { checkGrounding } from '../chat/grounding';
+import { isCovered } from '../chat/coverage';
+import { buildPrompt, type PromptSource } from '../chat/prompt';
+import { searchKbForChat } from '../kb/retrieve';
+import { redact } from '../privacy/redact';
+import { NOT_COVERED_REPLY } from '../../../src/lib/chatWire';
+import { formatFact } from '../../../src/data/factFormat';
+import type { ChatMessageView, CitationView, GroundingFlag, MessageStatus } from '../../../src/lib/chatWire';
+import { conversationContext, historyFor, insertAssistantMessage, insertUserMessage } from './conversationService';
+import { rowToFact } from './kbService';
+import { recordUsage } from './usageService';
+
+// Only redacted text reaches the embedder, retrieval and the provider (Hard rule 13). Nothing here logs a body.
+// No database transaction is open while the embedder or the provider runs.
+
+export interface ExchangeIo {
+  start(userMessage: ChatMessageView): void;
+  sources(sources: CitationView[]): void;
+  delta(text: string): void;
+  done(message: ChatMessageView): void;
+  signal: AbortSignal; // aborted when the client disconnects
+}
+
+const EXCERPT_CHARS = 600;
+const PLACEHOLDER = /\[[A-Z]+_\d+\]/g;
+
+/** Caller has already checked the conversation exists, a provider is configured and the guard passed. Never throws for provider failures; throws only when the database fails. */
+export async function runExchange(
+  orgId: string,
+  userId: string,
+  conversationId: string,
+  text: string,
+  provider: ChatProvider,
+  io: ExchangeIo,
+  now: Date,
+): Promise<void> {
+  // 1
+  const ctx = await conversationContext(orgId, conversationId);
+  if (!ctx) throw new Error('conversation not found');
+  const userMessage = await insertUserMessage(orgId, userId, conversationId, text);
+  io.start(userMessage);
+
+  // 2
+  const names = ctx.names;
+  const question = redact(text, { names });
+  const history = (await historyFor(orgId, conversationId)).map((t) => ({ role: t.role, text: redact(t.text, { names }) }));
+
+  // 3
+  let jurisdiction: 'AU' | 'UK' | undefined;
+  if (ctx.client) {
+    jurisdiction = ctx.client.jurisdiction === 'AU' ? 'AU' : ctx.client.jurisdiction === 'UK' ? 'UK' : undefined;
+  } else {
+    jurisdiction = ctx.conversation.scope === 'AU' ? 'AU' : ctx.conversation.scope === 'UK' ? 'UK' : undefined;
+  }
+
+  // 5 (query is needed by 4)
+  const query = question.replace(PLACEHOLDER, ' ').replace(/\s+/g, ' ').trim().slice(0, 500);
+
+  // 4
+  let embedding: number[] | null = null;
+  const embedder = query.length >= 3 ? currentEmbedder() : null;
+  if (embedder) {
+    try {
+      embedding = (await embedder.embed([query], 'RETRIEVAL_QUERY'))[0] ?? null;
+    } catch (err) {
+      if (!(err instanceof EmbeddingError)) throw err;
+      embedding = null;
+    }
+  }
+
+  // 5, 6
+  const retrieval =
+    query.length < 3
+      ? null
+      : await searchKbForChat({ query, jurisdiction, includeBills: true, limit: 8 }, embedding);
+  if (!retrieval || !isCovered(retrieval)) {
+    const message = await insertAssistantMessage(orgId, userId, conversationId, {
+      body: NOT_COVERED_REPLY,
+      status: 'not_covered',
+      flags: [],
+      provider: null,
+      model: null,
+      citations: [],
+    });
+    io.done(message);
+    return;
+  }
+
+  // 7
+  const results = retrieval.results;
+  const sources: CitationView[] = results.map((r, i) => ({
+    marker: i + 1,
+    sourceId: r.sourceId,
+    versionId: r.versionId,
+    chunkId: r.chunkId,
+    title: r.title,
+    citation: r.citation,
+    kind: r.kind,
+    jurisdiction: r.jurisdiction,
+    billStatus: r.billStatus,
+    headingPath: r.headingPath,
+    provisionRef: r.provisionRef,
+    sitePath: r.sitePath,
+    officialUrl: r.officialUrl,
+    excerpt: r.text.slice(0, EXCERPT_CHARS),
+  }));
+  io.sources(sources);
+
+  // 8
+  const promptSources: PromptSource[] = results.map((r, i) => ({
+    marker: i + 1,
+    title: r.title,
+    citation: r.citation,
+    headingPath: r.headingPath,
+    provisionRef: r.provisionRef,
+    isBill: r.kind === 'bill',
+    text: r.text,
+  }));
+  const prompt = buildPrompt({
+    today: now.toISOString().slice(0, 10),
+    jurisdiction,
+    sources: promptSources,
+    history,
+    question,
+  });
+
+  // 9
+  const ac = new AbortController();
+  const onAbort = (): void => ac.abort();
+  if (io.signal.aborted) ac.abort();
+  else io.signal.addEventListener('abort', onAbort, { once: true });
+
+  let answer = '';
+  const usages: { model: string; tokens: UsageTokens }[] = [];
+  let stopReason: 'end' | 'max_tokens' | 'refusal' = 'end';
+  let failed = false;
+  try {
+    for await (const ev of provider.stream({ system: prompt.system, messages: prompt.messages, maxTokens: MAX_ANSWER_TOKENS, signal: ac.signal })) {
+      if (ev.type === 'text') {
+        answer += ev.text;
+        io.delta(ev.text);
+      } else if (ev.type === 'usage') {
+        usages.push({
+          model: ev.model,
+          tokens: {
+            inputTokens: ev.inputTokens,
+            outputTokens: ev.outputTokens,
+            cacheWriteTokens: ev.cacheWriteTokens,
+            cacheReadTokens: ev.cacheReadTokens,
+          },
+        });
+      } else {
+        stopReason = ev.reason;
+      }
+    }
+  } catch {
+    // A ChatProviderError and any other failure are both stored as an error; the abort case is decided below.
+    failed = true;
+  } finally {
+    io.signal.removeEventListener('abort', onAbort);
+  }
+  const aborted = io.signal.aborted;
+
+  // 10
+  let status: Exclude<MessageStatus, 'sent'>;
+  let flags: GroundingFlag[] = [];
+  let citations: CitationView[] = [];
+  if (aborted) {
+    status = 'stopped';
+  } else if (failed) {
+    status = 'error';
+  } else if (stopReason === 'refusal') {
+    status = 'refused';
+  } else {
+    const factRows = await db.select().from(kbFact);
+    const factValues = factRows.map((row) => formatFact(rowToFact(row)));
+    const g = checkGrounding(
+      answer,
+      results.map((r, i) => ({ marker: i + 1, text: r.text })),
+      factValues,
+    );
+    status = g.status;
+    flags = g.flags;
+    citations = sources.filter((s) => g.usedMarkers.includes(s.marker));
+  }
+
+  // 11
+  if (usages.length > 0) {
+    for (const u of usages) {
+      await recordUsage({ orgId, userId, provider: provider.name, model: u.model, tokens: u.tokens, estimated: false });
+    }
+  } else {
+    const promptChars = prompt.system.length + prompt.messages.reduce((n, m) => n + m.text.length, 0);
+    await recordUsage({
+      orgId,
+      userId,
+      provider: provider.name,
+      model: provider.model,
+      tokens: {
+        inputTokens: Math.ceil(promptChars / 4),
+        outputTokens: Math.ceil(answer.length / 4),
+        cacheWriteTokens: 0,
+        cacheReadTokens: 0,
+      },
+      estimated: true,
+    });
+  }
+
+  // 12
+  const message = await insertAssistantMessage(orgId, userId, conversationId, {
+    body: answer,
+    status,
+    flags,
+    provider: provider.name,
+    model: provider.model,
+    citations,
+  });
+  io.done(message);
+}

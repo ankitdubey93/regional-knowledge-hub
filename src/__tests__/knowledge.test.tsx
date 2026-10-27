@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { renderAt } from './render';
@@ -8,8 +8,7 @@ import { KnowledgeLayout } from '../pages/knowledge/KnowledgeLayout';
 import { Learn } from '../pages/Learn';
 import { TaxCalculator } from '../components/TaxCalculator';
 import { ClientRedirect, HubRedirect } from '../components/Redirects';
-import { ChatPanel } from '../components/ChatPanel';
-import { NOT_CONNECTED_REPLY } from '../lib/chat';
+import { KnowledgeHome } from '../pages/knowledge/KnowledgeHome';
 import * as session from '../lib/session';
 
 const signedIn = {
@@ -98,19 +97,13 @@ describe('Redirects', () => {
   });
 });
 
-describe('ChatPanel', () => {
-  it('answers with the not-connected notice and never calls fetch', async () => {
+describe('KnowledgeHome', () => {
+  it('KH1 signed out, the hub asks you to sign in', async () => {
+    vi.mocked(session.useSessionInfo).mockReturnValue(signedOut);
     const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
-    const user = userEvent.setup();
-    render(<ChatPanel title="Ask the Knowledge Hub" placeholder="Ask" suggestions={['What is double entry?']} />);
-    await user.click(screen.getByRole('button', { name: 'What is double entry?' }));
-    expect(screen.getByLabelText('Your question')).toHaveValue('What is double entry?');
-    await user.click(screen.getByRole('button', { name: 'Send' }));
-    const log = screen.getByRole('log', { name: 'Ask the Knowledge Hub conversation' });
-    expect(within(log).getByText('What is double entry?')).toBeInTheDocument();
-    expect(within(log).getByText(NOT_CONNECTED_REPLY)).toBeInTheDocument();
-    expect(screen.getByLabelText('Your question')).toHaveValue('');
-    expect(fetchMock).not.toHaveBeenCalled();
+    renderAt('/knowledge', '/knowledge', <KnowledgeHome />);
+    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in');
+    expect(fetchMock.mock.calls.some(([url]) => String(url).startsWith('/api/conversations'))).toBe(false);
   });
 });

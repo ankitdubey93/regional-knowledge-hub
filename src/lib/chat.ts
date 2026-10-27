@@ -1,28 +1,71 @@
-// The chat seam. P3 replaces appendExchange's fixed reply with a streaming, cited answer from the knowledge base.
+// The chat client: typed calls to /api/conversations and the SSE reader. Answers come only from the knowledge base (Hard rule 12).
+import { z } from 'zod';
 import type { Jurisdiction } from './entity';
 import type { HubScope } from './scope';
+import { apiDelete, apiJson, ApiError, failure } from './api';
+import {
+  chatMessageViewSchema,
+  chatStatusSchema,
+  conversationViewSchema,
+  parseSse,
+  sseDeltaSchema,
+  sseDoneSchema,
+  sseErrorSchema,
+  sseSourcesSchema,
+  sseStartSchema,
+  type ChatMessageView,
+  type ChatScope,
+  type ChatStatus,
+  type CitationView,
+  type ConversationView,
+  type GroundingFlag,
+  type MessageStatus,
+} from './chatWire';
 
-export interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant';
-  text: string;
-  notConnected: boolean;
+const MARKER_PATTERN = /\[(\d+(?:\s*,\s*\d+)*)\]/g;
+
+const conversationResponseSchema = z.object({ conversation: conversationViewSchema });
+const conversationListSchema = z.object({ conversations: z.array(conversationViewSchema) });
+const conversationDetailSchema = z.object({ conversation: conversationViewSchema, messages: z.array(chatMessageViewSchema) });
+
+/** "[1]" → "[[1]](#cite-<id>-1)"; "[1, 2]" → "[[1]](#cite-<id>-1) [[2]](#cite-<id>-2)"; placeholders like [NAME_1] untouched. */
+export function linkMarkers(body: string, messageId: string): string {
+  return body.replace(MARKER_PATTERN, (_match, group: string) =>
+    group
+      .split(',')
+      .map((n) => n.trim())
+      .map((n) => `[[${n}]](#cite-${messageId}-${n})`)
+      .join(' '),
+  );
 }
 
-export const NOT_CONNECTED_REPLY =
-  "The assistant isn't connected yet. When it is, answers will come only from the Knowledge Hub and cite the topics they use.";
+export function flagText(f: GroundingFlag): string {
+  switch (f.code) {
+    case 'uncited':
+      return 'Part of this answer has no citation.';
+    case 'bad_marker':
+      return `It cites a source that wasn't provided (${f.detail}).`;
+    case 'unsupported_number':
+      return `It uses a number not found in its sources: ${f.detail}.`;
+  }
+}
 
-/** Trims text. Blank → returns `messages` itself (same reference). Otherwise returns a new array with
- *  { id: makeId(), role: 'user', text: trimmed, notConnected: false } then
- *  { id: makeId(), role: 'assistant', text: NOT_CONNECTED_REPLY, notConnected: true }. */
-export function appendExchange(messages: ChatMessage[], text: string, makeId: () => string): ChatMessage[] {
-  const trimmed = text.trim();
-  if (trimmed === '') return messages;
-  return [
-    ...messages,
-    { id: makeId(), role: 'user', text: trimmed, notConnected: false },
-    { id: makeId(), role: 'assistant', text: NOT_CONNECTED_REPLY, notConnected: true },
-  ];
+export function statusBadge(s: MessageStatus): string | null {
+  switch (s) {
+    case 'not_covered':
+      return 'Not covered';
+    case 'flagged':
+      return 'Check this answer';
+    case 'refused':
+      return 'Declined';
+    case 'stopped':
+      return 'Stopped';
+    case 'error':
+      return 'Failed';
+    case 'sent':
+    case 'answered':
+      return null;
+  }
 }
 
 export function hubSuggestions(scope: HubScope): string[] {
@@ -43,4 +86,92 @@ export function entitySuggestions(j: Jurisdiction): string[] {
     return ['What does this entity file each quarter?', 'Which VAT treatment does a bill from an overseas supplier get?', 'What goes into the month-end close for this entity?'];
   }
   return ['How do GST and VAT differ for this entity?', 'What does this entity file in each country?', 'What goes into the month-end close for this entity?'];
+}
+
+export async function getChatStatus(): Promise<ChatStatus> {
+  return chatStatusSchema.parse(await apiJson<unknown>('/chat/status'));
+}
+
+export async function listConversations(clientId: string | null): Promise<ConversationView[]> {
+  const query = encodeURIComponent(clientId ?? 'none');
+  const body = conversationListSchema.parse(await apiJson<unknown>(`/conversations?clientId=${query}`));
+  return body.conversations;
+}
+
+export async function createConversation(input: { clientId: string | null; scope: ChatScope | null }): Promise<ConversationView> {
+  const body = conversationResponseSchema.parse(await apiJson<unknown>('/conversations', { method: 'POST', body: input }));
+  return body.conversation;
+}
+
+export async function getConversation(id: string): Promise<{ conversation: ConversationView; messages: ChatMessageView[] }> {
+  return conversationDetailSchema.parse(await apiJson<unknown>(`/conversations/${encodeURIComponent(id)}`));
+}
+
+export async function renameConversation(id: string, title: string): Promise<ConversationView> {
+  const body = conversationResponseSchema.parse(
+    await apiJson<unknown>(`/conversations/${encodeURIComponent(id)}`, { method: 'PATCH', body: { title } }),
+  );
+  return body.conversation;
+}
+
+export async function deleteConversation(id: string): Promise<void> {
+  await apiDelete(`/conversations/${encodeURIComponent(id)}`);
+}
+
+export interface StreamHandlers {
+  onStart(m: ChatMessageView): void;
+  onSources(s: CitationView[]): void;
+  onDelta(t: string): void;
+  onDone(m: ChatMessageView): void;
+  onError(message: string): void;
+}
+
+function dispatch(event: string, data: string, h: StreamHandlers): void {
+  switch (event) {
+    case 'start':
+      h.onStart(sseStartSchema.parse(JSON.parse(data)).userMessage);
+      return;
+    case 'sources':
+      h.onSources(sseSourcesSchema.parse(JSON.parse(data)).sources);
+      return;
+    case 'delta':
+      h.onDelta(sseDeltaSchema.parse(JSON.parse(data)).text);
+      return;
+    case 'done':
+      h.onDone(sseDoneSchema.parse(JSON.parse(data)).message);
+      return;
+    case 'error':
+      h.onError(sseErrorSchema.parse(JSON.parse(data)).error);
+      return;
+    default:
+      return;
+  }
+}
+
+/** POST /api/conversations/:id/messages; reads the event stream with parseSse; zod-parses each event. A non-OK response throws `await failure(res)`. */
+export async function streamMessage(id: string, text: string, h: StreamHandlers, signal: AbortSignal): Promise<void> {
+  const res = await fetch(`/api/conversations/${encodeURIComponent(id)}/messages`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+    signal,
+  });
+  if (!res.ok) throw await failure(res);
+  if (res.body === null) throw new ApiError(res.status, 'The answer could not be read.');
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const parsed = parseSse(buffer);
+    buffer = parsed.rest;
+    for (const ev of parsed.events) dispatch(ev.event, ev.data, h);
+  }
+  // Flush: complete any final event the server ended without a blank line.
+  buffer += decoder.decode();
+  for (const ev of parseSse(buffer + '\n\n').events) dispatch(ev.event, ev.data, h);
 }
