@@ -22,6 +22,10 @@ function record(over: Partial<ClientRecord>): ClientRecord {
     taxRegistered: false,
     taxPeriod: null,
     fyEndMonth: 6,
+    timezone: null,
+    registeredOn: null,
+    vatStaggerMonth: null,
+    mtdItsa: false,
     ...over,
   };
 }

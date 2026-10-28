@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CALENDAR_TIMEZONES } from '@chub/shared/utils/deadlines';
 import type { client } from '../db/schema';
 
 export const jurisdictionSchema = z.enum(['AU', 'UK', 'AU+UK']);
@@ -40,6 +41,10 @@ const fields = {
   taxRegistered: z.boolean(),
   taxPeriod: taxPeriodSchema.nullable(),
   fyEndMonth: z.number().int().min(1).max(12),
+  timezone: z.enum(CALENDAR_TIMEZONES).nullable(),
+  registeredOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+  vatStaggerMonth: z.number().int().min(1).max(12).nullable(),
+  mtdItsa: z.boolean(),
 };
 
 // Unknown keys (such as orgId or isSelf) are stripped: the firm always comes from the session.
@@ -50,6 +55,10 @@ export const clientInputSchema = z
     entities: fields.entities.default([]),
     taxRegistered: fields.taxRegistered.default(false),
     taxPeriod: fields.taxPeriod.default(null),
+    timezone: fields.timezone.default(null),
+    registeredOn: fields.registeredOn.default(null),
+    vatStaggerMonth: fields.vatStaggerMonth.default(null),
+    mtdItsa: fields.mtdItsa.default(false),
   })
   .superRefine((v, ctx) => {
     for (const message of profileProblems(v)) ctx.addIssue({ code: 'custom', message });

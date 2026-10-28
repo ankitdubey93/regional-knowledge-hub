@@ -155,6 +155,20 @@
       "when": 1793172553977,
       "tag": "0021_documents_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1793200803392,
+      "tag": "0022_calendar_profile",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1793200804896,
+      "tag": "0023_calendar_profile_checks",
+      "breakpoints": true
     }
   ]
 }

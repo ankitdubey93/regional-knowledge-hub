@@ -59,6 +59,9 @@ function EntityView({ c }: { c: ClientRecord }) {
               <li>
                 <TextLink to={`/entities/${c.id}/documents`}>Documents</TextLink>
               </li>
+              <li>
+                <TextLink to={`/entities/${c.id}/calendar`}>Calendar</TextLink>
+              </li>
             </ul>
           </Card>
           <Card>

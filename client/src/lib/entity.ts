@@ -24,6 +24,10 @@ export interface ClientRecord {
   taxRegistered: boolean;
   taxPeriod: TaxPeriod | null;
   fyEndMonth: number | null;
+  timezone: string | null;
+  registeredOn: string | null;
+  vatStaggerMonth: number | null;
+  mtdItsa: boolean;
 }
 
 export type ClientBody = { name: string; notes: string } & EntityProfile;

@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { ClientForm } from '../../components/ClientForm';
+import { DueSoon } from '../../components/DueSoon';
 import { Card, JurisdictionBadge, PageHeader, TextLink } from '../../components/ui';
 import { ApiError, apiJson } from '../../lib/api';
 import { defaultProfile, profileSummary, type ClientBody, type ClientRecord } from '../../lib/entity';
@@ -141,6 +142,7 @@ export function WorkspaceHome() {
   } else {
     main = (
       <div>
+        <DueSoon clients={clients} />
         <h2 className="mb-4 text-xl font-semibold">{isBusiness ? 'Your business' : 'Clients'}</h2>
         {!isBusiness && clients.length === 0 && (
           <p className="mb-4 text-muted">No clients yet. Add your first client to get a dashboard for it.</p>

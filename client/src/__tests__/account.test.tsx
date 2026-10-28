@@ -36,6 +36,10 @@ const acmeClient = {
   taxRegistered: false,
   taxPeriod: null,
   fyEndMonth: 6,
+  timezone: null,
+  registeredOn: null,
+  vatStaggerMonth: null,
+  mtdItsa: false,
 };
 
 const selfClient = {
@@ -49,6 +53,10 @@ const selfClient = {
   taxRegistered: true,
   taxPeriod: 'quarterly',
   fyEndMonth: 6,
+  timezone: null,
+  registeredOn: null,
+  vatStaggerMonth: null,
+  mtdItsa: false,
 };
 
 function jsonResponse(status: number, body: unknown): Response {
@@ -247,6 +255,10 @@ describe('WorkspaceHome', () => {
             taxRegistered: false,
             taxPeriod: null,
             fyEndMonth: 6,
+            timezone: null,
+            registeredOn: null,
+            vatStaggerMonth: null,
+            mtdItsa: false,
           },
         }),
       );

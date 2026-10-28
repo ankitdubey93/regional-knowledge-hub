@@ -242,3 +242,45 @@ describe('client profile', () => {
     expect(((err as Error).cause as { code?: string }).code).toBe('23505');
   });
 });
+
+describe('calendar fields', () => {
+  let calId = '';
+  type CalBody = { client: { timezone: string | null; registeredOn: string | null; mtdItsa: boolean } };
+
+  beforeAll(async () => {
+    const res = await call('POST', '/api/clients', {
+      cookie: cookieA,
+      body: { name: 'Calendar Ltd', jurisdiction: 'AU', entityType: 'company', fyEndMonth: 6 },
+    });
+    calId = ((await res.json()) as { client: { id: string } }).client.id;
+  });
+
+  it('PATCH stores the calendar fields', async () => {
+    const res = await call('PATCH', `/api/clients/${calId}`, {
+      cookie: cookieA,
+      body: { timezone: 'Australia/Perth', registeredOn: '2020-03-10', vatStaggerMonth: null, mtdItsa: false },
+    });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as CalBody;
+    expect(body.client.timezone).toBe('Australia/Perth');
+    expect(body.client.registeredOn).toBe('2020-03-10');
+  });
+
+  it('PATCH rejects an unknown timezone', async () => {
+    const res = await call('PATCH', `/api/clients/${calId}`, { cookie: cookieA, body: { timezone: 'Mars/Base' } });
+    expect(res.status).toBe(400);
+    expect(((await res.json()) as { error: string }).error).toBe('Invalid input');
+  });
+
+  it('PATCH rejects a stagger month of 13', async () => {
+    const res = await call('PATCH', `/api/clients/${calId}`, { cookie: cookieA, body: { vatStaggerMonth: 13 } });
+    expect(res.status).toBe(400);
+  });
+
+  it('another firm cannot PATCH calendar fields', async () => {
+    const res = await call('PATCH', `/api/clients/${calId}`, { cookie: cookieB, body: { mtdItsa: true } });
+    expect(res.status).toBe(404);
+    const get = await call('GET', `/api/clients/${calId}`, { cookie: cookieA });
+    expect(((await get.json()) as CalBody).client.mtdItsa).toBe(false);
+  });
+});

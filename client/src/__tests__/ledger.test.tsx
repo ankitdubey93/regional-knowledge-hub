@@ -29,6 +29,10 @@ const acme = {
   taxRegistered: false,
   taxPeriod: null,
   fyEndMonth: 6,
+  timezone: null,
+  registeredOn: null,
+  vatStaggerMonth: null,
+  mtdItsa: false,
 };
 
 const ukLtd = { ...acme, id: 'c2', name: 'UK Ltd', jurisdiction: 'UK' };

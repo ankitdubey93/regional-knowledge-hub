@@ -1,8 +1,8 @@
 # Testing
 
 ```bash
-npm run test:web    # all web Vitest files (212 tests, 18 files); `npm test` runs web then server
-npm test -w server  # server tests (337 tests, 25 files); needs the database
+npm run test:web    # all web Vitest files (243 tests, 20 files); `npm test` runs web then server
+npm test -w server  # server tests (341 tests, 25 files); needs the database
 npm test -w client -- src/__tests__/tax.test.ts   # one web file
 npm run typecheck  # three workspaces, then the e2e folder
 npm run test:e2e    # Playwright: 161 tests, about 5 minutes; needs Docker Postgres up and system Chrome
@@ -22,6 +22,7 @@ npm run lint        # inside a git repository (oxlint follows .gitignore)
 | `hub.test.ts` | Hub scope rules (`scope.ts`), the chat helpers in `client/src/lib/chat.ts` (`linkMarkers`, `flagText`, `statusBadge`, suggestions) and `parseActiveEntity` |
 | `knowledge.test.tsx` | Knowledge Hub filtering by entity and by the signed-out switch, tax calculator scope, old-URL redirects, `ChatPanel` (hub chat signed-in only, the not-configured notice, no provider call), KH2 (a pending session shows Loading… and no Sign in link) |
 | `chatWire.test.ts` | CW1 to CW8 and CW-D1 (`conversationViewSchema` requires `documents`, `FLAG_CODES` includes `from_document`): `parseSse` (two events, an unfinished event, multi-line data, CRLF, no data) and the wire schemas, including a ledger citation with null KB ids (CW7) and a KB citation without `ledger` (CW8) |
+| `deadlines.test.ts`, `calendar.test.tsx` | C1: the `deadlines.ts` engine (25 cases: BAS, VAT, CT, Companies House, Self Assessment, MTD) and the calendar page, `.ics` download and Due soon panel (6 cases, `fetch` stubbed) |
 | `entity-documents.test.tsx` | ED1 to ED5: the Documents page with `fetch` stubbed: the privacy note and the empty state, a list with type and size, an upload posting the raw `File` with a URI-encoded `X-Filename`, delete asking for confirmation and calling DELETE, and the "only the first part is used" label |
 | `chat-panel.test.tsx` | CP1 to CP12: the chat panel with `fetch` stubbed: listing, sending and streaming, sources and citations, the not-configured callout, rename and delete, and a ledger citation that links to the report and carries the books badge (CP6); CP7 to CP10 (P4): an entity chat shows Attach document and the entity's documents, choosing one posts it and shows a chip, Remove calls DELETE, a hub chat has no Attach button; CP11 a late attach reply after a chat switch is dropped; CP12 the panel says when every document is attached |
 | `admin.test.tsx` | The admin pages with `../lib/session` mocked and `fetch` stubbed: U1 to U3 (a non-admin sees Page not found with no fetch; the users list; banning with a reason), N1 (the Admin link shows only to the platform admin), KW1 to KW5 (pasting a draft, Publish disabled by a blocking issue, the Bill badge and the keyword-only note, Embed now, uploading a file) |
@@ -61,7 +62,7 @@ npm test -w server
 
 `npm run test:e2e` runs Playwright (`playwright.config.ts`, specs in `e2e/`). It starts its own stack: the database `chub_e2e` on the Docker Postgres at 5437 (dropped, migrated and seeded each run by `server/scripts/e2e-db.ts`), the API on 5193 and the web app on 5192 (the Vite proxy follows `CHUB_API_ORIGIN`). The dev servers on 5190 and 5191 are not touched. It uses the system Chrome (`channel: 'chrome'`, nothing downloaded) and both AI keys are empty, so no provider is called. A `setup` project creates three users through the API (`e2e-user`, with a practice, the AU client "Browser Books Pty Ltd", a trial-balance import and a text document; `e2e-admin`, promoted by `scripts/admin-role.ts`; `e2e-plain`, no workspace) and saves their sessions in `e2e/.auth/` (gitignored). Four projects then run every spec: `mobile-light`, `mobile-dark` (375 px), `desktop-light` and `desktop-dark` (1440 px). `checkPage` fails a route that scrolls sideways, logs a console error or page error, or whose first Tab is not the skip link and second does not reach the content. Specs: `public.spec.ts` (18 routes and two cases), `workspace.spec.ts` (9 signed-in routes), `admin.spec.ts` (8 admin routes, a source and its published version, and a signed-in non-admin getting Page not found at `/admin` three times and at `/admin/facts`).
 
-Last run (2026-10-28, twice): `161 passed (5.0m)`, `161 passed (4.9m)` (1 setup + 80 public + 36 workspace + 44 admin).
+Last full run (2026-10-28, twice): `161 passed (5.0m)`, `161 passed (4.9m)` (1 setup + 80 public + 36 workspace + 44 admin). `calendar.spec.ts` (2 tests per project, a UK company made by API) was added after: `npm run test:e2e -- calendar` gave `9 passed (28.6s)`; the full suite has not been re-run since.
 
 ### Earlier scratch checks
 

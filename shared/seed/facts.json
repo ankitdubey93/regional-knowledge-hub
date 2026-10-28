@@ -414,5 +414,235 @@
     "source": "https://www.frc.org.uk/documents/7668/FRS_102_September_2024_tmKYWO6.pdf",
     "verifiedOn": "2026-10-28",
     "note": "FRS 102 (September 2024) paragraph 19.23(a); the same 10-year cap applies to other intangibles (18.20)."
+  },
+  "au.bas.monthlyDueDay": {
+    "label": "Monthly BAS: day of the following month it is due",
+    "jurisdiction": "AU",
+    "unit": "count",
+    "value": 21,
+    "effectiveFrom": "2000-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/business-activity-statements-bas/lodging-and-paying-your-bas/due-dates-for-lodging-and-paying-your-bas",
+    "verifiedOn": null,
+    "note": "Not checked: the ATO page returned HTTP 403 Forbidden when fetched on 2026-10-28."
+  },
+  "au.bas.monthlyDecemberDueMonthsAfter": {
+    "label": "Monthly BAS for December: months after month end it is due",
+    "jurisdiction": "AU",
+    "unit": "count",
+    "value": 2,
+    "effectiveFrom": "2000-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/business-activity-statements-bas/lodging-and-paying-your-bas/due-dates-for-lodging-and-paying-your-bas",
+    "verifiedOn": null,
+    "note": "Not checked: the ATO page returned HTTP 403 Forbidden when fetched on 2026-10-28."
+  },
+  "au.bas.quarterlyDueDay": {
+    "label": "Quarterly BAS: day of the month it is due",
+    "jurisdiction": "AU",
+    "unit": "count",
+    "value": 28,
+    "effectiveFrom": "2000-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/business-activity-statements-bas/lodging-and-paying-your-bas/due-dates-for-lodging-and-paying-your-bas",
+    "verifiedOn": null,
+    "note": "Not checked: the ATO page returned HTTP 403 Forbidden when fetched on 2026-10-28."
+  },
+  "au.bas.quarterlyDueMonthsAfter": {
+    "label": "Quarterly BAS: months after quarter end it is due",
+    "jurisdiction": "AU",
+    "unit": "count",
+    "value": 1,
+    "effectiveFrom": "2000-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/business-activity-statements-bas/lodging-and-paying-your-bas/due-dates-for-lodging-and-paying-your-bas",
+    "verifiedOn": null,
+    "note": "Not checked: the ATO page returned HTTP 403 Forbidden when fetched on 2026-10-28."
+  },
+  "au.bas.quarterlyDecemberDueMonthsAfter": {
+    "label": "Quarterly BAS for the December quarter: months after quarter end it is due",
+    "jurisdiction": "AU",
+    "unit": "count",
+    "value": 2,
+    "effectiveFrom": "2000-07-01",
+    "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/business-activity-statements-bas/lodging-and-paying-your-bas/due-dates-for-lodging-and-paying-your-bas",
+    "verifiedOn": null,
+    "note": "Not checked: the ATO page returned HTTP 403 Forbidden when fetched on 2026-10-28."
+  },
+  "au.itr.individualDueMonth": {
+    "label": "Individual tax return (self-lodged): month it is due",
+    "jurisdiction": "AU",
+    "unit": "count",
+    "value": 10,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.ato.gov.au/individuals-and-families/your-tax-return/before-you-prepare-your-tax-return/preparing-your-tax-return",
+    "verifiedOn": null,
+    "note": "Not checked: the ATO page returned HTTP 403 Forbidden when fetched on 2026-10-28."
+  },
+  "au.itr.individualDueDay": {
+    "label": "Individual tax return (self-lodged): day it is due",
+    "jurisdiction": "AU",
+    "unit": "count",
+    "value": 31,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.ato.gov.au/individuals-and-families/your-tax-return/before-you-prepare-your-tax-return/preparing-your-tax-return",
+    "verifiedOn": null,
+    "note": "Not checked: the ATO page returned HTTP 403 Forbidden when fetched on 2026-10-28."
+  },
+  "au.asic.reviewFeeDueMonthsAfter": {
+    "label": "ASIC annual review fee: months after the review date it is due",
+    "jurisdiction": "AU",
+    "unit": "count",
+    "value": 2,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.asic.gov.au/for-business-and-companies/companies/company-annual-review",
+    "verifiedOn": "2026-10-28",
+    "note": "ASIC: the annual review fee is usually due \"2 months after the annual review date\"; the exact date is on the annual statement. Effective date not stated on the source page."
+  },
+  "uk.vat.returnDueMonthsAfter": {
+    "label": "VAT return: months after period end it is due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 1,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/submit-vat-return",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: the return deadline is \"one calendar month and 7 days after the end of an accounting period\". Effective date not stated on the source page."
+  },
+  "uk.vat.returnDueExtraDays": {
+    "label": "VAT return: days added after those months",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 7,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/submit-vat-return",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: the return deadline is \"one calendar month and 7 days after the end of an accounting period\". Effective date not stated on the source page."
+  },
+  "uk.ct.paymentDueMonthsAfter": {
+    "label": "Corporation Tax payment: months after period end it is due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 9,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/pay-corporation-tax",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: \"You must pay your Corporation Tax 9 months and 1 day after the end of your accounting period\" (companies with profits up to 1.5 million pounds). Effective date not stated on the source page."
+  },
+  "uk.ct.paymentDueExtraDays": {
+    "label": "Corporation Tax payment: days added after those months",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 1,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/pay-corporation-tax",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: \"You must pay your Corporation Tax 9 months and 1 day after the end of your accounting period\". Effective date not stated on the source page."
+  },
+  "uk.ct.returnDueMonthsAfter": {
+    "label": "Company Tax Return (CT600): months after period end it is due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 12,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/company-tax-returns",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: \"The deadline for your tax return is 12 months after the end of the accounting period it covers.\" Effective date not stated on the source page."
+  },
+  "uk.ch.accountsDueMonthsAfter": {
+    "label": "Companies House accounts: months after the accounting reference date they are due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 9,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/prepare-file-annual-accounts-for-limited-company",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: later accounts are due \"9 months after your company's financial year ends\". Effective date not stated on the source page."
+  },
+  "uk.ch.firstAccountsDueMonthsAfterIncorporation": {
+    "label": "Companies House first accounts: months after incorporation they are due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 21,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/prepare-file-annual-accounts-for-limited-company",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: first accounts are due \"21 months after the date you registered with Companies House\". Effective date not stated on the source page."
+  },
+  "uk.ch.firstPeriodMinMonths": {
+    "label": "Companies House first accounting period: it must be more than this many months",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 6,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.legislation.gov.uk/ukpga/2006/46/section/391",
+    "verifiedOn": "2026-10-28",
+    "note": "Companies Act 2006 s.391(5): \"A company's first accounting reference period is the period of more than six months, but not more than 18 months\" beginning with incorporation. Effective date not stated on the source page."
+  },
+  "uk.ch.confirmationDueDaysAfter": {
+    "label": "Confirmation statement: days after the review period ends it is due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 14,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/guidance/confirmation-statement-guidance",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: \"You can file your statement up to 14 days after the review period has ended.\" Effective date not stated on the source page."
+  },
+  "uk.sa.onlineDueMonth": {
+    "label": "Self Assessment online return: month it is due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 1,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/self-assessment-tax-returns/deadlines",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: the online return and payment are due by 11:59pm on 31 January after the tax year ends (31 January 2027 for 2025 to 2026). Effective date not stated on the source page."
+  },
+  "uk.sa.onlineDueDay": {
+    "label": "Self Assessment online return: day it is due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 31,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/self-assessment-tax-returns/deadlines",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: the online return and payment are due by 11:59pm on 31 January after the tax year ends (31 January 2027 for 2025 to 2026). Effective date not stated on the source page."
+  },
+  "uk.sa.secondPaymentOnAccountMonth": {
+    "label": "Second payment on account: month it is due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 7,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/understand-self-assessment-bill/payments-on-account",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: \"These payments are due by midnight on 31 January and 31 July.\" Effective date not stated on the source page."
+  },
+  "uk.sa.secondPaymentOnAccountDay": {
+    "label": "Second payment on account: day it is due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 31,
+    "effectiveFrom": "2000-01-01",
+    "source": "https://www.gov.uk/understand-self-assessment-bill/payments-on-account",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK: \"These payments are due by midnight on 31 January and 31 July.\" Effective date not stated on the source page."
+  },
+  "uk.mtdItsa.updateDueMonthsAfter": {
+    "label": "MTD Income Tax quarterly update: months after the update period ends it is due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 1,
+    "effectiveFrom": "2026-04-06",
+    "source": "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK lists update deadlines of 7 August, 7 November, 7 February and 7 May, for standard periods ending 5 July, 5 October, 5 January and 5 April. Effective date not stated on the source page."
+  },
+  "uk.mtdItsa.updateDueDay": {
+    "label": "MTD Income Tax quarterly update: day of that month it is due",
+    "jurisdiction": "UK",
+    "unit": "count",
+    "value": 7,
+    "effectiveFrom": "2026-04-06",
+    "source": "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates",
+    "verifiedOn": "2026-10-28",
+    "note": "GOV.UK lists update deadlines of 7 August, 7 November, 7 February and 7 May, for standard periods ending 5 July, 5 October, 5 January and 5 April. Effective date not stated on the source page."
   }
 }

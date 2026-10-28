@@ -6,7 +6,7 @@ Status words: **done** means built, tested and checked in a browser; **built** m
 
 - Scaffold: Vite 8, React 19, TypeScript 7, Tailwind v4, Vitest 4, oxlint, zod 4, react-markdown with remark-gfm.
 - Curriculum: the 14 docs of the original blueprint (`docs/core-accounting`, `standards`, `australia`, `uk`), each with a `## Sources` section.
-- Facts registry: 44 facts, 42 verified on 2026-10-26.
+- Facts registry: 67 facts, 60 verified (42 on 2026-10-26, the rest on 2026-10-28); 7 AU calendar facts are not checked (ATO pages returned 403): `au.bas.*` due-date facts and `au.itr.individualDue*`.
 - Engines with tests: money, GST and BAS, VAT 100, super guarantee, employer NIC, CIS, depreciation, FIFO and weighted average, UK and AU company size, ledger checks and T-accounts, Leitner spaced repetition, progress storage.
 - Tools: journal simulator, tax calculator (six tabs), depreciation, inventory, company size, framework comparison.
 - Practice: per-topic quizzes, flashcards, coding scenarios, month-end checklist.
@@ -135,7 +135,7 @@ The owner's research on AU and UK firms named four pains: chasing documents, cro
 
 | Phase | Outcome | Needs | Status |
 |---|---|---|---|
-| **C1** | Compliance calendar: due dates per entity from its profile (BAS, VAT, Corporation Tax, CT600, Companies House accounts and confirmation statement, Self Assessment, MTD ITSA updates, ASIC review), each rule a `kb_fact`; a "Due soon" panel on `/workspace`, `/entities/:id/calendar`, an `.ics` download; each entity gets a timezone | debt sprint | planned (`plans/c1-compliance-calendar.md`) |
+| **C1** | Compliance calendar: due dates per entity from its profile (BAS, VAT, Corporation Tax, CT600, Companies House accounts and confirmation statement, Self Assessment, MTD ITSA updates, ASIC review), each rule a `kb_fact`; a "Due soon" panel on `/workspace`, `/entities/:id/calendar`, an `.ics` download; each entity gets a timezone | debt sprint | built 2026-10-28 (`e2e/calendar.spec.ts` passed; 7 AU rules not checked; owner to review before "done") |
 | **P5a** | Rate limits on sign-up, sign-in, chat, uploads and KB fetch; 429 with `Retry-After` | P3 | planned (`plans/p5a-rate-limits.md`) |
 | **P5b** | Email over SMTP: verification, password reset, workspace invitations | P5a | planned (`plans/p5b-email.md`) |
 | **C2** | Intake checklist: deterministic rules (jurisdiction × entity type × registration) produce each entity's document request list; C1 obligations add dated requests | C1 | planned, outline (`plans/c2-intake-checklist.md`) |
