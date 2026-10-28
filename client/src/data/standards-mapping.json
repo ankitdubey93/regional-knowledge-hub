@@ -12,7 +12,7 @@
       "group": "Assets & liabilities",
       "ifrs": { "summary": "One model: almost every lease goes on the balance sheet as a right-of-use asset and a lease liability. Optional exemptions for short-term leases (12 months or less) and low-value assets.", "ref": "IFRS 16" },
       "frs102": { "summary": "From periods beginning on or after 1 January 2026 the lessee model follows IFRS 16: right-of-use asset and lease liability, with short-term and low-value exemptions. Before that, operating leases were expensed straight-line and only finance leases were capitalised.", "ref": "FRS 102 Section 20 (Periodic Review 2024)" },
-      "frs105": { "summary": "Keeps the old split: finance leases on the balance sheet, operating lease payments expensed. Check the current FRS 105 text before relying on this, as the Periodic Review 2024 also amended FRS 105.", "ref": "FRS 105 Section 15" },
+      "frs105": { "summary": "Keeps the old split: finance leases on the balance sheet, operating lease payments expensed. The Periodic Review 2024 did not bring the right-of-use model into FRS 105.", "ref": "FRS 105 Section 15 (September 2024)" },
       "aasb": { "summary": "Same as IFRS 16, word for word.", "ref": "AASB 16" },
       "changed2026": true,
       "takeaway": "A UK client moving onto the 2026 FRS 102 will see new assets, new liabilities, higher EBITDA and lease payments split between interest and principal."
@@ -23,7 +23,7 @@
       "group": "Income",
       "ifrs": { "summary": "Five steps: identify the contract, identify the performance obligations, set the price, allocate it, recognise revenue as each obligation is satisfied (at a point in time or over time).", "ref": "IFRS 15" },
       "frs102": { "summary": "From 2026, a five-step model based on IFRS 15, with simplifications. Before that, revenue was recognised on transfer of the risks and rewards of ownership, or by stage of completion for services.", "ref": "FRS 102 Section 23 (Periodic Review 2024)" },
-      "frs105": { "summary": "A simplified revenue section. The Periodic Review 2024 aligned it with the new FRS 102 approach in a simpler form; check the current FRS 105 text for detail.", "ref": "FRS 105 Section 18" },
+      "frs105": { "summary": "From periods beginning on or after 1 January 2026, the same five steps as the new FRS 102, in simpler wording: identify the contract, identify the performance obligations, set the price, allocate it, recognise revenue as each obligation is satisfied.", "ref": "FRS 105 Section 18 (September 2024)" },
       "aasb": { "summary": "For-profit entities use AASB 15 (same as IFRS 15). Not-for-profits also apply AASB 1058 to income such as grants and donations where there is no enforceable obligation to transfer goods or services.", "ref": "AASB 15, AASB 1058" },
       "changed2026": true,
       "takeaway": "In practice the timing changes most for bundled contracts: a sale of hardware plus a year's support becomes two obligations."

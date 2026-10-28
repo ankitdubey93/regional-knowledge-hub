@@ -401,8 +401,9 @@
     "unit": "text",
     "value": "12 months or less (with no purchase option)",
     "effectiveFrom": "2019-01-01",
-    "source": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-16-leases/",
-    "verifiedOn": null
+    "source": "https://www.legislation.gov.au/F2016L00233/latest/text",
+    "verifiedOn": "2026-10-28",
+    "note": "Checked against AASB 16 Appendix A (compilation of 31 December 2023), which is word for word IFRS 16."
   },
   "uk.frs102.goodwillDefaultLife": {
     "label": "FRS 102 goodwill: maximum life when it cannot be reliably estimated",
@@ -410,7 +411,8 @@
     "unit": "text",
     "value": "not more than 10 years",
     "effectiveFrom": "2015-01-01",
-    "source": "https://www.frc.org.uk/library/standards-codes-policy/accounting-and-reporting/uk-accounting-standards/frs-102/",
-    "verifiedOn": null
+    "source": "https://www.frc.org.uk/documents/7668/FRS_102_September_2024_tmKYWO6.pdf",
+    "verifiedOn": "2026-10-28",
+    "note": "FRS 102 (September 2024) paragraph 19.23(a); the same 10-year cap applies to other intangibles (18.20)."
   }
 }

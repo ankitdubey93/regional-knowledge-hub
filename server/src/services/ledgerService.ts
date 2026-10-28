@@ -194,13 +194,37 @@ export async function commitTrialBalance(
   });
 }
 
+// Deleting the active import makes the newest import it superseded (same as-at date) active again.
 export async function deleteImport(orgId: string, clientId: string, importId: string): Promise<'deleted' | 'not_found'> {
   return withOrg(orgId, async (tx) => {
     const rows = await tx
       .delete(ledgerImport)
       .where(and(eq(ledgerImport.id, importId), eq(ledgerImport.clientId, clientId), eq(ledgerImport.orgId, orgId)))
-      .returning({ id: ledgerImport.id });
-    return rows.length > 0 ? 'deleted' : 'not_found';
+      .returning({ id: ledgerImport.id, status: ledgerImport.status, asAt: ledgerImport.asAt });
+    const gone = rows[0];
+    if (!gone) return 'not_found';
+    if (gone.status === 'active') {
+      const [prev] = await tx
+        .select({ id: ledgerImport.id })
+        .from(ledgerImport)
+        .where(
+          and(
+            eq(ledgerImport.orgId, orgId),
+            eq(ledgerImport.clientId, clientId),
+            eq(ledgerImport.asAt, gone.asAt),
+            eq(ledgerImport.status, 'superseded'),
+          ),
+        )
+        .orderBy(desc(ledgerImport.createdAt))
+        .limit(1);
+      if (prev) {
+        await tx
+          .update(ledgerImport)
+          .set({ status: 'active' })
+          .where(and(eq(ledgerImport.id, prev.id), eq(ledgerImport.orgId, orgId), eq(ledgerImport.clientId, clientId)));
+      }
+    }
+    return 'deleted';
   });
 }
 

@@ -74,7 +74,7 @@ export function EntityBooks() {
   }
 
   async function onDelete(imp: LedgerImportRecord) {
-    if (!window.confirm('Delete this import? Its reports will no longer be available.')) return;
+    if (!window.confirm('Delete this import? Its reports will no longer be available. If it replaced an earlier import with the same date, that one becomes active again.')) return;
     try {
       await deleteImport(id, imp.id);
       await reloadLedger();

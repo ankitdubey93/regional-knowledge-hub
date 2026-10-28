@@ -34,6 +34,8 @@ The repo is three npm workspaces (root `package.json`), and `./dev.sh` runs them
 | `server/` (`@chub/server`) | The Express 5 API, Drizzle migrations, the seed and admin scripts | `npm run dev -w server` (tsx watch on :5191), reading the root `.env` |
 | `shared/` (`@chub/shared`) | Pure TypeScript that both sides import: `data/schemas`, `data/factFormat`, `lib/chatWire`, `content/frontmatter`, `content/curriculumMeta`, `utils/{money,csv,ledger,accountClasses,ledgerImport,reports}`, the test fixture `fixtures/tb`, and `seed/facts.json` (the fact seed) | No build step: `exports` maps `@chub/shared/<path>` to `src/<path>.ts`, compiled by Vite and tsx. No DOM, no Node APIs, zod only |
 
+`e2e/` (the Playwright specs, helpers and fixture) and `playwright.config.ts` also sit at the repo root; `server/scripts/e2e-db.ts` resets the `chub_e2e` database for them.
+
 `docs/` (the curriculum), `docker-compose.yml` (Postgres with pgvector on :5437) and `.env` stay at the repo root. The client and the server never import each other by a relative path. Code both of them need goes in `shared/`.
 
 `dev.sh` checks for Docker and Node 22, creates `.env` from `.env.example` with generated `BETTER_AUTH_SECRET` and `DATA_ENCRYPTION_KEY` if it is missing, runs `npm install` when the lockfile is newer, runs `docker compose up -d --wait db`, `db:migrate`, `kb:seed-facts` and `kb:seed-curriculum` (`--no-seed` skips the seeds), then runs the API and the web app with `[api]` and `[web]` prefixes. Ctrl+C stops both, and the database keeps running (`./dev.sh down` stops it).
@@ -88,7 +90,7 @@ Built in P3. **Not checked against a live provider:** no test or check has calle
 
 ### Spend guard
 
-A minimal guard, not the P5 rate limiter. Every provider call writes one row to `ai_usage` (tokens and `cost_micro_usd`, no text) through `usageService`. Before a call, `checkGuard` refuses when today's (UTC) global cost has reached `DAILY_SPEND_CAP_USD` or this user's calls today have reached `CHAT_DAILY_MESSAGES_PER_USER` (429). The limit counts provider calls, so "not covered" answers are free and errors still count. Cost is integer micro-USD through `roundDiv` from `PRICES`; a model not in `PRICES` is charged at the highest tier. `PRICES` was taken from the claude-api reference's cached table on 2026-10-06 and was **not re-checked** against Anthropic's pricing page. Two simultaneous requests can both pass the guard; P5 owes real limits.
+A minimal guard, not the P5 rate limiter. Every provider call writes one row to `ai_usage` (tokens and `cost_micro_usd`, no text) through `usageService`. Before a call, `checkGuard` refuses when today's (UTC) global cost has reached `DAILY_SPEND_CAP_USD` or this user's calls today have reached `CHAT_DAILY_MESSAGES_PER_USER` (429). The limit counts provider calls, so "not covered" answers are free and errors still count. Cost is integer micro-USD through `roundDiv` from `PRICES`; a model not in `PRICES` is charged at the highest tier. `PRICES` was read from Anthropic's pricing page and Google's Gemini pricing page on 2026-10-28 (`PRICES_CHECKED_ON`). Cache reads are priced per model through `cacheReadFortieths` (0.05x input for Opus 5.5 and Sonnet 5.5, 0.1x for the others); Haiku 5.5 is priced at its >100k-token tier so a long prompt is never under-counted; `gemini-2.5-flash` ($0.30 in, $2.50 out per million tokens) is priced, so Gemini chat can be configured with it. Two simultaneous requests can both pass the guard; P5 owes real limits.
 
 ## Adding things
 
@@ -110,6 +112,7 @@ A minimal guard, not the P5 rate limiter. Every provider call writes one row to 
 | zod | Validate every data file at load and in tests |
 | vitest, jsdom, @testing-library/* | Tests |
 | oxlint | Lint (TypeScript 7 has no JS API for typescript-eslint) |
+| @playwright/test 1.64.1 (root, dev only) | Drives the committed browser check in `e2e/` (every route at 375 and 1440 px, light and dark, console errors, keyboard). It runs the system Chrome (`channel: 'chrome'`), so no browser is downloaded. It replaces the scratch scripts (Hard rule 7). |
 
 ## Database
 
@@ -153,6 +156,7 @@ Copied from `.env.example`. All are server-only; never prefix one with `VITE_` (
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `GEMINI_MODEL`, `CHAT_PROVIDER`, `DAILY_SPEND_CAP_USD`, `CHAT_DAILY_MESSAGES_PER_USER` | P3 (`env.ts`; with no provider key chat answers "not configured" and `/api/chat/status` says so) |
 | `DATA_ENCRYPTION_KEY` | P4 (`env.ts`; required; base64 of 32 bytes, from `openssl rand -base64 32`; never logged) |
 | `SMTP_URL` | P5 (planned) |
+| `CHUB_API_ORIGIN` | `client/vite.config.ts` only (the dev proxy target; set to the e2e API on 5193 by `playwright.config.ts`; not `.env`, no `VITE_` prefix, never bundled) |
 
 ## Server dependencies and why
 

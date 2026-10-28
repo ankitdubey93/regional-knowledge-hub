@@ -106,4 +106,12 @@ describe('KnowledgeHome', () => {
     expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in');
     expect(fetchMock.mock.calls.some(([url]) => String(url).startsWith('/api/conversations'))).toBe(false);
   });
+
+  it('KH2 while the session is pending, the hub shows Loading… and no sign-in link', () => {
+    vi.mocked(session.useSessionInfo).mockReturnValue({ session: null, pending: true });
+    vi.stubGlobal('fetch', vi.fn());
+    renderAt('/knowledge', '/knowledge', <KnowledgeHome />);
+    expect(screen.getByText('Loading…')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Sign in' })).toBeNull();
+  });
 });

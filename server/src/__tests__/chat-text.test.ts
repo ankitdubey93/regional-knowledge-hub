@@ -267,7 +267,7 @@ describe('pricing', () => {
     expect(costMicroUsd('claude-opus-5-5', { inputTokens: 1000, outputTokens: 500, cacheWriteTokens: 0, cacheReadTokens: 0 })).toBe(14000);
   });
   it('PC2 cache writes and reads', () => {
-    expect(costMicroUsd('claude-opus-5-5', { inputTokens: 0, outputTokens: 0, cacheWriteTokens: 1000, cacheReadTokens: 1000 })).toBe(5400);
+    expect(costMicroUsd('claude-opus-5-5', { inputTokens: 0, outputTokens: 0, cacheWriteTokens: 1000, cacheReadTokens: 1000 })).toBe(5200);
   });
   it('PC3 unknown model uses the highest price', () => {
     expect(costMicroUsd('stub-model', { inputTokens: 1000, outputTokens: 0, cacheWriteTokens: 0, cacheReadTokens: 0 })).toBe(10000);
@@ -281,7 +281,14 @@ describe('pricing', () => {
   it('PC5 isPriced', () => {
     expect(isPriced('claude-opus-5-5')).toBe(true);
     expect(isPriced('gemini-x')).toBe(false);
-    expect(PRICES_CHECKED_ON).toBe('2026-10-06');
+    expect(PRICES_CHECKED_ON).toBe('2026-10-28');
+  });
+  it('PC6 sonnet 5.5 cache reads at 0.05x', () => {
+    expect(costMicroUsd('claude-sonnet-5-5', { inputTokens: 0, outputTokens: 0, cacheWriteTokens: 0, cacheReadTokens: 1_000_000 })).toBe(100000);
+  });
+  it('PC7 gemini-2.5-flash is priced', () => {
+    expect(isPriced('gemini-2.5-flash')).toBe(true);
+    expect(costMicroUsd('gemini-2.5-flash', { inputTokens: 1000, outputTokens: 1000, cacheWriteTokens: 0, cacheReadTokens: 0 })).toBe(2800);
   });
 });
 

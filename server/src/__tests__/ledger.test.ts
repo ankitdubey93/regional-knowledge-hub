@@ -313,4 +313,32 @@ describe('ledger', () => {
     expect(report.status).toBe(400);
     expect(((await report.json()) as ErrorBody).error).toBe('Invalid input');
   });
+
+  it('LG-R1 deleting the active import reactivates the one it superseded', async () => {
+    const list = await call('GET', imports(ukId), { cookie: cookieA });
+    const rows = ((await list.json()) as { imports: { id: string; status: string }[] }).imports;
+    const active = rows.find((r) => r.status === 'active');
+    expect(active).toBeDefined();
+    const del = await call('DELETE', `${imports(ukId)}/${active?.id}`, { cookie: cookieA });
+    expect(del.status).toBe(204);
+    const after = await call('GET', imports(ukId), { cookie: cookieA });
+    const left = ((await after.json()) as { imports: { id: string; status: string }[] }).imports;
+    expect(left.map((r) => ({ id: r.id, status: r.status }))).toEqual([{ id: ukFirstImportId, status: 'active' }]);
+  });
+
+  it('LG-R2 deleting a superseded import leaves the active one alone', async () => {
+    const post = await call('POST', imports(auId), { cookie: cookieA, body: auBody });
+    expect(post.status).toBe(201);
+    const newest = ((await post.json()) as ImportBody).import.id;
+    const list = await call('GET', imports(auId), { cookie: cookieA });
+    const rows = ((await list.json()) as { imports: { id: string; status: string }[] }).imports;
+    const old = rows.find((r) => r.status === 'superseded');
+    expect(old).toBeDefined();
+    const del = await call('DELETE', `${imports(auId)}/${old?.id}`, { cookie: cookieA });
+    expect(del.status).toBe(204);
+    const after = await call('GET', imports(auId), { cookie: cookieA });
+    const left = ((await after.json()) as { imports: { id: string; status: string }[] }).imports;
+    expect(left.find((r) => r.id === newest)?.status).toBe('active');
+    expect(left.filter((r) => r.status === 'active')).toHaveLength(1);
+  });
 });

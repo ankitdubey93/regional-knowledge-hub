@@ -12,14 +12,19 @@ const order: ToolId[] = ['journal', 'tax', 'depreciation', 'inventory', 'company
 
 export function KnowledgeHome() {
   const { scope } = useHubScope();
-  const { session } = useSessionInfo();
+  const { session, pending } = useSessionInfo();
   const paths = SECTIONS.map((s) => ({ s, items: docsIn(s.id).filter((d) => inScope(d.jurisdiction, scope)) })).filter((p) => p.items.length > 0);
 
   return (
     <div className="space-y-10">
       <PageHeader title="Knowledge Hub" lead="Guides, framework comparisons, calculators and practice for bookkeeping in Australia and the UK." />
 
-      {session === null ? (
+      {pending ? (
+        <Card>
+          <h2 className="text-lg font-semibold">Ask the Knowledge Hub</h2>
+          <p className="mt-1 text-sm text-muted">Loading…</p>
+        </Card>
+      ) : session === null ? (
         <Card>
           <h2 className="text-lg font-semibold">Ask the Knowledge Hub</h2>
           <p className="mt-1 text-sm text-muted">Sign in to ask questions. Answers come only from the Knowledge Hub, with citations.</p>
