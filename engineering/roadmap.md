@@ -14,7 +14,7 @@ Status words: **done** means built, tested and checked in a browser; **built** m
 
 ### Owed from Phase 1
 
-- Check `src/data/tax-codes.json` names against a live Xero AU and Xero UK demo company, and add the QBO names. Then set `verifiedOn`.
+- Check `client/src/data/tax-codes.json` names against a live Xero AU and Xero UK demo company, and add the QBO names. Then set `verifiedOn`.
 - Verify `intl.ifrs16.shortTermMonths` and `uk.frs102.goodwillDefaultLife` against the standards' text (run `fact-check`).
 - Figures in doc prose that are not `{{fact:…}}` tokens (filing deadlines, penalty amounts, the auto-enrolment minimums, P11D dates) have not each been checked. Either move them into `facts.json` and verify them, or check them in place.
 - FRS 105 rows in `standards-mapping.json` for leases and revenue say "check the current text": confirm what the Periodic Review 2024 changed in FRS 105.
@@ -33,6 +33,10 @@ Status words: **done** means built, tested and checked in a browser; **built** m
 
 - PAYG withholding and PAYE calculators, only if built from the official formulas with tests against published examples (ATO Schedule 1 formulas, HMRC's PAYE specification). Until then the site says they do not exist.
 - ~~An Express API for accounts and progress sync.~~ Superseded on 2026-10-26 by the platform track below.
+
+## Repo structure (done, 2026-10-28)
+
+Three npm workspaces: `client/` (React + Vite), `server/` (Express) and `shared/` (`@chub/shared`, the code both use), and `./dev.sh` starts Postgres, migrates, seeds and runs both. See `engineering/architecture.md`, "Folders". Owed: containerising the API and the web app for a deploy (only the database runs in Docker today).
 
 ## Platform track: multi-tenant AI assistant (planned, decided 2026-10-26)
 
@@ -59,7 +63,7 @@ Stack decisions:
 | **P1.2** | Workspace dashboard with entity tiles, entity dashboard, Knowledge Hub at /knowledge filtered by the selected entity's jurisdiction, chat UI (not connected) in the hub and on the entity dashboard | done (2026-10-26) |
 | **P2a** | A platform admin (one, promoted from the command line), a users page with ban and unban, and the knowledge base in Postgres (sources, versions, chunks; draft → preview → publish) fed by paste, file upload or an allowlisted official URL, with hybrid search and a "test a question" page; the 14 curriculum docs seeded | done (2026-10-26) |
 | **P2b** | `kb_fact` and facts editing in the admin, a `/laws` page, the web reading the KB from the API | built (2026-10-27); "done" waits on the admin-facts browser check below |
-| **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `src/lib/chat.ts` | built (2026-10-27); "done" waits on the owner's live check below |
+| **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `client/src/lib/chat.ts` | built (2026-10-27); "done" waits on the owner's live check below |
 | **P3b** | Numbers tool: answers from an entity's trial balance, computed by engines and cited to the report or account; amends Hard rule 12 | built (2026-10-28); "done" waits on the live check |
 | **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT, MD) stored encrypted and attachable to an entity chat as context; PII placeholders kept per conversation in a sealed map | built (2026-10-28); "done" waits on the live check below |
 | **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | planned |

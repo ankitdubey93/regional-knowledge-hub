@@ -1,9 +1,9 @@
 # Testing
 
 ```bash
-npm test            # all web Vitest files (211 tests, 18 files)
+npm run test:web    # all web Vitest files (211 tests, 18 files); `npm test` runs web then server
 npm test -w server  # server tests (333 tests, 25 files); needs the database
-npx vitest run src/__tests__/tax.test.ts
+npm test -w client -- src/__tests__/tax.test.ts   # one web file
 npm run typecheck
 npm run lint        # inside a git repository (oxlint follows .gitignore)
 ```
@@ -13,12 +13,12 @@ npm run lint        # inside a git repository (oxlint follows .gitignore)
 | File | Covers |
 |---|---|
 | `money.test.ts` | Rounding, rate application, parsing typed amounts |
-| `entity.test.ts` | Entity-profile helpers in `src/lib/entity.ts`: entity types per jurisdiction, GST/VAT labels, default year ends, profile summaries |
+| `entity.test.ts` | Entity-profile helpers in `client/src/lib/entity.ts`: entity types per jurisdiction, GST/VAT labels, default year ends, profile summaries |
 | `tax.test.ts` | GST, the BAS worksheet, VAT 100 including reverse charge, super, employer NIC, CIS |
 | `engines.test.ts` | Depreciation, FIFO and weighted average, UK two-year size rule, AU large proprietary test, ledger checks, spaced repetition |
 | `data.test.ts` | Every JSON file parses; doc frontmatter and `{{fact:…}}` keys exist; each doc has 5+ quiz questions and flashcards; journal scenarios balance on real accounts; coding answers are real accounts and tax codes |
 | `components.test.tsx` | Journal simulator feedback and progress, quiz scoring, topic rendering with fact links, tax calculator, coding scenarios, company size, resetting practice data from the Practice page |
-| `hub.test.ts` | Hub scope rules (`scope.ts`), the chat helpers in `src/lib/chat.ts` (`linkMarkers`, `flagText`, `statusBadge`, suggestions) and `parseActiveEntity` |
+| `hub.test.ts` | Hub scope rules (`scope.ts`), the chat helpers in `client/src/lib/chat.ts` (`linkMarkers`, `flagText`, `statusBadge`, suggestions) and `parseActiveEntity` |
 | `knowledge.test.tsx` | Knowledge Hub filtering by entity and by the signed-out switch, tax calculator scope, old-URL redirects, `ChatPanel` (hub chat signed-in only, the not-configured notice, no provider call) |
 | `chatWire.test.ts` | CW1 to CW8 and CW-D1 (`conversationViewSchema` requires `documents`, `FLAG_CODES` includes `from_document`): `parseSse` (two events, an unfinished event, multi-line data, CRLF, no data) and the wire schemas, including a ledger citation with null KB ids (CW7) and a KB citation without `ledger` (CW8) |
 | `entity-documents.test.tsx` | ED1 to ED5: the Documents page with `fetch` stubbed: the privacy note and the empty state, a list with type and size, an upload posting the raw `File` with a URI-encoded `X-Filename`, delete asking for confirmation and calling DELETE, and the "only the first part is used" label |
@@ -33,9 +33,9 @@ npm run lint        # inside a git repository (oxlint follows .gitignore)
 
 ## Conventions
 
-- `setup.ts` fills the facts and docs registries (`setFacts`, `setDocs`) before every test from `src/__tests__/seedData.ts`, which parses `facts.json` and the `docs/` files itself. No test renders the app through `KbGate` except `kb-store.test.tsx`.
+- `setup.ts` fills the facts and docs registries (`setFacts`, `setDocs`) before every test from `client/src/__tests__/seedData.ts`, which parses `facts.json` and the `docs/` files itself. No test renders the app through `KbGate` except `kb-store.test.tsx`.
 - Engine tests use hand-worked numbers, written as integer cents, with the working in a comment when it is not obvious.
-- Component tests render through `renderAt` in `src/__tests__/render.tsx` (router + progress provider) and query by role and accessible name.
+- Component tests render through `renderAt` in `client/src/__tests__/render.tsx` (router + progress provider) and query by role and accessible name.
 - `setup.ts` runs RTL `cleanup()` and clears `localStorage` and `sessionStorage` after every test.
 
 ## Server tests
@@ -45,7 +45,7 @@ docker compose up -d db
 npm test -w server
 ```
 
-- `src/__tests__/globalSetup.ts` drops and recreates the `public` schema and the `drizzle` schema of `chub_test`, then runs every migration as the owner, so each run starts from an empty, migrated database.
+- `client/src/__tests__/globalSetup.ts` drops and recreates the `public` schema and the `drizzle` schema of `chub_test`, then runs every migration as the owner, so each run starts from an empty, migrated database.
 - `testEnv.ts` holds the test settings (local Docker credentials, a throwaway auth secret, loopback URLs); `vitest.config.ts` passes them as `env`, so no `.env` is needed.
 - Tests reach the app through `startApp()` in `server.ts` on `127.0.0.1` and an ephemeral port. The suite is 1 health test, 3 auth tests (`auth.test.ts`), 23 client cases (`clients.test.ts`), 11 workspace cases (`workspaces.test.ts`) and the P2a files below. The isolation ones are 6 to 8 (firm B cannot read, update, delete or list firm A's clients) and 13 to 15 (the app role sees no rows without `app.org_id`, `withOrg` cannot insert a row for another firm, and `chub_app` is not a superuser and cannot bypass RLS). Case 14 reads the RLS error from `.cause`, because Drizzle wraps Postgres errors. P7 (the database rejects a UK trust without the API), P8 (one self row per workspace, unique violation `23505`) and W11 (switching workspace switches the client list, still scoped by RLS) are the isolation and invariant cases for the workspace work.
 - `ledger.test.ts` (19 cases): import, reports, superseding, a user's class surviving a re-import, currency checks, and the cross-tenant cases for `ledger_import`, `ledger_account` and `ledger_balance` (404 for firm B, RLS with no `app.org_id`, `withOrg` cannot insert for another firm, composite foreign keys refuse another firm's client).

@@ -16,7 +16,7 @@ import type {
   ConversationView,
   GroundingFlag,
   MessageStatus,
-} from '../../../src/lib/chatWire';
+} from '@chub/shared/lib/chatWire';
 
 // Every function runs inside withOrg (RLS) and keeps an explicit org_id predicate (Hard rule 11).
 // Nothing here logs message bodies (Hard rule 13).

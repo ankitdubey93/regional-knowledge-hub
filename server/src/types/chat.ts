@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { conversation } from '../db/schema';
-import { chatScopeSchema } from '../../../src/lib/chatWire';
+import { chatScopeSchema } from '@chub/shared/lib/chatWire';
 
 export const conversationCreateSchema = z
   .object({ clientId: z.uuid().nullable(), scope: chatScopeSchema.nullable() })

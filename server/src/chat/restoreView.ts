@@ -1,4 +1,4 @@
-import type { ChatMessageView, CitationView } from '../../../src/lib/chatWire';
+import type { ChatMessageView, CitationView } from '@chub/shared/lib/chatWire';
 import { restore, type RedactionMap } from '../privacy/redact';
 
 // Pure. Puts the reader's own details back into text that is stored and sent with placeholders.

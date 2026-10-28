@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { setEmbedderForTests } from '../ai/embed';
-import type { Fact } from '../../../src/data/schemas';
+import type { Fact } from '@chub/shared/data/schemas';
 import { db, pool } from '../db/client';
 import { kbChunk, kbSource, kbVersion } from '../db/schema';
 import { seedCurriculum, type CurriculumFile } from '../kb/curriculum';

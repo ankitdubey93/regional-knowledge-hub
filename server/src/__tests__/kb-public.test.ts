@@ -4,9 +4,9 @@ import { join } from 'node:path';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { setEmbedderForTests } from '../ai/embed';
-import { curriculumMeta } from '../../../src/content/curriculumMeta';
-import { parseFrontmatter } from '../../../src/content/frontmatter';
-import { factsSchema, type SiteDoc } from '../../../src/data/schemas';
+import { curriculumMeta } from '@chub/shared/content/curriculumMeta';
+import { parseFrontmatter } from '@chub/shared/content/frontmatter';
+import { factsSchema, type SiteDoc } from '@chub/shared/data/schemas';
 import { pool } from '../db/client';
 import { seedCurriculum, type CurriculumFile } from '../kb/curriculum';
 import { normaliseText } from '../kb/normalise';
@@ -19,7 +19,7 @@ import { stopApp } from './server';
 
 const REPO = join(__dirname, '../../..');
 const today = new Date().toISOString().slice(0, 10);
-const factsJson = factsSchema.parse(JSON.parse(readFileSync(join(REPO, 'src/data/facts.json'), 'utf8')));
+const factsJson = factsSchema.parse(JSON.parse(readFileSync(join(REPO, 'shared/seed/facts.json'), 'utf8')));
 const SECTIONS = ['core-accounting', 'standards', 'australia', 'uk'];
 const files: CurriculumFile[] = [];
 for (const section of SECTIONS) {

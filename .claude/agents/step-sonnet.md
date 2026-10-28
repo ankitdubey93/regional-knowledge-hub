@@ -18,7 +18,7 @@ You are a **Sonnet-tier step runner** for this repository.
    - `as any`, `@ts-expect-error`, or loosening `tsconfig`
    - dropping an `org_id` predicate or disabling RLS
    - connecting as the `chub` superuser from app code
-   - a secret in a `VITE_*` var or in `src/`
+   - a secret in a `VITE_*` var or in `client/src/`
    - typing a rate into a doc or component
    - editing an applied migration
    - running `npm install` for anything the step doesn't name

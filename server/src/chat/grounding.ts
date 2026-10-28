@@ -1,5 +1,5 @@
-import type { GroundingFlag } from '../../../src/lib/chatWire';
-import { NOT_IN_SOURCES } from '../../../src/lib/chatWire';
+import type { GroundingFlag } from '@chub/shared/lib/chatWire';
+import { NOT_IN_SOURCES } from '@chub/shared/lib/chatWire';
 import { stripMarkers } from './prompt';
 
 export interface CitedChunk {

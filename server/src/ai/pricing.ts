@@ -1,4 +1,4 @@
-import { roundDiv } from '../../../src/utils/money';
+import { roundDiv } from '@chub/shared/utils/money';
 
 export interface ModelPrice {
   inputMicroUsdPerMTok: number;

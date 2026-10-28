@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Fact } from '../../../src/data/schemas';
+import type { Fact } from '@chub/shared/data/schemas';
 import { checkFactSave, resolveVerifiedOn } from '../kb/factRules';
 
 const today = '2026-10-27';

@@ -1,5 +1,5 @@
 import readXlsxFile from 'read-excel-file/node';
-import { parseCsv } from '../../../src/utils/csv';
+import { parseCsv } from '@chub/shared/utils/csv';
 import type { DOCUMENT_KINDS } from '../db/schema';
 import { ExtractError, extractFile } from '../kb/extract';
 

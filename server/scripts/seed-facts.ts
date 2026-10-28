@@ -2,9 +2,9 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { pool } from '../src/db/client';
 import { seedFacts } from '../src/kb/seedFacts';
-import { factsSchema } from '../../src/data/schemas';
+import { factsSchema } from '@chub/shared/data/schemas';
 
-const path = fileURLToPath(new URL('../../src/data/facts.json', import.meta.url));
+const path = fileURLToPath(new URL('../../shared/seed/facts.json', import.meta.url));
 const facts = factsSchema.parse(JSON.parse(await readFile(path, 'utf8')));
 const today = new Date().toISOString().slice(0, 10);
 try {

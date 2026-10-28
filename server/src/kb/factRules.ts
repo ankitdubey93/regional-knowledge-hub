@@ -1,4 +1,4 @@
-import type { Fact } from '../../../src/data/schemas';
+import type { Fact } from '@chub/shared/data/schemas';
 import type { KbIssue } from '../db/schema';
 import { hostOf, isOfficialUrl } from './officialSites';
 

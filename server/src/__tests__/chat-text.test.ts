@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { NOT_IN_SOURCES } from '../../../src/lib/chatWire';
+import { NOT_IN_SOURCES } from '@chub/shared/lib/chatWire';
 import { PRICES_CHECKED_ON, costMicroUsd, isPriced, usdToMicroUsd } from '../ai/pricing';
 import { isCovered } from '../chat/coverage';
 import { checkGrounding, extractNumbers } from '../chat/grounding';
 import { HISTORY_TURNS, MAX_DOCUMENT_CHARS_IN_PROMPT, SYSTEM_PROMPT, buildPrompt, stripMarkers, type PromptSource, type PromptTurn } from '../chat/prompt';
 import { createRestorer, emptyRedactionMap, redact, redactWith, restore } from '../privacy/redact';
 import { formatSse } from '../chat/sse';
-import { parseSse } from '../../../src/lib/chatWire';
+import { parseSse } from '@chub/shared/lib/chatWire';
 
 describe('redact', () => {
   const r = (input: string, names: string[] = []): string => redact(input, { names });

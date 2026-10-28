@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { factKeySchema, factSchema, type Fact } from '../../../src/data/schemas';
+import { factKeySchema, factSchema, type Fact } from '@chub/shared/data/schemas';
 import { KB_JURISDICTIONS } from '../db/schema';
 export type { Fact };
 const changeNote = z.string().trim().min(3).max(500);

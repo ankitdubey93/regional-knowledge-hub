@@ -2,7 +2,7 @@ import { and, asc, eq, inArray, isNotNull } from 'drizzle-orm';
 import type { z } from 'zod';
 import { db } from '../db/client';
 import { kbFact, kbSource, kbVersion } from '../db/schema';
-import type { Fact, SiteDoc } from '../../../src/data/schemas';
+import type { Fact, SiteDoc } from '@chub/shared/data/schemas';
 import { LAW_KINDS, type LawDetail, type LawListItem, type SitePayload, type lawQuerySchema } from '../types/kbPublic';
 import { rowToFact } from './kbService';
 

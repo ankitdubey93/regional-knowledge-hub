@@ -1,6 +1,6 @@
-import { ACCOUNT_CLASS_LABELS } from '../../../src/utils/accountClasses';
-import { formatPlain, formatRate } from '../../../src/utils/money';
-import { balanceSheet, profitAndLoss, variance, type Balance, type ReportAccount, type ReportSection } from '../../../src/utils/reports';
+import { ACCOUNT_CLASS_LABELS } from '@chub/shared/utils/accountClasses';
+import { formatPlain, formatRate } from '@chub/shared/utils/money';
+import { balanceSheet, profitAndLoss, variance, type Balance, type ReportAccount, type ReportSection } from '@chub/shared/utils/reports';
 import { emptyRedactionMap, redactWith, type RedactionMap } from '../privacy/redact';
 
 export const LEDGER_LINE_CAP = 400;

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { parseSse } from '../../../src/lib/chatWire';
+import { parseSse } from '@chub/shared/lib/chatWire';
 import { ChatProviderError, type ChatEvent, type ChatProvider, type ChatProviderErrorCode, type ChatRequest } from './chat';
 
 const chunkSchema = z.object({

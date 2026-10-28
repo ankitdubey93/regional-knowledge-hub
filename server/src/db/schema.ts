@@ -19,10 +19,10 @@ import {
   uuid,
   vector,
 } from 'drizzle-orm/pg-core';
-import { ACCOUNT_CLASSES } from '../../../src/utils/accountClasses';
-import type { CurriculumMeta, Fact } from '../../../src/data/schemas';
-import type { ImportIssue } from '../../../src/utils/ledgerImport';
-import { CHAT_SCOPES, MESSAGE_ROLES, MESSAGE_STATUSES, type GroundingFlag } from '../../../src/lib/chatWire';
+import { ACCOUNT_CLASSES } from '@chub/shared/utils/accountClasses';
+import type { CurriculumMeta, Fact } from '@chub/shared/data/schemas';
+import type { ImportIssue } from '@chub/shared/utils/ledgerImport';
+import { CHAT_SCOPES, MESSAGE_ROLES, MESSAGE_STATUSES, type GroundingFlag } from '@chub/shared/lib/chatWire';
 import { organization } from './auth-schema';
 
 export * from './auth-schema';

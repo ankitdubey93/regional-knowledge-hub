@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, ilike, inArray, or, sql, type SQL } from 'drizzle-orm';
-import type { Fact } from '../../../src/data/schemas';
+import type { Fact } from '@chub/shared/data/schemas';
 import { currentEmbedder } from '../ai/embed';
 import { db } from '../db/client';
 import { kbFact, kbFactHistory, kbSource, kbVersion, type KbIssue } from '../db/schema';

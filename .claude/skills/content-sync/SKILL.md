@@ -28,14 +28,14 @@ A line ending in `(none)` under a check named for a problem, such as `docs.witho
 Counts go into the docs only from a run you made yourself (CLAUDE.md, "Keeping this honest"):
 
 ```bash
-npm test                                         # web
+npm run test:web                                 # web
 docker compose ps db || docker compose up -d db  # the server suite needs Postgres
 npm test -w server
 ```
 
 Record `Tests N passed (N)` and `Test Files M passed (M)` from each run. If a run fails, the count is not "N passed". Report the failure and stop: fixing tests isn't this skill's job.
 
-You may reuse counts from a run earlier in this session only if no file under `src/`, `server/src/` or `server/drizzle/` has changed since. Say that you reused them.
+You may reuse counts from a run earlier in this session only if no file under `client/src/`, `server/src/` or `server/drizzle/` has changed since. Say that you reused them.
 
 ## 3. Compare every claim
 
@@ -53,7 +53,7 @@ Read each file in full. For each claim, find the inventory line or command that 
 | CLAUDE.md, Skills | Which skills exist and which are "owed, not yet written" | `skills`, `agents` |
 | CLAUDE.md, Docs | Every linked file exists | `ls` each path |
 | `engineering/architecture.md`, Shape | The API paths in the diagram | `server.routes`, `server/src/app.ts` |
-| `engineering/architecture.md`, Folders | Page subfolders and their routes, named components, `src/lib/` files, migrations listed, routers, services | `pages`, `routes`, `ls src/components src/lib`, `migrations.files`, `server.routes`, `server.services` |
+| `engineering/architecture.md`, Folders | Page subfolders and their routes, named components, `client/src/lib/` files, migrations listed, routers, services | `pages`, `routes`, `ls client/src/components client/src/lib`, `migrations.files`, `server.routes`, `server.services` |
 | `engineering/architecture.md`, Folders | Statements about how a file is made (for example "generated, never hand-edited") | the file itself (`grep` for hand-added lines) |
 | `engineering/architecture.md`, Dependencies and Server dependencies | Every package in `deps.root` and `deps.server` has a row, and every row names a package that is installed | `deps.root`, `deps.server` |
 | `engineering/architecture.md`, Database | The table list | `server.tenantTables`, plus Better Auth's tables in `server/src/db/auth-schema.ts` |

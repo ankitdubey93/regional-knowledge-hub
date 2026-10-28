@@ -4,9 +4,9 @@ import { client, ledgerAccount, ledgerBalance, ledgerImport } from '../db/schema
 import { withOrg, type Tx } from '../db/withOrg';
 import { CURRENCY_MESSAGES, type LedgerAccount, type LedgerImport, type TbCommitInput } from '../types/ledger';
 import { pickComparison, type LedgerSnapshot } from '../chat/ledgerSources';
-import { parseCsv } from '../../../src/utils/csv';
-import { suggestClass, type AccountClass } from '../../../src/utils/accountClasses';
-import { mapTrialBalance, type ImportIssue } from '../../../src/utils/ledgerImport';
+import { parseCsv } from '@chub/shared/utils/csv';
+import { suggestClass, type AccountClass } from '@chub/shared/utils/accountClasses';
+import { mapTrialBalance, type ImportIssue } from '@chub/shared/utils/ledgerImport';
 import {
   balanceSheet,
   profitAndLoss,
@@ -14,7 +14,7 @@ import {
   type BalanceSheet,
   type ProfitAndLoss,
   type ReportAccount,
-} from '../../../src/utils/reports';
+} from '@chub/shared/utils/reports';
 
 // Every function runs in one withOrg (RLS) and keeps explicit org_id (and client_id) predicates (Hard rule 11).
 // Nothing here logs csvText or row contents (Hard rule 13).

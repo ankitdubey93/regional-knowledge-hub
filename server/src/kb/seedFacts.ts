@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import type { Fact } from '../../../src/data/schemas';
+import type { Fact } from '@chub/shared/data/schemas';
 import { db } from '../db/client';
 import { kbFact } from '../db/schema';
 import { recordAudit } from '../services/auditService';
@@ -26,7 +26,7 @@ export async function seedFacts(facts: Record<string, Fact>, today: string): Pro
     }
     const issues = checkFactSave(prev, f, today);
     if (issues.length > 0) throw new Error(`Fact ${key}: ${issues.map((i) => i.message).join('; ')}`);
-    await db.transaction((tx) => writeFactInTx(tx, SEED_ACTOR, key, prev, f, 'Seeded from src/data/facts.json'));
+    await db.transaction((tx) => writeFactInTx(tx, SEED_ACTOR, key, prev, f, 'Seeded from shared/seed/facts.json'));
     if (prev) report.updated += 1;
     else report.created += 1;
   }

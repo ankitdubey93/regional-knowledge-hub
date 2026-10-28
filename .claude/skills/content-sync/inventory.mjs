@@ -24,43 +24,43 @@ for (const s of sections) out(`docs.${s}`, docs.filter((d) => d.startsWith(`${s}
 out('docs.withoutSourcesSection', docs.filter((d) => !/^## Sources/m.test(read(`docs/${d}.md`))));
 
 // Facts (Hard rules 1, 2)
-const facts = json('src/data/facts.json');
+const facts = json('shared/seed/facts.json');
 const keys = Object.keys(facts);
 const unverified = keys.filter((k) => facts[k].verifiedOn == null);
 out('facts.total', keys.length);
 out('facts.verified', keys.length - unverified.length);
 out('facts.unverifiedKeys', unverified);
 out('facts.latestVerifiedOn', keys.map((k) => facts[k].verifiedOn).filter(Boolean).sort().at(-1) ?? '(none)');
-out('taxCodes.verifiedOn', json('src/data/tax-codes.json').verifiedOn ?? 'null');
+out('taxCodes.verifiedOn', json('client/src/data/tax-codes.json').verifiedOn ?? 'null');
 
 // Practice (Hard rule 8: 5+ quiz questions and 5+ flashcards per doc)
-const quizzes = json('src/data/quizzes.json');
-const flashcards = json('src/data/flashcards.json');
+const quizzes = json('client/src/data/quizzes.json');
+const flashcards = json('client/src/data/flashcards.json');
 out('quizzes.total', `${quizzes.length} (${byJurisdiction(quizzes)})`);
 out('flashcards.total', `${flashcards.length} (${byJurisdiction(flashcards)})`);
 const perDoc = (items) => (d) => items.filter((i) => i.doc === d).length;
 out('docs.under5Quiz', docs.filter((d) => perDoc(quizzes)(d) < 5));
 out('docs.under5Flashcards', docs.filter((d) => perDoc(flashcards)(d) < 5));
-const journals = json('src/data/journal-scenarios.json');
-const coding = json('src/data/coding-scenarios.json');
+const journals = json('client/src/data/journal-scenarios.json');
+const coding = json('client/src/data/coding-scenarios.json');
 out('journalScenarios.total', `${journals.length} (${byJurisdiction(journals)})`);
 out('codingScenarios.total', `${coding.length} (${byJurisdiction(coding)})`);
-out('standardsMapping.topics', json('src/data/standards-mapping.json').topics.length);
-out('checklists.total', json('src/data/checklists.json').length);
-const dataFiles = files('src/data', /\.json$/);
-const index = read('src/data/index.ts');
+out('standardsMapping.topics', json('client/src/data/standards-mapping.json').topics.length);
+out('checklists.total', json('client/src/data/checklists.json').length);
+const dataFiles = files('client/src/data', /\.json$/);
+const index = read('client/src/data/index.ts');
 out('data.files', dataFiles);
 out('data.notImportedInIndex', dataFiles.filter((f) => !index.includes(f)));
 
-// Routes (src/App.tsx is the authority)
-const app = read('src/App.tsx');
+// Routes (client/src/App.tsx is the authority)
+const app = read('client/src/App.tsx');
 const routes = [...app.matchAll(/path="([^"]+)"/g)].map((m) => m[1]);
 out('routes', routes);
-const nestedPages = dirs('src/pages').flatMap((d) => files(`src/pages/${d}`, /\.tsx$/).map((f) => `${d}/${f}`));
-const allPages = [...files('src/pages', /\.tsx$/), ...nestedPages].map((f) => f.replace(/\.tsx$/, ''));
+const nestedPages = dirs('client/src/pages').flatMap((d) => files(`client/src/pages/${d}`, /\.tsx$/).map((f) => `${d}/${f}`));
+const allPages = [...files('client/src/pages', /\.tsx$/), ...nestedPages].map((f) => f.replace(/\.tsx$/, ''));
 out('pages', allPages);
 out('pages.notReferencedInApp', allPages.filter((p) => !app.includes(`./pages/${p}'`) && !app.includes(`./pages/${p}"`)));
-const tools = read('src/content/tools.ts');
+const tools = read('client/src/content/tools.ts');
 const toolTargets = [...tools.matchAll(/to: '([^'#]+)/g)].map((m) => m[1].replace(/^\//, ''));
 const routePatterns = routes.filter((r) => r !== '*').map((r) => new RegExp(`^${r.replace(/:[^/]+/g, '[^/]+')}$`));
 out('toolsRegistry.targetsWithoutRoute', toolTargets.filter((t) => !routePatterns.some((re) => re.test(t))));
@@ -76,7 +76,7 @@ out('server.services', files('server/src/services', /\.ts$/));
 out('server.tenantTables', [...read('server/src/db/schema.ts').matchAll(/pgTable\(\s*'([^']+)'/g)].map((m) => m[1]));
 
 // Tests (files only; counts need a real run)
-out('tests.web.files', files('src/__tests__', /\.test\.tsx?$/));
+out('tests.web.files', files('client/src/__tests__', /\.test\.tsx?$/));
 out('tests.server.files', files('server/src/__tests__', /\.test\.ts$/));
 
 // Dependencies (Hard rule 9: each needs a reason in architecture.md)

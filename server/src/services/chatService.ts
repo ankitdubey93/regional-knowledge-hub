@@ -10,9 +10,9 @@ import { buildLedgerSources, isLedgerQuestion, ledgerAccountNames, redactQuestio
 import { searchKbForChat } from '../kb/retrieve';
 import { createRestorer, redactWith } from '../privacy/redact';
 import { restoreCitation, restoreMessageView } from '../chat/restoreView';
-import { NOT_COVERED_REPLY } from '../../../src/lib/chatWire';
-import { formatFact } from '../../../src/data/factFormat';
-import type { ChatMessageView, CitationView, GroundingFlag, MessageStatus } from '../../../src/lib/chatWire';
+import { NOT_COVERED_REPLY } from '@chub/shared/lib/chatWire';
+import { formatFact } from '@chub/shared/data/factFormat';
+import type { ChatMessageView, CitationView, GroundingFlag, MessageStatus } from '@chub/shared/lib/chatWire';
 import { ledgerChatContext } from './ledgerService';
 import {
   conversationContext,

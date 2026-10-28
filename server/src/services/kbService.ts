@@ -1,7 +1,7 @@
 import { and, asc, count, desc, eq, ilike, inArray, ne, or, sql, type SQL } from 'drizzle-orm';
 import { db } from '../db/client';
 import { kbChunk, kbFact, kbSource, kbVersion } from '../db/schema';
-import type { Fact } from '../../../src/data/schemas';
+import type { Fact } from '@chub/shared/data/schemas';
 import type { Tx } from '../db/withOrg';
 import { chunkText, type RawChunk } from '../kb/chunk';
 import { factKeysIn, renderFactForKb, renderFactTokens } from '../kb/curriculum';

@@ -3,7 +3,7 @@ import { auth } from '../auth';
 import { pool } from '../db/client';
 import { ledgerImport } from '../db/schema';
 import { withOrg } from '../db/withOrg';
-import { AU_TB_CSV, UK_TB_CSV, UK_TB_UNBALANCED_CSV } from '../../../src/__tests__/fixtures/tb';
+import { AU_TB_CSV, UK_TB_CSV, UK_TB_UNBALANCED_CSV } from '@chub/shared/fixtures/tb';
 import { call, createFirm, mergeCookies, signUp } from './helpers';
 import { stopApp } from './server';
 

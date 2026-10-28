@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { ledgerAccount, ledgerImport } from '../db/schema';
-import { ACCOUNT_CLASSES } from '../../../src/utils/accountClasses';
+import { ACCOUNT_CLASSES } from '@chub/shared/utils/accountClasses';
 
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD');
 const column = z.number().int().min(0).max(200);

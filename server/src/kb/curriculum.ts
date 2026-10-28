@@ -1,13 +1,13 @@
 import { and, eq, inArray } from 'drizzle-orm';
-import { curriculumMeta } from '../../../src/content/curriculumMeta';
-import { parseFrontmatter } from '../../../src/content/frontmatter'; // pure, no imports of its own
+import { curriculumMeta } from '@chub/shared/content/curriculumMeta';
+import { parseFrontmatter } from '@chub/shared/content/frontmatter'; // pure, no imports of its own
 import type { Embedder } from '../ai/embed';
 import { db } from '../db/client';
 import { kbFact, kbSource, kbVersion } from '../db/schema';
 import { recordAudit } from '../services/auditService';
 import { createDraft, publishVersion } from '../services/kbService';
-import { formatFact } from '../../../src/data/factFormat';
-import type { Fact } from '../../../src/data/schemas';
+import { formatFact } from '@chub/shared/data/factFormat';
+import type { Fact } from '@chub/shared/data/schemas';
 import { normaliseText, sha256Hex } from './normalise';
 
 export const SEED_ACTOR = 'system:seed';

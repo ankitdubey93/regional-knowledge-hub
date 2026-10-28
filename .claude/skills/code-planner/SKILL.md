@@ -28,7 +28,7 @@ Either way, **you** do the thinking now so the executor does none of it later. E
 Docs describe the intended state. The filesystem is the only authority on what is actually built.
 
 ```bash
-ls src/ src/pages/ src/components/ src/utils/ src/data/ src/__tests__/
+ls client/src/ client/src/pages/ client/src/components/ client/src/utils/ client/src/data/ client/src/__tests__/
 ls server/src/ server/src/db/ server/src/routes/ server/src/services/ server/src/__tests__/ server/drizzle/ 2>/dev/null
 ls packages/ 2>/dev/null; ls .claude/skills/ .claude/agents/ plans/ 2>/dev/null
 cat package.json; cat server/package.json 2>/dev/null
@@ -36,7 +36,7 @@ git status --short
 ```
 
 Decide which part owns the work:
-- the **web app** (`src/`: the learning site and the chat UI)
+- the **web app** (`client/src/`: the learning site and the chat UI)
 - the **server** (`server/`: auth, tenants, knowledge base, chat, uploads)
 - **shared code** (`packages/shared/`, once it exists: zod schemas, money, redaction)
 
@@ -44,10 +44,10 @@ Then **read the closest existing analogue in full**. You're about to tell the ex
 
 | Kind of work | Analogue to read |
 |---|---|
-| Pure engine with tests | `src/utils/gst.ts` + `src/__tests__/tax.test.ts` |
-| Data file with schema | `src/data/schemas.ts` + `src/data/index.ts` + `src/__tests__/data.test.ts` |
-| Page or component | `src/pages/practice/PracticeIndex.tsx`, `src/components/ui.tsx` (`Card`, `Button`, `PageHeader`, `TableScroll`, `Field`) |
-| Component test | `src/__tests__/components.test.tsx` + `src/__tests__/render.tsx` (`renderAt`) |
+| Pure engine with tests | `client/src/utils/gst.ts` + `client/src/__tests__/tax.test.ts` |
+| Data file with schema | `shared/src/data/schemas.ts` + `client/src/data/index.ts` + `client/src/__tests__/data.test.ts` |
+| Page or component | `client/src/pages/practice/PracticeIndex.tsx`, `client/src/components/ui.tsx` (`Card`, `Button`, `PageHeader`, `TableScroll`, `Field`) |
+| Component test | `client/src/__tests__/components.test.tsx` + `client/src/__tests__/render.tsx` (`renderAt`) |
 | Server route + service | `server/src/routes/clients.ts` + `server/src/services/clientService.ts` (once Phase P1 lands) |
 | Tenant table + RLS | `server/src/db/schema.ts` (`client`) + its custom RLS migration in `server/drizzle/` |
 | Server integration test | `server/src/__tests__/clients.test.ts` + `server/src/__tests__/helpers.ts` |
@@ -149,7 +149,7 @@ How to fill in each field:
 - **Contract:** **write it out word for word, ready to paste.** That means the actual signatures, column lists, route table with methods and status codes, error message strings, JSX labels and test names. Don't describe the shape and hope. Money is integer cents and rates are basis points (Hard rule 3). Services take `orgId` first.
 - **Guardrails:** cite the numbered Hard rules from [CLAUDE.md](../../../CLAUDE.md) that actually apply *here*. Not all of them; just the two or three a tired executor would get wrong in this file.
 - **Proof:** the exact command plus the expected result. "Tests pass" is not a proof. `npm test -w server -- clients` with the named cross-tenant 404 case is. **The command must run in this environment:**
-  - Web: `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`.
+  - Web: `npm run test:web`, `npm run typecheck`, `npm run lint`, `npm run build`.
   - Server: `npm run typecheck -w server`, `npm test -w server` (needs `docker compose up -d db` first), `npm run db:migrate -w server`.
   - Direct SQL: `docker exec chub-db psql -U chub -d chub -c '…'`. Don't assume `psql` exists on the host.
   - Postgres runs on host port **5437**. Ports 5433, 5435 and 5436 are taken on this machine.
@@ -235,7 +235,7 @@ Then name the forbidden recoveries. These are the shortcuts a smaller model reac
 | Test fails | Weakening or deleting the assertion | Fix the code; the test is the spec |
 | Type error | `as any`, `@ts-expect-error`, loosening `tsconfig` | Fix the type |
 | Query returns no rows | Dropping the `org_id` predicate, disabling RLS, connecting as `chub` (superuser) | Fix `withOrg` usage or the fixture (Hard rule 11) |
-| Need a key in the browser | A `VITE_*` env var, a key in `src/` | Server-only env through `server/src/env.ts` (Hard rule 10) |
+| Need a key in the browser | A `VITE_*` env var, a key in `client/src/` | Server-only env through `server/src/env.ts` (Hard rule 10) |
 | A rate is needed in a doc or component | Typing the number | `{{fact:key}}` or `rateBp`/`cents` (Hard rule 1) |
 | Money assertion off by a cent | Floats, an epsilon comparison | Integer cents through `roundDiv` (Hard rule 3) |
 | A fact can't be verified | Setting `verifiedOn` anyway | `verifiedOn: null` (Hard rule 2) |

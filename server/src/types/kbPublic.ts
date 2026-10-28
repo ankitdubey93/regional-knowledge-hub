@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Fact, SiteDoc } from '../../../src/data/schemas';
+import type { Fact, SiteDoc } from '@chub/shared/data/schemas';
 import { BILL_STATUSES, KB_JURISDICTIONS } from '../db/schema';
 
 export const LAW_KINDS = ['act', 'regulation', 'bill', 'ruling', 'standard'] as const;

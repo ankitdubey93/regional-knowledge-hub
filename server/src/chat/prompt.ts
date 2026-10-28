@@ -1,4 +1,4 @@
-import { NOT_IN_SOURCES } from '../../../src/lib/chatWire';
+import { NOT_IN_SOURCES } from '@chub/shared/lib/chatWire';
 
 export interface PromptSource {
   marker: number;
