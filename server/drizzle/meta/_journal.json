@@ -134,6 +134,27 @@
       "when": 1793167862253,
       "tag": "0018_chat_ledger_citation_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793171127101,
+      "tag": "0019_conversation_redaction_map",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1793172541381,
+      "tag": "0020_documents",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1793172553977,
+      "tag": "0021_documents_rules",
+      "breakpoints": true
     }
   ]
 }

@@ -3,12 +3,14 @@ import {
   type AnyPgColumn,
   bigint,
   boolean,
+  customType,
   date,
   foreignKey,
   index,
   integer,
   jsonb,
   pgTable,
+  primaryKey,
   smallint,
   text,
   timestamp,
@@ -26,6 +28,9 @@ import { organization } from './auth-schema';
 export * from './auth-schema';
 
 // Tenant table: RLS is enabled and forced in migration 0003 (Hard rule 11); profile checks are in 0005.
+// Postgres bytea as a Node Buffer. Holds only sealed data (privacy/crypto.ts).
+export const bytea = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => 'bytea' });
+
 export const client = pgTable(
   'client',
   {
@@ -136,12 +141,14 @@ export const conversation = pgTable(
     userId: text('user_id').notNull(),
     title: text('title').notNull().default('New chat'),
     scope: text('scope', { enum: CHAT_SCOPES }),
+    redactionMap: bytea('redaction_map'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
     foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'conversation_client_org_fk' }).onDelete('cascade'),
     unique('conversation_id_org_unique').on(t.id, t.orgId),
+    unique('conversation_id_client_org_unique').on(t.id, t.clientId, t.orgId),
     index('conversation_org_client_idx').on(t.orgId, t.clientId, t.updatedAt),
   ],
 );
@@ -329,3 +336,61 @@ export const kbFactHistory = pgTable('kb_fact_history', {
   changedBy: text('changed_by').notNull(),
   changedAt: timestamp('changed_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [index('kb_fact_history_key_idx').on(t.factKey, t.changedAt)]);
+
+export const DOCUMENT_KINDS = ['pdf', 'docx', 'xlsx', 'csv', 'text', 'markdown'] as const;
+
+// Tenant table: RLS is enabled and forced in migration 0021 (Hard rule 11).
+export const document = pgTable(
+  'document',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    clientId: uuid('client_id').notNull(),
+    uploadedBy: text('uploaded_by').notNull(),
+    originalName: text('original_name').notNull(),
+    kind: text('kind', { enum: DOCUMENT_KINDS }).notNull(),
+    byteSize: integer('byte_size').notNull(),
+    sha256: text('sha256').notNull(),
+    textChars: integer('text_chars').notNull(),
+    truncated: boolean('truncated').notNull().default(false),
+    fileEnc: bytea('file_enc').notNull(),
+    textEnc: bytea('text_enc').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'document_client_org_fk' }).onDelete('cascade'),
+    unique('document_id_org_unique').on(t.id, t.orgId),
+    unique('document_id_client_org_unique').on(t.id, t.clientId, t.orgId),
+    uniqueIndex('document_client_sha_idx').on(t.clientId, t.sha256),
+  ],
+);
+
+// Tenant table: RLS is enabled and forced in migration 0021 (Hard rule 11).
+export const conversationDocument = pgTable(
+  'conversation_document',
+  {
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    conversationId: uuid('conversation_id').notNull(),
+    clientId: uuid('client_id').notNull(),
+    documentId: uuid('document_id').notNull(),
+    attachedBy: text('attached_by').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.conversationId, t.documentId], name: 'conversation_document_pk' }),
+    foreignKey({
+      columns: [t.conversationId, t.clientId, t.orgId],
+      foreignColumns: [conversation.id, conversation.clientId, conversation.orgId],
+      name: 'conversation_document_conversation_fk',
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [t.documentId, t.clientId, t.orgId],
+      foreignColumns: [document.id, document.clientId, document.orgId],
+      name: 'conversation_document_document_fk',
+    }).onDelete('cascade'),
+  ],
+);

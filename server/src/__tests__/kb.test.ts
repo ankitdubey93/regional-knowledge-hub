@@ -361,6 +361,15 @@ describe('kb', () => {
     expect(((await res.json()) as { error: string }).error).toContain('Too large');
   });
 
+  it('K25 upload a real .pdf → 201 (the body arrives as a Buffer)', async () => {
+    const source = await makeSource({ jurisdiction: 'UK', title: 'Upload PDF Act 2026', citation: 'Upload PDF Act 2026 (UK)', officialUrl: 'https://www.legislation.gov.uk/ukpga/2026/3' });
+    const pdf = readFileSync(join(__dirname, 'fixtures/documents/sample.pdf'));
+    const res = await upload(source.id, 'sample.pdf', new Uint8Array(pdf));
+    expect(res.status).toBe(201);
+    const { detail } = (await res.json()) as { detail: KbVersionDetail };
+    expect(detail.chunks.map((c) => c.text).join(' ')).toContain('980.00');
+  });
+
   it('K23 fetch a URL draft through the stubbed fetch', async () => {
     const url = 'https://www.legislation.gov.uk/ukpga/2026/1';
     setOfficialFetchForTests((async () =>

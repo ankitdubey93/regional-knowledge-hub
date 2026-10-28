@@ -35,6 +35,7 @@ const EntityDashboard = page(() => import('./pages/entity/EntityDashboard'), 'En
 const EntitySettings = page(() => import('./pages/entity/EntitySettings'), 'EntitySettings');
 const EntityBooks = page(() => import('./pages/entity/EntityBooks'), 'EntityBooks');
 const EntityReports = page(() => import('./pages/entity/EntityReports'), 'EntityReports');
+const EntityDocuments = page(() => import('./pages/entity/EntityDocuments'), 'EntityDocuments');
 const AdminHome = page(() => import('./pages/admin/AdminHome'), 'AdminHome');
 const AdminUsers = page(() => import('./pages/admin/AdminUsers'), 'AdminUsers');
 const AdminKb = page(() => import('./pages/admin/AdminKb'), 'AdminKb');
@@ -85,6 +86,7 @@ export function App() {
             <Route path="entities/:id/settings" element={<EntitySettings />} />
             <Route path="entities/:id/books" element={<EntityBooks />} />
             <Route path="entities/:id/reports" element={<EntityReports />} />
+            <Route path="entities/:id/documents" element={<EntityDocuments />} />
             <Route path="business" element={<Navigate to="/workspace" replace />} />
             <Route path="clients" element={<Navigate to="/workspace" replace />} />
             <Route path="clients/:id" element={<ClientRedirect />} />

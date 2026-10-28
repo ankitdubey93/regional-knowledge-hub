@@ -1,0 +1,1 @@
+ALTER TABLE "conversation" ADD COLUMN "redaction_map" bytea;

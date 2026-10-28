@@ -8,12 +8,21 @@ import { isCovered } from '../chat/coverage';
 import { buildPrompt, type PromptSource } from '../chat/prompt';
 import { buildLedgerSources, isLedgerQuestion, ledgerAccountNames, redactQuestionAndNames } from '../chat/ledgerSources';
 import { searchKbForChat } from '../kb/retrieve';
-import { redact } from '../privacy/redact';
+import { createRestorer, redactWith } from '../privacy/redact';
+import { restoreCitation, restoreMessageView } from '../chat/restoreView';
 import { NOT_COVERED_REPLY } from '../../../src/lib/chatWire';
 import { formatFact } from '../../../src/data/factFormat';
 import type { ChatMessageView, CitationView, GroundingFlag, MessageStatus } from '../../../src/lib/chatWire';
 import { ledgerChatContext } from './ledgerService';
-import { conversationContext, historyFor, insertAssistantMessage, insertUserMessage } from './conversationService';
+import {
+  conversationContext,
+  historyFor,
+  insertAssistantMessage,
+  insertUserMessage,
+  listAttachedDocuments,
+  withRedactionMap,
+} from './conversationService';
+import { openDocumentTexts } from './documentService';
 import { rowToFact } from './kbService';
 import { recordUsage } from './usageService';
 
@@ -51,7 +60,32 @@ export async function runExchange(
   const names = ctx.names;
   const ledger = ctx.client ? await ledgerChatContext(orgId, ctx.client.id) : null;
   const rawNames = ledger ? ledgerAccountNames(ledger.current, ledger.prior) : new Map<string, string>();
-  const red = redactQuestionAndNames(text, [...rawNames.values()], names);
+  const rawHistory = await historyFor(orgId, conversationId);
+  const accountNameList = [...rawNames.values()];
+  // Attached documents are opened in their own short transactions, before the map transaction (never held during a provider call).
+  const attached = ctx.client ? await listAttachedDocuments(orgId, conversationId) : [];
+  const rawDocs = await openDocumentTexts(orgId, attached.map((d) => d.id));
+  const redacted = await withRedactionMap(orgId, conversationId, (m0) => {
+    const red = redactQuestionAndNames(text, accountNameList, names, m0);
+    let map = red.map;
+    const hist: { role: 'user' | 'assistant'; text: string }[] = [];
+    for (const t of rawHistory) {
+      const r = redactWith(t.text, { names }, map);
+      map = r.map;
+      hist.push({ role: t.role, text: r.text });
+    }
+    const docs: { label: string; name: string; text: string }[] = [];
+    for (const [i, d] of rawDocs.entries()) {
+      const n = redactWith(d.name, { names }, map);
+      map = n.map;
+      const t = redactWith(d.text, { names }, map);
+      map = t.map;
+      docs.push({ label: `D${i + 1}`, name: n.text, text: t.text });
+    }
+    return { map, result: { red, history: hist, docs, map } };
+  });
+  if (!redacted) throw new Error('conversation not found');
+  const { red, history, docs, map } = redacted;
   const question = red.question;
   const displayNames = new Map<string, string>();
   for (const [i, code] of [...rawNames.keys()].entries()) {
@@ -59,7 +93,6 @@ export async function runExchange(
     if (n === undefined) throw new Error('redaction changed the account name count');
     displayNames.set(code, n);
   }
-  const history = (await historyFor(orgId, conversationId)).map((t) => ({ role: t.role, text: redact(t.text, { names }) }));
 
   // 3
   let jurisdiction: 'AU' | 'UK' | undefined;
@@ -100,7 +133,7 @@ export async function runExchange(
       model: null,
       citations: [],
     });
-    io.done(message);
+    io.done(restoreMessageView(message, map));
     return;
   }
 
@@ -145,7 +178,7 @@ export async function runExchange(
     excerpt: r.text.slice(0, EXCERPT_CHARS),
   }));
   const sources: CitationView[] = [...ledgerCitations, ...kbCitations];
-  io.sources(sources);
+  io.sources(sources.map((c) => restoreCitation(c, map)));
 
   // 8
   const promptSources: PromptSource[] = [
@@ -174,6 +207,7 @@ export async function runExchange(
     today: now.toISOString().slice(0, 10),
     jurisdiction,
     sources: promptSources,
+    documents: docs,
     history,
     question,
   });
@@ -185,6 +219,7 @@ export async function runExchange(
   else io.signal.addEventListener('abort', onAbort, { once: true });
 
   let answer = '';
+  const restorer = createRestorer(map);
   const usages: { model: string; tokens: UsageTokens }[] = [];
   let stopReason: 'end' | 'max_tokens' | 'refusal' = 'end';
   let failed = false;
@@ -192,7 +227,8 @@ export async function runExchange(
     for await (const ev of provider.stream({ system: prompt.system, messages: prompt.messages, maxTokens: MAX_ANSWER_TOKENS, signal: ac.signal })) {
       if (ev.type === 'text') {
         answer += ev.text;
-        io.delta(ev.text);
+        const shown = restorer.push(ev.text);
+        if (shown) io.delta(shown);
       } else if (ev.type === 'usage') {
         usages.push({
           model: ev.model,
@@ -211,6 +247,8 @@ export async function runExchange(
     // A ChatProviderError and any other failure are both stored as an error; the abort case is decided below.
     failed = true;
   } finally {
+    const rest = restorer.flush();
+    if (rest) io.delta(rest);
     io.signal.removeEventListener('abort', onAbort);
   }
   const aborted = io.signal.aborted;
@@ -235,6 +273,7 @@ export async function runExchange(
         ...results.map((r, i) => ({ marker: offset + i + 1, text: r.text })),
       ],
       factValues,
+      docs.map((d) => d.text),
     );
     status = g.status;
     flags = g.flags;
@@ -272,5 +311,5 @@ export async function runExchange(
     model: provider.model,
     citations,
   });
-  io.done(message);
+  io.done(restoreMessageView(message, map));
 }

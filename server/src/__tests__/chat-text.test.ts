@@ -3,8 +3,8 @@ import { NOT_IN_SOURCES } from '../../../src/lib/chatWire';
 import { PRICES_CHECKED_ON, costMicroUsd, isPriced, usdToMicroUsd } from '../ai/pricing';
 import { isCovered } from '../chat/coverage';
 import { checkGrounding, extractNumbers } from '../chat/grounding';
-import { HISTORY_TURNS, SYSTEM_PROMPT, buildPrompt, stripMarkers, type PromptSource, type PromptTurn } from '../chat/prompt';
-import { redact } from '../privacy/redact';
+import { HISTORY_TURNS, MAX_DOCUMENT_CHARS_IN_PROMPT, SYSTEM_PROMPT, buildPrompt, stripMarkers, type PromptSource, type PromptTurn } from '../chat/prompt';
+import { createRestorer, emptyRedactionMap, redact, redactWith, restore } from '../privacy/redact';
 import { formatSse } from '../chat/sse';
 import { parseSse } from '../../../src/lib/chatWire';
 
@@ -51,6 +51,51 @@ describe('redact', () => {
   it('RD12 leaves amounts, rates and dates alone', () => {
     const s = 'A$75,000 at 10% by 28 October 2026';
     expect(r(s)).toBe(s);
+  });
+});
+
+describe('redaction map', () => {
+  const none = { names: [] as string[] };
+  const twoCalls = () => {
+    const a = redactWith('a@x.com', none, emptyRedactionMap());
+    const b = redactWith('b@y.com and a@x.com', none, a.map);
+    return { a, b };
+  };
+
+  it('RD13 redactWith continues numbering from the map', () => {
+    expect(twoCalls().b.text).toBe('[EMAIL_2] and [EMAIL_1]');
+  });
+  it('RD14 redactWith does not mutate the input map', () => {
+    const a = redactWith('a@x.com', none, emptyRedactionMap());
+    const before = structuredClone(a.map);
+    redactWith('b@y.com and a@x.com', none, a.map);
+    expect(a.map).toEqual(before);
+  });
+  it('RD15 restore swaps known tokens and leaves unknown ones', () => {
+    expect(restore('[EMAIL_1] and [NAME_9]', twoCalls().b.map)).toBe('a@x.com and [NAME_9]');
+  });
+  it('RD16 restorer handles a token split across chunks', () => {
+    const r = createRestorer(twoCalls().b.map);
+    const first = r.push('Hi [EMA');
+    expect(first).toBe('Hi ');
+    const rest = r.push('IL_1] there') + r.flush();
+    expect(first + rest).toBe('Hi a@x.com there');
+  });
+  it('RD17 restorer does not hold back a long bracket', () => {
+    const chunk = 'x [ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    expect(chunk.length - 2).toBe(27);
+    expect(createRestorer(emptyRedactionMap()).push(chunk)).toBe(chunk);
+  });
+  it('RD18 names match case-insensitively and reuse one token across calls', () => {
+    const o = { names: ['Acme Pty Ltd'] };
+    const a = redactWith('acme pty ltd', o, emptyRedactionMap());
+    const b = redactWith('ACME PTY LTD', o, a.map);
+    expect(a.text).toBe('[NAME_1]');
+    expect(b.text).toBe('[NAME_1]');
+  });
+  it('RD19 the redact() wrapper still numbers from 1 on every call', () => {
+    expect(redact('a@x.com', none)).toBe('[EMAIL_1]');
+    expect(redact('b@y.com', none)).toBe('[EMAIL_1]');
   });
 });
 
@@ -114,6 +159,37 @@ describe('prompt', () => {
   });
 });
 
+describe('prompt documents', () => {
+  const base = { today: 'd', jurisdiction: undefined, sources: [], history: [], question: 'q' } as const;
+  const lastText = (docs: { label: string; name: string; text: string }[]): string => {
+    const built = buildPrompt({ ...base, sources: [], history: [], documents: docs });
+    return built.messages[built.messages.length - 1]?.text ?? '';
+  };
+  it('PR-D1 no documents means no <documents> block', () => {
+    expect(lastText([])).not.toContain('<documents>');
+  });
+  it('PR-D2 documents come before <sources> with labels D1, D2', () => {
+    const t = lastText([
+      { label: 'D1', name: 'a.csv', text: 'alpha' },
+      { label: 'D2', name: 'b.csv', text: 'beta' },
+    ]);
+    expect(t).toContain('<document label="D1" name="a.csv">\nalpha\n</document>');
+    expect(t.indexOf('label="D1"')).toBeLessThan(t.indexOf('label="D2"'));
+    expect(t.indexOf('</documents>')).toBeLessThan(t.indexOf('<sources>'));
+  });
+  it('PR-D3 the char cap cuts the crossing document and omits later ones', () => {
+    const t = lastText([
+      { label: 'D1', name: 'a', text: 'x'.repeat(MAX_DOCUMENT_CHARS_IN_PROMPT - 10) },
+      { label: 'D2', name: 'b', text: 'y'.repeat(50) },
+      { label: 'D3', name: 'c', text: 'zzz' },
+    ]);
+    expect(t).toContain('y'.repeat(10) + '\n[truncated]');
+    expect(t).not.toContain('y'.repeat(11));
+    expect(t).not.toContain('label="D3"');
+    expect(t.split('[Further attached documents omitted]').length - 1).toBe(1);
+  });
+});
+
 describe('grounding', () => {
   it('GR1 cited answer passes', () => {
     expect(checkGrounding('GST is 10% [1].', [{ marker: 1, text: 'The rate of GST is 10%.' }], [])).toEqual({
@@ -161,6 +237,17 @@ describe('grounding', () => {
   });
   it('GR9 extractNumbers normalises', () => {
     expect(extractNumbers('A$75,000.00 and 3.50% and 2026')).toEqual(['75000', '3.5%', '2026']);
+  });
+});
+
+describe('grounding documents', () => {
+  it('GR-D1 a number only in a document is flagged from_document', () => {
+    const r = checkGrounding('The total is 980.00 [1].', [{ marker: 1, text: 'No figures.' }], [], ['Invoice total 980.00']);
+    expect(r.flags).toEqual([{ code: 'from_document', detail: '980' }]);
+  });
+  it('GR-D2 a number in a cited source is not flagged even if also in a document', () => {
+    const r = checkGrounding('The total is 980.00 [1].', [{ marker: 1, text: 'Total 980.00' }], [], ['Invoice total 980.00']);
+    expect(r.status).toBe('answered');
   });
 });
 

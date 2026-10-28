@@ -2,17 +2,20 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { Pencil, Plus, Send, Square, Trash2 } from 'lucide-react';
 import { ApiError } from '../lib/api';
 import {
+  attachDocument,
   createConversation,
   deleteConversation,
+  detachDocument,
   getChatStatus,
   getConversation,
   listConversations,
   renameConversation,
   streamMessage,
 } from '../lib/chat';
-import type { ChatMessageView as Msg, ChatScope, ChatStatus, CitationView, ConversationView } from '../lib/chatWire';
+import type { AttachedDocument, ChatMessageView as Msg, ChatScope, ChatStatus, CitationView, ConversationView } from '../lib/chatWire';
+import { listDocuments, type DocumentView } from '../lib/documents';
 import { ChatMessageView } from './chat/ChatMessageView';
-import { Button, Callout, Card, cx, inputClass } from './ui';
+import { Button, Callout, Card, cx, inputClass, TextLink } from './ui';
 
 const NOT_CONFIGURED_TEXT = "The assistant isn't configured on this server.";
 const DELETE_CONFIRM = 'Delete this chat? This cannot be undone.';
@@ -41,7 +44,15 @@ export function ChatPanel({ title, lead, contextLine, placeholder, suggestions, 
   const [error, setError] = useState<string | null>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState('');
+  const [attached, setAttached] = useState<AttachedDocument[]>([]);
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const [library, setLibrary] = useState<DocumentView[] | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  // The chat on screen now, read after an await so a late attach/detach reply can't land on another chat.
+  const activeRef = useRef<string | null>(null);
+  useEffect(() => {
+    activeRef.current = activeId;
+  }, [activeId]);
   const id = useId();
 
   const refreshChats = useCallback(async () => {
@@ -60,6 +71,9 @@ export function ChatPanel({ title, lead, contextLine, placeholder, suggestions, 
     setStreaming(null);
     setRenamingId(null);
     setError(null);
+    setAttached([]);
+    setLibraryOpen(false);
+    setLibrary(null);
     getChatStatus().then(
       (s) => { if (!cancelled) setStatus(s); },
       (err: unknown) => { if (!cancelled) setError(errorText(err)); },
@@ -80,6 +94,8 @@ export function ChatPanel({ title, lead, contextLine, placeholder, suggestions, 
       const detail = await getConversation(chatId);
       setActiveId(chatId);
       setMessages(detail.messages);
+      setAttached(detail.conversation.documents);
+      setLibraryOpen(false);
     } catch (err) {
       setError(errorText(err));
     }
@@ -88,6 +104,8 @@ export function ChatPanel({ title, lead, contextLine, placeholder, suggestions, 
   function newChat() {
     setActiveId(null);
     setMessages([]);
+    setAttached([]);
+    setLibraryOpen(false);
     setError(null);
   }
 
@@ -99,6 +117,8 @@ export function ChatPanel({ title, lead, contextLine, placeholder, suggestions, 
       if (activeId === chat.id) {
         setActiveId(null);
         setMessages([]);
+        setAttached([]);
+        setLibraryOpen(false);
       }
     } catch (err) {
       setError(errorText(err));
@@ -114,6 +134,51 @@ export function ChatPanel({ title, lead, contextLine, placeholder, suggestions, 
       setRenamingId(null);
     } catch (err) {
       setError(errorText(err));
+    }
+  }
+
+  async function toggleLibrary() {
+    if (libraryOpen) {
+      setLibraryOpen(false);
+      return;
+    }
+    setLibraryOpen(true);
+    if (clientId === null) return;
+    try {
+      setLibrary(await listDocuments(clientId));
+    } catch (err) {
+      setError(errorText(err));
+    }
+  }
+
+  function closeLibrary() {
+    setLibraryOpen(false);
+    document.getElementById(`${id}-attach`)?.focus();
+  }
+
+  async function chooseDocument(doc: DocumentView) {
+    const chatId = activeId;
+    if (chatId === null) return;
+    setError(null);
+    try {
+      const next = await attachDocument(chatId, doc.id);
+      if (activeRef.current !== chatId) return;
+      setAttached(next);
+      closeLibrary();
+    } catch (err) {
+      if (activeRef.current === chatId) setError(errorText(err));
+    }
+  }
+
+  async function removeAttached(doc: AttachedDocument) {
+    const chatId = activeId;
+    if (chatId === null) return;
+    setError(null);
+    try {
+      const next = await detachDocument(chatId, doc.id);
+      if (activeRef.current === chatId) setAttached(next);
+    } catch (err) {
+      if (activeRef.current === chatId) setError(errorText(err));
     }
   }
 
@@ -293,6 +358,78 @@ export function ChatPanel({ title, lead, contextLine, placeholder, suggestions, 
 
       {notConfigured && <Callout tone="warn">{NOT_CONFIGURED_TEXT}</Callout>}
       {error !== null && <Callout tone="bad">{error}</Callout>}
+
+      {clientId !== null && activeId !== null && (
+        <div
+          className="flex flex-col gap-2"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape' && libraryOpen) closeLibrary();
+          }}
+        >
+          {attached.length > 0 && (
+            <ul aria-label="Attached documents" className="flex flex-wrap gap-2">
+              {attached.map((d) => (
+                <li
+                  key={d.id}
+                  className="flex min-w-0 max-w-full items-center gap-1 rounded-full border border-line bg-panel-2 px-3 py-1 text-sm"
+                >
+                  <span className="min-w-0 break-all">{d.originalName}</span>
+                  <button
+                    type="button"
+                    aria-label={`Remove ${d.originalName}`}
+                    className="rounded-full px-1.5 text-muted hover:text-ink"
+                    onClick={() => void removeAttached(d)}
+                  >
+                    ×
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div>
+            <Button id={`${id}-attach`} variant="secondary" aria-expanded={libraryOpen} onClick={() => void toggleLibrary()}>
+              Attach document
+            </Button>
+          </div>
+          {libraryOpen && (
+            <div role="group" aria-label="Choose a document" className="flex flex-col gap-2 rounded-lg border border-line p-3">
+              {library !== null && library.length === 0 && (
+                <>
+                  <p className="text-sm text-muted">No documents yet.</p>
+                  <div>
+                    <TextLink to={`/entities/${clientId}/documents`}>Upload one</TextLink>
+                  </div>
+                </>
+              )}
+              {library !== null && library.length > 0 && library.every((d) => attached.some((a) => a.id === d.id)) && (
+                <>
+                  <p className="text-sm text-muted">Every document for this entity is already attached.</p>
+                  <div>
+                    <TextLink to={`/entities/${clientId}/documents`}>Upload another</TextLink>
+                  </div>
+                </>
+              )}
+              {library !== null && library.length > 0 && (
+                <ul className="flex flex-wrap gap-2">
+                  {library
+                    .filter((d) => !attached.some((a) => a.id === d.id))
+                    .map((d) => (
+                      <li key={d.id} className="min-w-0 max-w-full">
+                        <button
+                          type="button"
+                          className="max-w-full break-all rounded-full border border-line bg-panel-2 px-3 py-1.5 text-left text-sm hover:border-accent"
+                          onClick={() => void chooseDocument(d)}
+                        >
+                          {d.originalName}
+                        </button>
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <form
         className="flex flex-col gap-2 sm:flex-row sm:items-end"

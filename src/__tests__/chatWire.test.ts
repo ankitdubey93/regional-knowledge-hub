@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chatMessageViewSchema, citationViewSchema, parseSse } from '../lib/chatWire';
+import { chatMessageViewSchema, citationViewSchema, conversationViewSchema, FLAG_CODES, parseSse } from '../lib/chatWire';
 
 describe('parseSse', () => {
   it('CW1 parses two complete events', () => {
@@ -106,5 +106,20 @@ describe('parseSse', () => {
       excerpt: 'The rate of GST is 10%.',
     });
     expect(parsed.ledger).toBeUndefined();
+  });
+
+  it('CW-D1 conversationViewSchema requires documents and FLAG_CODES includes from_document', () => {
+    const base = {
+      id: 'c1',
+      clientId: null,
+      scope: null,
+      title: 'Chat',
+      createdBy: 'u1',
+      createdAt: '2026-10-28T00:00:00.000Z',
+      updatedAt: '2026-10-28T00:00:00.000Z',
+    };
+    expect(() => conversationViewSchema.parse(base)).toThrow();
+    expect(() => conversationViewSchema.parse({ ...base, documents: [] })).not.toThrow();
+    expect(FLAG_CODES).toContain('from_document');
   });
 });

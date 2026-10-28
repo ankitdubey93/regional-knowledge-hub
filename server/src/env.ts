@@ -18,6 +18,11 @@ const schema = z.object({
   CHAT_PROVIDER: z.enum(['anthropic', 'gemini']).default('anthropic'),
   DAILY_SPEND_CAP_USD: z.string().regex(/^\d{1,6}(\.\d{1,2})?$/).default('5'),
   CHAT_DAILY_MESSAGES_PER_USER: z.coerce.number().int().positive().default(50),
+  // P4: seals stored uploads and each conversation's redaction map. Base64 of exactly 32 bytes. Never logged.
+  DATA_ENCRYPTION_KEY: z
+    .string()
+    .transform((v) => Buffer.from(v, 'base64'))
+    .refine((b) => b.length === 32, 'DATA_ENCRYPTION_KEY must be base64 of 32 bytes (openssl rand -base64 32)'),
 });
 
 export const env = schema.parse(process.env);

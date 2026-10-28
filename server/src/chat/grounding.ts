@@ -46,7 +46,7 @@ export function extractNumbers(text: string): string[] {
 
 const PREVIEW = 60;
 
-export function checkGrounding(answer: string, sources: CitedChunk[], factValues: string[]): GroundingResult {
+export function checkGrounding(answer: string, sources: CitedChunk[], factValues: string[], documentTexts: string[] = []): GroundingResult {
   if (answer.trim() === NOT_IN_SOURCES) return { status: 'not_covered', flags: [], usedMarkers: [] };
 
   const flags: GroundingFlag[] = [];
@@ -79,8 +79,10 @@ export function checkGrounding(answer: string, sources: CitedChunk[], factValues
     ...extractNumbers(sources.filter((s) => usedMarkers.includes(s.marker)).map((s) => s.text).join(' ')),
     ...extractNumbers(factValues.join(' ')),
   ]);
+  const fromDocs = new Set<string>(extractNumbers(documentTexts.join(' ')));
   for (const n of extractNumbers(answer)) {
-    if (!allowed.has(n)) flags.push({ code: 'unsupported_number', detail: n });
+    if (allowed.has(n)) continue;
+    flags.push({ code: fromDocs.has(n) ? 'from_document' : 'unsupported_number', detail: n });
   }
 
   return { status: flags.length > 0 ? 'flagged' : 'answered', flags, usedMarkers };

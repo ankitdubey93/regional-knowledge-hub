@@ -8,6 +8,7 @@ import { adminKbRoutes } from './routes/adminKb';
 import { adminRoutes } from './routes/admin';
 import { chatStatusRoutes, conversationRoutes } from './routes/conversations';
 import { clientRoutes } from './routes/clients';
+import { documentRoutes } from './routes/documents';
 import { kbRoutes } from './routes/kb';
 import { ledgerRoutes } from './routes/ledger';
 
@@ -20,6 +21,7 @@ app.get('/api/health', (_req, res) => {
 });
 app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use('/api/kb', kbRoutes);
+app.use('/api/clients/:clientId', documentRoutes);
 app.use('/api/clients/:clientId', ledgerRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/chat', chatStatusRoutes);

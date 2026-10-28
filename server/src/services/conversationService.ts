@@ -1,11 +1,15 @@
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
-import { chatCitation, chatMessage, client, conversation } from '../db/schema';
+import { chatCitation, chatMessage, client, conversation, conversationDocument, document, type DOCUMENT_KINDS } from '../db/schema';
 import { withOrg } from '../db/withOrg';
 import type { ConversationRow } from '../types/chat';
 import type { Client } from '../types/clients';
 import type { FirmRole } from '../types';
 import { stripMarkers } from '../chat/prompt';
+import { restoreMessageView } from '../chat/restoreView';
+import { CryptoError, aadFor, seal, unseal } from '../privacy/crypto';
+import { emptyRedactionMap, type RedactionMap } from '../privacy/redact';
 import type {
+  AttachedDocument,
   ChatMessageView,
   ChatScope,
   CitationView,
@@ -20,7 +24,9 @@ import type {
 type MessageRow = typeof chatMessage.$inferSelect;
 type CitationRow = typeof chatCitation.$inferSelect;
 
-export function toConversationView(r: ConversationRow): ConversationView {
+type DocumentKind = (typeof DOCUMENT_KINDS)[number];
+
+export function toConversationView(r: ConversationRow, documents: AttachedDocument[] = []): ConversationView {
   return {
     id: r.id,
     clientId: r.clientId,
@@ -29,7 +35,133 @@ export function toConversationView(r: ConversationRow): ConversationView {
     createdBy: r.userId,
     createdAt: r.createdAt.toISOString(),
     updatedAt: r.updatedAt.toISOString(),
+    documents,
   };
+}
+
+function openMap(orgId: string, id: string, sealed: Buffer | null): RedactionMap {
+  if (sealed === null) return emptyRedactionMap();
+  const parsed: unknown = JSON.parse(unseal(sealed, aadFor('conversation', orgId, id)).toString('utf8'));
+  if (typeof parsed !== 'object' || parsed === null || (parsed as { v?: unknown }).v !== 1) {
+    throw new CryptoError('Cannot open sealed data');
+  }
+  return parsed as RedactionMap;
+}
+
+/** One withOrg transaction: SELECT redaction_map ... FOR UPDATE (with the org_id predicate), unseal, run fn, seal the returned map, UPDATE, commit.
+ *  fn must be synchronous and pure: no provider or embedder call inside (no transaction is held during a provider call). */
+export async function withRedactionMap<T>(
+  orgId: string,
+  conversationId: string,
+  fn: (map: RedactionMap) => { map: RedactionMap; result: T },
+): Promise<T | null> {
+  return withOrg(orgId, async (tx) => {
+    const found = await tx
+      .select({ id: conversation.id, redactionMap: conversation.redactionMap })
+      .from(conversation)
+      .where(and(eq(conversation.id, conversationId), eq(conversation.orgId, orgId)))
+      .limit(1)
+      .for('update');
+    const row = found[0];
+    if (!row) return null;
+    const out = fn(openMap(orgId, conversationId, row.redactionMap));
+    const sealed = seal(Buffer.from(JSON.stringify(out.map), 'utf8'), aadFor('conversation', orgId, conversationId));
+    await tx
+      .update(conversation)
+      .set({ redactionMap: sealed })
+      .where(and(eq(conversation.id, conversationId), eq(conversation.orgId, orgId)));
+    return out.result;
+  });
+}
+
+export async function readRedactionMap(orgId: string, conversationId: string): Promise<RedactionMap> {
+  return withOrg(orgId, async (tx) => {
+    const found = await tx
+      .select({ redactionMap: conversation.redactionMap })
+      .from(conversation)
+      .where(and(eq(conversation.id, conversationId), eq(conversation.orgId, orgId)))
+      .limit(1);
+    const row = found[0];
+    return row ? openMap(orgId, conversationId, row.redactionMap) : emptyRedactionMap();
+  });
+}
+
+type Tx = Parameters<Parameters<typeof withOrg>[1]>[0];
+
+async function attachedIn(tx: Tx, orgId: string, conversationId: string): Promise<AttachedDocument[]> {
+  const rows = await tx
+    .select({
+      id: document.id,
+      originalName: document.originalName,
+      kind: document.kind,
+      truncated: document.truncated,
+    })
+    .from(conversationDocument)
+    .innerJoin(
+      document,
+      and(eq(document.id, conversationDocument.documentId), eq(document.orgId, orgId)),
+    )
+    .where(and(eq(conversationDocument.conversationId, conversationId), eq(conversationDocument.orgId, orgId)))
+    .orderBy(asc(conversationDocument.createdAt), asc(document.id));
+  return rows.map((r) => ({ id: r.id, originalName: r.originalName, kind: r.kind as DocumentKind, truncated: r.truncated }));
+}
+
+export async function listAttachedDocuments(orgId: string, conversationId: string): Promise<AttachedDocument[]> {
+  return withOrg(orgId, (tx) => attachedIn(tx, orgId, conversationId));
+}
+
+export type AttachOutcome = { documents: AttachedDocument[] } | { notFound: 'chat' | 'document' };
+
+export async function attachDocument(
+  orgId: string,
+  userId: string,
+  conversationId: string,
+  documentId: string,
+): Promise<AttachOutcome> {
+  return withOrg(orgId, async (tx): Promise<AttachOutcome> => {
+    const found = await tx
+      .select({ id: conversation.id, clientId: conversation.clientId })
+      .from(conversation)
+      .where(and(eq(conversation.id, conversationId), eq(conversation.orgId, orgId)))
+      .limit(1);
+    const conv = found[0];
+    if (!conv) return { notFound: 'chat' };
+    if (conv.clientId === null) return { notFound: 'document' };
+    const docs = await tx
+      .select({ id: document.id })
+      .from(document)
+      .where(and(eq(document.id, documentId), eq(document.orgId, orgId), eq(document.clientId, conv.clientId)))
+      .limit(1);
+    if (docs.length === 0) return { notFound: 'document' };
+    await tx
+      .insert(conversationDocument)
+      .values({ orgId, conversationId, clientId: conv.clientId, documentId, attachedBy: userId })
+      .onConflictDoNothing();
+    return { documents: await attachedIn(tx, orgId, conversationId) };
+  });
+}
+
+export async function detachDocument(orgId: string, conversationId: string, documentId: string): Promise<AttachOutcome> {
+  return withOrg(orgId, async (tx): Promise<AttachOutcome> => {
+    const found = await tx
+      .select({ id: conversation.id })
+      .from(conversation)
+      .where(and(eq(conversation.id, conversationId), eq(conversation.orgId, orgId)))
+      .limit(1);
+    if (found.length === 0) return { notFound: 'chat' };
+    const gone = await tx
+      .delete(conversationDocument)
+      .where(
+        and(
+          eq(conversationDocument.conversationId, conversationId),
+          eq(conversationDocument.documentId, documentId),
+          eq(conversationDocument.orgId, orgId),
+        ),
+      )
+      .returning({ id: conversationDocument.documentId });
+    if (gone.length === 0) return { notFound: 'document' };
+    return { documents: await attachedIn(tx, orgId, conversationId) };
+  });
 }
 
 function toCitationView(c: CitationRow): CitationView {
@@ -86,7 +218,7 @@ export async function listConversations(orgId: string, clientId: string | null):
         ),
       )
       .orderBy(desc(conversation.updatedAt), desc(conversation.id));
-    return rows.map(toConversationView);
+    return rows.map((r) => toConversationView(r));
   });
 }
 
@@ -138,7 +270,9 @@ export async function getConversation(
             .select()
             .from(chatCitation)
             .where(and(eq(chatCitation.orgId, orgId), inArray(chatCitation.messageId, msgs.map((m) => m.id))));
-    return { conversation: toConversationView(conv), messages: msgs.map((m) => toMessageView(m, cites)) };
+    const map = openMap(orgId, id, conv.redactionMap);
+    const documents = await attachedIn(tx, orgId, id);
+    return { conversation: toConversationView(conv, documents), messages: msgs.map((m) => restoreMessageView(toMessageView(m, cites), map)) };
   });
 }
 
@@ -170,7 +304,7 @@ export async function renameConversation(
       .returning();
     const row = rows[0];
     if (!row) return { notFound: true };
-    return { conversation: toConversationView(row) };
+    return { conversation: toConversationView(row, await attachedIn(tx, orgId, id)) };
   });
 }
 

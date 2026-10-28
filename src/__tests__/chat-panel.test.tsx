@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { ChatPanel } from '../components/ChatPanel';
 import { ChatMessageView as MessageView } from '../components/chat/ChatMessageView';
 import type { ChatMessageView, CitationView, ConversationView } from '../lib/chatWire';
+import type { DocumentView } from '../lib/documents';
 
 const NOW = '2026-10-27T09:00:00.000Z';
 const CONV_ID = 'conv-1';
@@ -20,6 +21,7 @@ const conversation: ConversationView = {
   createdBy: 'u1',
   createdAt: NOW,
   updatedAt: NOW,
+  documents: [],
 };
 
 const citation: CitationView = {
@@ -59,7 +61,7 @@ const assistantMessage: ChatMessageView = {
   citations: [citation],
 };
 
-type Handler = (init: RequestInit) => Response;
+type Handler = (init: RequestInit) => Response | Promise<Response>;
 
 function json(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
@@ -258,5 +260,156 @@ describe('ChatPanel', () => {
       '/entities/c1/reports?importId=i1&compareId=i0&tab=pnl',
     );
     expect(screen.getByText('Your books: as imported, not reviewed')).toBeInTheDocument();
+  });
+
+  describe('attached documents (entity chats)', () => {
+    const ENTITY_ID = 'client-1';
+    const entityConversation: ConversationView = { ...conversation, clientId: ENTITY_ID, scope: null, title: 'Entity question' };
+    const sales: DocumentView = {
+      id: 'doc-1',
+      clientId: ENTITY_ID,
+      originalName: 'Sales.csv',
+      kind: 'csv',
+      byteSize: 2048,
+      textChars: 40,
+      truncated: false,
+      uploadedBy: 'u1',
+      createdAt: NOW,
+    };
+    const engagement: DocumentView = { ...sales, id: 'doc-2', originalName: 'Engagement.pdf', kind: 'pdf' };
+    const attachedSales = { id: 'doc-1', originalName: 'Sales.csv', kind: 'csv' as const, truncated: false };
+
+    function renderEntityPanel() {
+      return render(
+        <MemoryRouter>
+          <ChatPanel title="Ask about Acme" placeholder="Ask" suggestions={[]} clientId={ENTITY_ID} scope={null} />
+        </MemoryRouter>,
+      );
+    }
+
+    it('CP7 an entity chat shows Attach document and lists the entity\'s documents', async () => {
+      stubApi({
+        ...baseRoutes,
+        'GET /api/conversations': () => json(200, { conversations: [entityConversation] }),
+        'GET /api/conversations/conv-1': () => json(200, { conversation: entityConversation, messages: [] }),
+        [`GET /api/clients/${ENTITY_ID}/documents`]: () => json(200, { documents: [sales, engagement] }),
+      });
+
+      const user = userEvent.setup();
+      renderEntityPanel();
+      await user.click(await screen.findByRole('button', { name: 'Entity question' }));
+      const attach = await screen.findByRole('button', { name: 'Attach document' });
+      expect(attach).toHaveAttribute('aria-expanded', 'false');
+      await user.click(attach);
+      expect(attach).toHaveAttribute('aria-expanded', 'true');
+      const group = screen.getByRole('group', { name: 'Choose a document' });
+      expect(within(group).getByRole('button', { name: 'Sales.csv' })).toBeInTheDocument();
+      expect(within(group).getByRole('button', { name: 'Engagement.pdf' })).toBeInTheDocument();
+    });
+
+    it('CP8 choosing a document posts it and shows a chip', async () => {
+      const fetchMock = stubApi({
+        ...baseRoutes,
+        'GET /api/conversations': () => json(200, { conversations: [entityConversation] }),
+        'GET /api/conversations/conv-1': () => json(200, { conversation: entityConversation, messages: [] }),
+        [`GET /api/clients/${ENTITY_ID}/documents`]: () => json(200, { documents: [sales] }),
+        'POST /api/conversations/conv-1/documents': () => json(200, { documents: [attachedSales] }),
+      });
+
+      const user = userEvent.setup();
+      renderEntityPanel();
+      await user.click(await screen.findByRole('button', { name: 'Entity question' }));
+      await user.click(await screen.findByRole('button', { name: 'Attach document' }));
+      await user.click(within(screen.getByRole('group', { name: 'Choose a document' })).getByRole('button', { name: 'Sales.csv' }));
+
+      const chips = screen.getByRole('list', { name: 'Attached documents' });
+      expect(within(chips).getByText('Sales.csv')).toBeInTheDocument();
+      expect(within(chips).getByRole('button', { name: 'Remove Sales.csv' })).toBeInTheDocument();
+      expect(screen.queryByRole('group', { name: 'Choose a document' })).not.toBeInTheDocument();
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/conversations/conv-1/documents',
+        expect.objectContaining({ method: 'POST', body: JSON.stringify({ documentId: 'doc-1' }) }),
+      );
+    });
+
+    it('CP9 Remove {name} calls DELETE and removes the chip', async () => {
+      const withSales = { ...entityConversation, documents: [attachedSales] };
+      const fetchMock = stubApi({
+        ...baseRoutes,
+        'GET /api/conversations': () => json(200, { conversations: [entityConversation] }),
+        'GET /api/conversations/conv-1': () => json(200, { conversation: withSales, messages: [] }),
+        'DELETE /api/conversations/conv-1/documents/doc-1': () => json(200, { documents: [] }),
+      });
+
+      const user = userEvent.setup();
+      renderEntityPanel();
+      await user.click(await screen.findByRole('button', { name: 'Entity question' }));
+      await user.click(await screen.findByRole('button', { name: 'Remove Sales.csv' }));
+      await waitFor(() => expect(screen.queryByRole('button', { name: 'Remove Sales.csv' })).not.toBeInTheDocument());
+      expect(screen.queryByRole('list', { name: 'Attached documents' })).not.toBeInTheDocument();
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/conversations/conv-1/documents/doc-1',
+        expect.objectContaining({ method: 'DELETE' }),
+      );
+    });
+
+    it('CP11 an attach reply that arrives after switching chats does not show on the new chat', async () => {
+      const other: ConversationView = { ...entityConversation, id: 'conv-2', title: 'Other question' };
+      let release: (r: Response) => void = () => {};
+      stubApi({
+        ...baseRoutes,
+        'GET /api/conversations': () => json(200, { conversations: [entityConversation, other] }),
+        'GET /api/conversations/conv-1': () => json(200, { conversation: entityConversation, messages: [] }),
+        'GET /api/conversations/conv-2': () => json(200, { conversation: other, messages: [] }),
+        [`GET /api/clients/${ENTITY_ID}/documents`]: () => json(200, { documents: [sales] }),
+        'POST /api/conversations/conv-1/documents': () => new Promise<Response>((resolve) => { release = resolve; }),
+      });
+
+      const user = userEvent.setup();
+      renderEntityPanel();
+      await user.click(await screen.findByRole('button', { name: 'Entity question' }));
+      await user.click(await screen.findByRole('button', { name: 'Attach document' }));
+      await user.click(within(screen.getByRole('group', { name: 'Choose a document' })).getByRole('button', { name: 'Sales.csv' }));
+      await user.click(screen.getByRole('button', { name: 'Other question' }));
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Other question' })).toHaveAttribute('aria-current', 'true'));
+      release(json(200, { documents: [attachedSales] }));
+      await new Promise((r) => setTimeout(r, 0));
+      expect(screen.queryByRole('list', { name: 'Attached documents' })).not.toBeInTheDocument();
+    });
+
+    it('CP12 when every document is attached the panel says so', async () => {
+      const withSales = { ...entityConversation, documents: [attachedSales] };
+      stubApi({
+        ...baseRoutes,
+        'GET /api/conversations': () => json(200, { conversations: [entityConversation] }),
+        'GET /api/conversations/conv-1': () => json(200, { conversation: withSales, messages: [] }),
+        [`GET /api/clients/${ENTITY_ID}/documents`]: () => json(200, { documents: [sales] }),
+      });
+
+      const user = userEvent.setup();
+      renderEntityPanel();
+      await user.click(await screen.findByRole('button', { name: 'Entity question' }));
+      await user.click(await screen.findByRole('button', { name: 'Attach document' }));
+      const group = screen.getByRole('group', { name: 'Choose a document' });
+      expect(await within(group).findByText('Every document for this entity is already attached.')).toBeInTheDocument();
+      expect(within(group).getByRole('link', { name: 'Upload another' })).toHaveAttribute('href', `/entities/${ENTITY_ID}/documents`);
+      expect(within(group).queryByRole('button')).not.toBeInTheDocument();
+    });
+
+    it('CP10 a hub chat shows no Attach document button', async () => {
+      const hubConversation: ConversationView = { ...conversation, title: 'Hub question' };
+      stubApi({
+        ...baseRoutes,
+        'GET /api/conversations': () => json(200, { conversations: [hubConversation] }),
+        'GET /api/conversations/conv-1': () => json(200, { conversation: hubConversation, messages: [] }),
+      });
+
+      const user = userEvent.setup();
+      renderPanel();
+      await user.click(await screen.findByRole('button', { name: 'Hub question' }));
+      await screen.findByRole('button', { name: 'Send' });
+      expect(screen.queryByRole('button', { name: 'Attach document' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('list', { name: 'Attached documents' })).not.toBeInTheDocument();
+    });
   });
 });

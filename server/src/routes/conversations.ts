@@ -6,9 +6,11 @@ import { currentChatProvider } from '../ai/chat';
 import { currentEmbedder } from '../ai/embed';
 import { openSse, sendSse } from '../chat/sse';
 import {
+  attachDocument,
   createConversation,
   conversationContext,
   deleteConversation,
+  detachDocument,
   getConversation,
   listConversations,
   renameConversation,
@@ -143,6 +145,50 @@ conversationRoutes.delete<'/:id', IdParams>('/:id', async (req, res) => {
   }
   res.status(204).end();
 });
+
+const attachSchema = z.object({ documentId: z.uuid() });
+
+conversationRoutes.post<'/:id/documents', IdParams>('/:id/documents', async (req, res) => {
+  const { orgId, userId } = firmOf(res);
+  if (!idSchema.safeParse(req.params.id).success) {
+    chatNotFound(res);
+    return;
+  }
+  const parsed = attachSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: 'Invalid input' });
+    return;
+  }
+  const outcome = await attachDocument(orgId, userId, req.params.id, parsed.data.documentId);
+  if ('notFound' in outcome) {
+    if (outcome.notFound === 'chat') chatNotFound(res);
+    else res.status(404).json({ error: 'Document not found' });
+    return;
+  }
+  res.status(200).json({ documents: outcome.documents });
+});
+
+conversationRoutes.delete<'/:id/documents/:documentId', IdParams & { documentId: string }>(
+  '/:id/documents/:documentId',
+  async (req, res) => {
+    const { orgId } = firmOf(res);
+    if (!idSchema.safeParse(req.params.id).success) {
+      chatNotFound(res);
+      return;
+    }
+    if (!idSchema.safeParse(req.params.documentId).success) {
+      res.status(404).json({ error: 'Document not found' });
+      return;
+    }
+    const outcome = await detachDocument(orgId, req.params.id, req.params.documentId);
+    if ('notFound' in outcome) {
+      if (outcome.notFound === 'chat') chatNotFound(res);
+      else res.status(404).json({ error: 'Document not found' });
+      return;
+    }
+    res.status(200).json({ documents: outcome.documents });
+  },
+);
 
 // Order: uuid check, body (400), conversation (404), provider (503), guard (429), then the stream.
 conversationRoutes.post<'/:id/messages', IdParams>('/:id/messages', async (req, res) => {

@@ -4,6 +4,7 @@ import type { Jurisdiction } from './entity';
 import type { HubScope } from './scope';
 import { apiDelete, apiJson, ApiError, failure } from './api';
 import {
+  attachedDocumentSchema,
   chatMessageViewSchema,
   chatStatusSchema,
   conversationViewSchema,
@@ -13,6 +14,7 @@ import {
   sseErrorSchema,
   sseSourcesSchema,
   sseStartSchema,
+  type AttachedDocument,
   type ChatMessageView,
   type ChatScope,
   type ChatStatus,
@@ -27,6 +29,7 @@ const MARKER_PATTERN = /\[(\d+(?:\s*,\s*\d+)*)\]/g;
 const conversationResponseSchema = z.object({ conversation: conversationViewSchema });
 const conversationListSchema = z.object({ conversations: z.array(conversationViewSchema) });
 const conversationDetailSchema = z.object({ conversation: conversationViewSchema, messages: z.array(chatMessageViewSchema) });
+const attachedDocumentsSchema = z.object({ documents: z.array(attachedDocumentSchema) });
 
 /** "[1]" → "[[1]](#cite-<id>-1)"; "[1, 2]" → "[[1]](#cite-<id>-1) [[2]](#cite-<id>-2)"; placeholders like [NAME_1] untouched. */
 export function linkMarkers(body: string, messageId: string): string {
@@ -47,6 +50,8 @@ export function flagText(f: GroundingFlag): string {
       return `It cites a source that wasn't provided (${f.detail}).`;
     case 'unsupported_number':
       return `It uses a number not found in its sources: ${f.detail}.`;
+    case 'from_document':
+      return `It uses a figure from an attached document, not from a checked source: ${f.detail}.`;
   }
 }
 
@@ -174,4 +179,23 @@ export async function streamMessage(id: string, text: string, h: StreamHandlers,
   // Flush: complete any final event the server ended without a blank line.
   buffer += decoder.decode();
   for (const ev of parseSse(buffer + '\n\n').events) dispatch(ev.event, ev.data, h);
+}
+
+/** POST /api/conversations/:id/documents with { documentId }; returns the chat's attached documents. */
+export async function attachDocument(id: string, documentId: string): Promise<AttachedDocument[]> {
+  const body = attachedDocumentsSchema.parse(
+    await apiJson<unknown>(`/conversations/${encodeURIComponent(id)}/documents`, { method: 'POST', body: { documentId } }),
+  );
+  return body.documents;
+}
+
+/** DELETE /api/conversations/:id/documents/:documentId. A raw fetch, because apiDelete returns void and the server sends the list back. */
+export async function detachDocument(id: string, documentId: string): Promise<AttachedDocument[]> {
+  const res = await fetch(
+    `/api/conversations/${encodeURIComponent(id)}/documents/${encodeURIComponent(documentId)}`,
+    { method: 'DELETE', credentials: 'include' },
+  );
+  if (!res.ok) throw await failure(res);
+  const body: unknown = await res.json();
+  return attachedDocumentsSchema.parse(body).documents;
 }

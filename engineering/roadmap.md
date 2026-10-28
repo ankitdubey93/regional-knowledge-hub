@@ -61,7 +61,7 @@ Stack decisions:
 | **P2b** | `kb_fact` and facts editing in the admin, a `/laws` page, the web reading the KB from the API | built (2026-10-27); "done" waits on the admin-facts browser check below |
 | **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `src/lib/chat.ts` | built (2026-10-27); "done" waits on the owner's live check below |
 | **P3b** | Numbers tool: answers from an entity's trial balance, computed by engines and cited to the report or account; amends Hard rule 12 | built (2026-10-28); "done" waits on the live check |
-| **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT) stored encrypted; PII redaction with placeholders kept per conversation | planned |
+| **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT, MD) stored encrypted and attachable to an entity chat as context; PII placeholders kept per conversation in a sealed map | built (2026-10-28); "done" waits on the live check below |
 | **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | planned |
 | Later | Local models, NER-based name detection, private KB per firm, 2FA/SSO, AU and UK data residency | maybe |
 
@@ -91,7 +91,17 @@ Stack decisions:
 - Add a sourced Gemini price row to `server/src/ai/pricing.ts` before Gemini chat can be configured, and check the Gemini request shape against a live call.
 - Re-check `PRICES` against Anthropic's pricing page (taken from a cached table on 2026-10-06).
 - A signed-in user briefly sees the signed-out card on a cold load of `/knowledge` (`KnowledgeHome` treats a pending session as no session). Owner's call.
-- The per-conversation placeholder map is P4; real rate limits are P5. Names not in a workspace's client list are not redacted.
+- ~~The per-conversation placeholder map is P4~~ (paid in P4); real rate limits are P5. Names not in a workspace's client list are not redacted.
+
+### Owed to P4
+
+- **The live check:** attach a PDF and an XLSX that contain a client's name and an email address to an entity chat, ask a question, and confirm (from the provider request) that placeholders were sent, that the screen shows the real names, and that a figure found only in a document carries the `from_document` flag. No test calls a provider.
+- NER for names that are not in the client list (staff, directors): the largest privacy gap left.
+- Key rotation: the seal has a version byte, but re-encryption of documents and maps is not built. Losing `DATA_ENCRYPTION_KEY` loses them all, so the key must be backed up apart from the database.
+- `VACUUM` for deleted `bytea` space.
+- Tune the untuned limits: `MAX_DOCUMENT_TEXT_CHARS`, `MAX_XLSX_CELLS`, `MAX_ZIP_UNCOMPRESSED_BYTES`, `MAX_DOCUMENTS_PER_CLIENT`, `MAX_DOCUMENT_CHARS_IN_PROMPT`.
+- Retention of documents and maps (P5).
+- ~~Found in review: the admin KB PDF upload failed on a Node `Buffer`; the Attach panel was an empty box when every document was attached; an attach or detach reply could land on another chat; `EntityDocuments` bypassed `page()`.~~ Fixed 2026-10-28: `extractFile` hands pdf.js a plain `Uint8Array` (K25, DO15), the panel says "Every document for this entity is already attached." (CP12), `ChatPanel` drops a reply for a chat that is no longer open (CP11), and the page is a named export loaded by `page()`.
 
 ## Data track: the entity's own numbers (decided 2026-10-26)
 
@@ -101,7 +111,7 @@ The goal is to give each entity its own numbers, so that answers can come from t
 |---|---|---|
 | D1 | TB CSV import, P&L, balance sheet | done (2026-10-26) |
 | D2 | GL transactions, record search, account drill-down, tax-code summary against `basWorksheet`/`vat100` using `tax-codes.json`, `parseLedgerDate` | planned |
-| D3 | XLSX import (needs a dependency decision under Hard rule 9) | planned |
+| D3 | XLSX import (`read-excel-file` 9.3.12 is installed since P4; the trial-balance import still has to use it) | planned |
 | D4 | Live Xero, then QBO, connection (OAuth, token storage, sync; check Xero's current API access terms) | planned |
 | D5 | Document requests and chasing | planned; needs P4 storage and P5 SMTP |
 

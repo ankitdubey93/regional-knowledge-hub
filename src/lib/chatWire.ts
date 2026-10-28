@@ -5,7 +5,7 @@ import { z } from 'zod';
 export const CHAT_SCOPES = ['AU', 'UK', 'ALL'] as const;
 export const MESSAGE_ROLES = ['user', 'assistant'] as const;
 export const MESSAGE_STATUSES = ['sent', 'answered', 'flagged', 'not_covered', 'refused', 'stopped', 'error'] as const;
-export const FLAG_CODES = ['uncited', 'bad_marker', 'unsupported_number'] as const;
+export const FLAG_CODES = ['uncited', 'bad_marker', 'unsupported_number', 'from_document'] as const;
 export const NOT_COVERED_REPLY = "The Knowledge Hub doesn't cover this yet, so I can't answer it. Try rephrasing the question, or browse the guides.";
 export const NOT_IN_SOURCES = "The Knowledge Hub sources I was given don't cover this.";
 
@@ -35,9 +35,15 @@ export const chatMessageViewSchema = z.object({
   id: z.string(), role: z.enum(MESSAGE_ROLES), body: z.string(), status: z.enum(MESSAGE_STATUSES),
   flags: z.array(groundingFlagSchema), createdAt: z.string(), citations: z.array(citationViewSchema),
 });
+export const attachedDocumentSchema = z.object({
+  id: z.string(), originalName: z.string(),
+  kind: z.enum(['pdf', 'docx', 'xlsx', 'csv', 'text', 'markdown']),
+  truncated: z.boolean(),
+});
 export const conversationViewSchema = z.object({
   id: z.string(), clientId: z.string().nullable(), scope: chatScopeSchema.nullable(), title: z.string(),
   createdBy: z.string(), createdAt: z.string(), updatedAt: z.string(),
+  documents: z.array(attachedDocumentSchema),
 });
 export const chatStatusSchema = z.object({ configured: z.boolean(), provider: z.string(), model: z.string().nullable(), embeddings: z.boolean() });
 export const sseStartSchema = z.object({ userMessage: chatMessageViewSchema });
@@ -52,6 +58,7 @@ export type GroundingFlag = z.infer<typeof groundingFlagSchema>;
 export type CitationView = z.infer<typeof citationViewSchema>;
 export type LedgerCitationRef = z.infer<typeof ledgerCitationRefSchema>;
 export type ChatMessageView = z.infer<typeof chatMessageViewSchema>;
+export type AttachedDocument = z.infer<typeof attachedDocumentSchema>;
 export type ConversationView = z.infer<typeof conversationViewSchema>;
 export type ChatStatus = z.infer<typeof chatStatusSchema>;
 

@@ -1,7 +1,7 @@
 import { ACCOUNT_CLASS_LABELS } from '../../../src/utils/accountClasses';
 import { formatPlain, formatRate } from '../../../src/utils/money';
 import { balanceSheet, profitAndLoss, variance, type Balance, type ReportAccount, type ReportSection } from '../../../src/utils/reports';
-import { redact } from '../privacy/redact';
+import { emptyRedactionMap, redactWith, type RedactionMap } from '../privacy/redact';
 
 export const LEDGER_LINE_CAP = 400;
 export const REDACT_SEP = '\n␞\n';
@@ -76,12 +76,13 @@ export function redactQuestionAndNames(
   question: string,
   accountNames: string[],
   names: string[],
-): { question: string; accountNames: string[] } {
-  const out = redact([question, ...accountNames].join(REDACT_SEP), { names });
-  const parts = out.split(REDACT_SEP);
+  map: RedactionMap = emptyRedactionMap(),
+): { question: string; accountNames: string[]; map: RedactionMap } {
+  const out = redactWith([question, ...accountNames].join(REDACT_SEP), { names }, map);
+  const parts = out.text.split(REDACT_SEP);
   if (parts.length !== accountNames.length + 1) throw new Error('redaction changed the account name count');
   const [q, ...rest] = parts;
-  return { question: q ?? '', accountNames: rest };
+  return { question: q ?? '', accountNames: rest, map: out.map };
 }
 
 interface Row { code: string; cur: number; pri: number }

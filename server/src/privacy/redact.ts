@@ -1,13 +1,30 @@
 export const REDACTION_KINDS = ['NAME', 'EMAIL', 'IBAN', 'CARD', 'BANK', 'PHONE', 'ABN', 'UTR', 'TAXID', 'NINO'] as const;
-type RedactionKind = (typeof REDACTION_KINDS)[number];
+export type RedactionKind = (typeof REDACTION_KINDS)[number];
 
 export interface RedactOptions {
   names: string[];
 }
 
+export interface RedactionEntry {
+  token: string;
+  kind: RedactionKind;
+  key: string;
+  value: string;
+}
+export interface RedactionMap {
+  v: 1;
+  counts: Partial<Record<RedactionKind, number>>;
+  entries: RedactionEntry[];
+}
+
+export function emptyRedactionMap(): RedactionMap {
+  return { v: 1, counts: {}, entries: [] };
+}
+
 interface State {
   counts: Map<RedactionKind, number>;
   seen: Map<string, string>;
+  entries: RedactionEntry[];
 }
 
 const collapse = (s: string): string => s.replace(/\s+/g, ' ').trim().toLowerCase();
@@ -20,6 +37,7 @@ function placeholder(state: State, kind: RedactionKind, matched: string): string
   state.counts.set(kind, n);
   const token = `[${kind}_${n}]`;
   state.seen.set(key, token);
+  state.entries.push({ token, kind, key, value: matched });
   return token;
 }
 
@@ -42,7 +60,16 @@ const escapeRegex = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$
 
 /** Replaces personal details with typed placeholders ([EMAIL_1], [NAME_2]). Pure; never logs. */
 export function redact(text: string, opts: RedactOptions): string {
-  const state: State = { counts: new Map(), seen: new Map() };
+  return redactWith(text, opts, emptyRedactionMap()).text;
+}
+
+/** Like redact(), but continues numbering from `map` and reuses its tokens. Returns a new map; never mutates the input. */
+export function redactWith(text: string, opts: RedactOptions, map: RedactionMap): { text: string; map: RedactionMap } {
+  const state: State = {
+    counts: new Map(Object.entries(map.counts) as [RedactionKind, number][]),
+    seen: new Map(map.entries.map((e) => [e.key, e.token])),
+    entries: map.entries.map((e) => ({ ...e })),
+  };
   let out = text;
 
   const apply = (kind: RedactionKind, re: RegExp): void => {
@@ -82,5 +109,47 @@ export function redact(text: string, opts: RedactOptions): string {
   // 10. NINO. Q is allowed in both prefix letters (HMRC's own example is QQ123456C); over-redacting is the safe failure.
   apply('NINO', /\b[A-CEGHJ-TW-Z][A-CEGHJ-NP-TW-Z] ?\d{2} ?\d{2} ?\d{2} ?[A-D]\b/gi);
 
-  return out;
+  return {
+    text: out,
+    map: { v: 1, counts: Object.fromEntries(state.counts) as RedactionMap['counts'], entries: state.entries },
+  };
+}
+
+const TOKEN_RE = /\[[A-Z]+_\d+\]/g;
+
+/** Replaces each token found in map.entries with its value (the first value seen for that token). Unknown tokens stay. */
+export function restore(text: string, map: RedactionMap): string {
+  const values = new Map<string, string>();
+  for (const e of map.entries) if (!values.has(e.token)) values.set(e.token, e.value);
+  return text.replace(TOKEN_RE, (t) => values.get(t) ?? t);
+}
+
+export interface Restorer {
+  push(chunk: string): string;
+  flush(): string;
+}
+
+const HOLD_RE = /\[[A-Z]*(?:_\d*)?$/;
+const HOLD_MAX = 24;
+
+/** Streaming restore: holds back a trailing match of /\[[A-Z]*(?:_\d*)?$/ when it is 24 characters or fewer. */
+export function createRestorer(map: RedactionMap): Restorer {
+  let held = '';
+  return {
+    push(chunk: string): string {
+      const all = held + chunk;
+      const m = HOLD_RE.exec(all);
+      if (m && all.length - m.index <= HOLD_MAX) {
+        held = all.slice(m.index);
+        return restore(all.slice(0, m.index), map);
+      }
+      held = '';
+      return restore(all, map);
+    },
+    flush(): string {
+      const out = restore(held, map);
+      held = '';
+      return out;
+    },
+  };
 }

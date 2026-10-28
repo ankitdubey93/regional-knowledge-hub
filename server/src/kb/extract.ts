@@ -44,7 +44,8 @@ export async function extractFile(kind: FileKind, bytes: Uint8Array): Promise<st
     case 'pdf': {
       let pages: string[];
       try {
-        pages = (await extractText(bytes, { mergePages: false })).text;
+        // pdf.js refuses a Node Buffer (what express.raw gives a route): hand it a plain Uint8Array.
+        pages = (await extractText(new Uint8Array(bytes), { mergePages: false })).text;
       } catch {
         throw new ExtractError('Could not read the PDF file');
       }
