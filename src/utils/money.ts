@@ -61,9 +61,11 @@ export function formatMoney(cents: number, currency: Currency): string {
 
 /** "12.00%" style text for a basis-point rate. */
 export function formatRate(bp: number): string {
-  const whole = Math.trunc(bp / 100);
-  const frac = Math.abs(bp % 100);
-  return frac === 0 ? `${whole}%` : `${whole}.${String(frac).padStart(2, '0').replace(/0$/, '')}%`;
+  const sign = bp < 0 ? '-' : '';
+  const abs = Math.abs(bp);
+  const whole = Math.trunc(abs / 100);
+  const frac = abs % 100;
+  return frac === 0 ? `${sign}${whole}%` : `${sign}${whole}.${String(frac).padStart(2, '0').replace(/0$/, '')}%`;
 }
 
 /** Plain number with thousands separators, for amounts shown without a symbol. */

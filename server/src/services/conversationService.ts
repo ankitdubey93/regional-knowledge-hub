@@ -48,6 +48,9 @@ function toCitationView(c: CitationRow): CitationView {
     sitePath: c.sitePath,
     officialUrl: c.officialUrl,
     excerpt: c.excerpt,
+    ...(c.ledgerImportId !== null && c.ledgerReport !== null && c.ledgerAsAt !== null
+      ? { ledger: { importId: c.ledgerImportId, compareImportId: c.ledgerCompareImportId, report: c.ledgerReport, asAt: c.ledgerAsAt } }
+      : {}),
   };
 }
 
@@ -293,6 +296,10 @@ export async function insertAssistantMessage(
             sitePath: c.sitePath,
             officialUrl: c.officialUrl,
             excerpt: c.excerpt,
+            ledgerImportId: c.ledger?.importId ?? null,
+            ledgerCompareImportId: c.ledger?.compareImportId ?? null,
+            ledgerReport: c.ledger?.report ?? null,
+            ledgerAsAt: c.ledger?.asAt ?? null,
           })),
         )
         .returning();

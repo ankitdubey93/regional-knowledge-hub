@@ -120,6 +120,20 @@
       "when": 1793082552624,
       "tag": "0016_chat_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1793167855332,
+      "tag": "0017_chat_ledger_citation",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1793167862253,
+      "tag": "0018_chat_ledger_citation_rules",
+      "breakpoints": true
     }
   ]
 }

@@ -166,9 +166,9 @@ export function EntityReports() {
   const [client, setClient] = useState<ClientRecord | null>(null);
   const [imports, setImports] = useState<LedgerImportRecord[] | null>(null);
   const [pageError, setPageError] = useState<string | null>(null);
-  const [tab, setTab] = useState<Tab>('pnl');
+  const [tab, setTab] = useState<Tab>(searchParams.get('tab') === 'bs' ? 'bs' : 'pnl');
   const [pickedId, setPickedId] = useState<string | null>(null);
-  const [compareId, setCompareId] = useState('');
+  const [compareId, setCompareId] = useState(searchParams.get('compareId') ?? '');
   const [report, setReport] = useState<ReportState>({ status: 'loading' });
 
   useEffect(() => {

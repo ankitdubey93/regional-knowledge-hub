@@ -41,6 +41,45 @@ async function failure(p: Promise<unknown>): Promise<string> {
   return cause instanceof Error ? cause.message : (err as Error).message;
 }
 
+async function answerIn(orgId: string, clientId: string, userId: string): Promise<string> {
+  return withOrg(orgId, async (tx) => {
+    const conv = first(await tx.insert(conversation).values({ orgId, clientId, userId, title: 'x', scope: null }).returning());
+    await tx.insert(chatMessage).values({ orgId, conversationId: conv.id, role: 'user', status: 'sent', body: 'q', createdBy: userId });
+    const answer = first(
+      await tx
+        .insert(chatMessage)
+        .values({ orgId, conversationId: conv.id, role: 'assistant', status: 'answered', body: 'a [1]', createdBy: userId })
+        .returning(),
+    );
+    return answer.id;
+  });
+}
+
+function ledgerCitation(orgId: string, messageId: string) {
+  return {
+    orgId,
+    messageId,
+    marker: 1,
+    sourceId: null as string | null,
+    versionId: null as string | null,
+    chunkId: null as string | null,
+    ledgerImportId: randomUUID(),
+    ledgerCompareImportId: null as string | null,
+    ledgerReport: 'pnl' as const,
+    ledgerAsAt: '2026-06-30',
+    kind: 'ledger',
+    jurisdiction: 'AU',
+    billStatus: null,
+    headingPath: [] as string[],
+    provisionRef: null,
+    sitePath: '/entities/x/reports?importId=y&tab=pnl',
+    officialUrl: null,
+    title: 'Profit and loss',
+    citation: 'Trial balance as at 2026-06-30, imported from Xero',
+    excerpt: 'x',
+  };
+}
+
 beforeAll(async () => {
   const a = await signUp();
   const firmA = await createFirm(a.cookie, 'Chat Firm A');
@@ -170,5 +209,45 @@ describe('chat tables', () => {
     expect(del.status).toBe(204);
     const after = await withOrg(orgA, (tx) => tx.select().from(conversation).where(and(eq(conversation.orgId, orgA), eq(conversation.clientId, clientId))));
     expect(after).toHaveLength(0);
+  });
+
+  it('T10 a ledger citation needs no KB ids', async () => {
+    const messageId = await answerIn(orgA, auId, userA);
+    await expect(withOrg(orgA, (tx) => tx.insert(chatCitation).values(ledgerCitation(orgA, messageId)))).resolves.toBeDefined();
+  });
+
+  it('T11 a ledger citation with a KB id is rejected', async () => {
+    const messageId = await answerIn(orgA, auId, userA);
+    const msg = await failure(
+      withOrg(orgA, (tx) => tx.insert(chatCitation).values({ ...ledgerCitation(orgA, messageId), sourceId: randomUUID() })),
+    );
+    expect(msg).toContain('chat_citation_source_check');
+  });
+
+  it('T12 a KB citation without its ids is rejected', async () => {
+    const messageId = await answerIn(orgA, auId, userA);
+    const msg = await failure(
+      withOrg(orgA, (tx) =>
+        tx.insert(chatCitation).values({
+          orgId: orgA,
+          messageId,
+          marker: 1,
+          sourceId: null,
+          versionId: randomUUID(),
+          chunkId: randomUUID(),
+          title: 'Test source',
+          citation: 'Test 2026',
+          kind: 'act',
+          jurisdiction: 'AU',
+          billStatus: null,
+          headingPath: ['Part 1', 's 2'],
+          provisionRef: 's 2',
+          sitePath: null,
+          officialUrl: 'https://example.gov.au/x',
+          excerpt: 'Excerpt text',
+        }),
+      ),
+    );
+    expect(msg).toContain('chat_citation_source_check');
   });
 });

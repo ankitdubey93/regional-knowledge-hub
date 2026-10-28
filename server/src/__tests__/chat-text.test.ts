@@ -62,6 +62,7 @@ describe('prompt', () => {
     headingPath: [],
     provisionRef: null,
     isBill: false,
+    isLedger: false,
     text: 'body',
     ...over,
   });
@@ -93,6 +94,20 @@ describe('prompt', () => {
   it('PR4 jurisdiction line', () => {
     const built = buildPrompt({ today: 'd', jurisdiction: undefined, sources: [], history: [], question: 'q' });
     expect(built.messages[built.messages.length - 1]?.text).toContain('Jurisdiction: Australia and the UK');
+  });
+  it('PR6 a ledger source is labelled', () => {
+    const built = buildPrompt({
+      today: '2026-10-28',
+      jurisdiction: 'AU',
+      sources: [src(1, { title: 'Profit and loss', citation: 'Trial balance as at 2026-06-30, imported from Xero', isLedger: true })],
+      history: [],
+      question: 'q',
+    });
+    const last = built.messages[built.messages.length - 1];
+    expect(last?.text).toContain(
+      "[1] Profit and loss | Trial balance as at 2026-06-30, imported from Xero | Ledger (entity's imported trial balance, not reviewed)",
+    );
+    expect(SYSTEM_PROMPT).toContain('Never add, subtract, average or otherwise calculate');
   });
   it('PR5 stripMarkers', () => {
     expect(stripMarkers('GST is 10% [1]. See [2, 3].')).toBe('GST is 10%. See.');

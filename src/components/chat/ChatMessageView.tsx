@@ -46,20 +46,26 @@ export function ChatMessageView({ message, streaming }: { message: Msg; streamin
         <>
           <h3 className="mt-3 text-xs font-semibold">Sources</h3>
           <ol className="mt-1 space-y-2 text-xs">
-            {message.citations.map((c) => (
-              <li key={c.marker} id={`cite-${message.id}-${c.marker}`} className="min-w-0 break-words">
-                <span className="font-semibold">[{c.marker}]</span>{' '}
-                <TextLink to={c.sitePath ?? `/knowledge/laws/${c.sourceId}`}>{c.title}</TextLink>{' '}
-                <span className="text-muted">{c.citation}</span>
-                {c.kind === 'bill' && (
-                  <span className="ml-2 inline-flex rounded-full bg-warn-soft px-2 py-0.5 text-xs font-medium">Bill: not law</span>
-                )}
-                <details className="mt-1">
-                  <summary className="cursor-pointer text-muted">Excerpt</summary>
-                  <p className="whitespace-pre-wrap break-words">{c.excerpt}</p>
-                </details>
-              </li>
-            ))}
+            {message.citations.map((c) => {
+              const href = c.sitePath ?? (c.sourceId === null ? null : `/knowledge/laws/${c.sourceId}`);
+              return (
+                <li key={c.marker} id={`cite-${message.id}-${c.marker}`} className="min-w-0 break-words">
+                  <span className="font-semibold">[{c.marker}]</span>{' '}
+                  {href !== null ? <TextLink to={href}>{c.title}</TextLink> : <span>{c.title}</span>}{' '}
+                  <span className="text-muted">{c.citation}</span>
+                  {c.kind === 'bill' && (
+                    <span className="ml-2 inline-flex rounded-full bg-warn-soft px-2 py-0.5 text-xs font-medium">Bill: not law</span>
+                  )}
+                  {c.kind === 'ledger' && (
+                    <span className="ml-2 inline-flex rounded-full bg-warn-soft px-2 py-0.5 text-xs font-medium">Your books: as imported, not reviewed</span>
+                  )}
+                  <details className="mt-1">
+                    <summary className="cursor-pointer text-muted">Excerpt</summary>
+                    <p className="whitespace-pre-wrap break-words">{c.excerpt}</p>
+                  </details>
+                </li>
+              );
+            })}
           </ol>
         </>
       )}

@@ -39,7 +39,7 @@ Status words: **done** means built, tested and checked in a browser; **built** m
 Compliance Hub becomes an assistant for bookkeepers and accounting firms:
 - Firms are tenants. Chats are saved and grouped under client headings.
 - Users can upload client documents as context.
-- Answers come only from the knowledge base, with citations (CLAUDE.md Hard rule 12).
+- Answers come only from the knowledge base or an entity's own ledger, with citations (CLAUDE.md Hard rule 12).
 - PII is redacted before anything reaches an AI provider (Hard rule 13).
 - Anthropic and Gemini are both available, using the owner's keys; local models come later.
 - The knowledge base is managed in an admin UI, backed by Postgres.
@@ -60,7 +60,7 @@ Stack decisions:
 | **P2a** | A platform admin (one, promoted from the command line), a users page with ban and unban, and the knowledge base in Postgres (sources, versions, chunks; draft → preview → publish) fed by paste, file upload or an allowlisted official URL, with hybrid search and a "test a question" page; the 14 curriculum docs seeded | done (2026-10-26) |
 | **P2b** | `kb_fact` and facts editing in the admin, a `/laws` page, the web reading the KB from the API | built (2026-10-27); "done" waits on the admin-facts browser check below |
 | **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `src/lib/chat.ts` | built (2026-10-27); "done" waits on the owner's live check below |
-| **P3b** | Numbers tool: answers from an entity's trial balance, computed by engines and cited to the report or account; amends Hard rule 12 | planned |
+| **P3b** | Numbers tool: answers from an entity's trial balance, computed by engines and cited to the report or account; amends Hard rule 12 | built (2026-10-28); "done" waits on the live check |
 | **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT) stored encrypted; PII redaction with placeholders kept per conversation | planned |
 | **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | planned |
 | Later | Local models, NER-based name detection, private KB per firm, 2FA/SSO, AU and UK data residency | maybe |
@@ -86,7 +86,7 @@ Stack decisions:
 
 ### Owed to P3
 
-- **The live check:** run one live Anthropic session (an AU GST question, an off-topic question, a question containing an email address) and record the result in CLAUDE.md. No test or browser check has called a real provider. P3 stays "built" until then.
+- **The live check:** run one live Anthropic session (an AU GST question, an off-topic question, a question containing an email address, and, for an entity with two imports, "what was revenue and how did it change?") and record the result in CLAUDE.md. No test or browser check has called a real provider. P3 and P3b stay "built" until then.
 - Tune `MIN_SIMILARITY_BP` and `MIN_LEXEME_COVERAGE_BP` (`server/src/chat/coverage.ts`) on real questions; both are untuned guesses.
 - Add a sourced Gemini price row to `server/src/ai/pricing.ts` before Gemini chat can be configured, and check the Gemini request shape against a live call.
 - Re-check `PRICES` against Anthropic's pricing page (taken from a cached table on 2026-10-06).
@@ -107,7 +107,7 @@ The goal is to give each entity its own numbers, so that answers can come from t
 
 Gates: D2 needs D1; D4 needs D1; D5 needs P4 and P5.
 
-P3b note: the numbers tool is split from P3. Answering from an entity's ledger needs an addition to Hard rule 12 (answers about its figures are grounded in ledger data computed by engines, and cite the report or account). That is decided in P3b, not here.
+P3b note: resolved in P3b (2026-10-28); Hard rule 12 was amended so an entity's figures are grounded in ledger sources built by the report engines and cited as the report.
 
 ### Owed to the data track
 

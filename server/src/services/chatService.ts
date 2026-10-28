@@ -6,11 +6,13 @@ import type { UsageTokens } from '../ai/pricing';
 import { checkGrounding } from '../chat/grounding';
 import { isCovered } from '../chat/coverage';
 import { buildPrompt, type PromptSource } from '../chat/prompt';
+import { buildLedgerSources, isLedgerQuestion, ledgerAccountNames, redactQuestionAndNames } from '../chat/ledgerSources';
 import { searchKbForChat } from '../kb/retrieve';
 import { redact } from '../privacy/redact';
 import { NOT_COVERED_REPLY } from '../../../src/lib/chatWire';
 import { formatFact } from '../../../src/data/factFormat';
 import type { ChatMessageView, CitationView, GroundingFlag, MessageStatus } from '../../../src/lib/chatWire';
+import { ledgerChatContext } from './ledgerService';
 import { conversationContext, historyFor, insertAssistantMessage, insertUserMessage } from './conversationService';
 import { rowToFact } from './kbService';
 import { recordUsage } from './usageService';
@@ -47,7 +49,16 @@ export async function runExchange(
 
   // 2
   const names = ctx.names;
-  const question = redact(text, { names });
+  const ledger = ctx.client ? await ledgerChatContext(orgId, ctx.client.id) : null;
+  const rawNames = ledger ? ledgerAccountNames(ledger.current, ledger.prior) : new Map<string, string>();
+  const red = redactQuestionAndNames(text, [...rawNames.values()], names);
+  const question = red.question;
+  const displayNames = new Map<string, string>();
+  for (const [i, code] of [...rawNames.keys()].entries()) {
+    const n = red.accountNames[i];
+    if (n === undefined) throw new Error('redaction changed the account name count');
+    displayNames.set(code, n);
+  }
   const history = (await historyFor(orgId, conversationId)).map((t) => ({ role: t.role, text: redact(t.text, { names }) }));
 
   // 3
@@ -78,7 +89,9 @@ export async function runExchange(
     query.length < 3
       ? null
       : await searchKbForChat({ query, jurisdiction, includeBills: true, limit: 8 }, embedding);
-  if (!retrieval || !isCovered(retrieval)) {
+  const kbCovered = retrieval !== null && isCovered(retrieval);
+  const ledgerAsked = ledger !== null && isLedgerQuestion(question, red.accountNames);
+  if (!kbCovered && !ledgerAsked) {
     const message = await insertAssistantMessage(orgId, userId, conversationId, {
       body: NOT_COVERED_REPLY,
       status: 'not_covered',
@@ -92,9 +105,31 @@ export async function runExchange(
   }
 
   // 7
-  const results = retrieval.results;
-  const sources: CitationView[] = results.map((r, i) => ({
+  const ledgerSources =
+    ledgerAsked && ledger && ctx.client
+      ? buildLedgerSources({ clientId: ctx.client.id, current: ledger.current, prior: ledger.prior, displayNames })
+      : [];
+  const results = kbCovered && retrieval ? retrieval.results : [];
+  const offset = ledgerSources.length;
+  const ledgerCitations: CitationView[] = ledgerSources.map((l, i) => ({
     marker: i + 1,
+    sourceId: null,
+    versionId: null,
+    chunkId: null,
+    title: l.title,
+    citation: l.citation,
+    kind: 'ledger',
+    jurisdiction: l.jurisdiction,
+    billStatus: null,
+    headingPath: [],
+    provisionRef: null,
+    sitePath: l.sitePath,
+    officialUrl: null,
+    excerpt: l.excerpt,
+    ledger: { importId: l.importId, compareImportId: l.compareImportId, report: l.report, asAt: l.asAt },
+  }));
+  const kbCitations: CitationView[] = results.map((r, i) => ({
+    marker: offset + i + 1,
     sourceId: r.sourceId,
     versionId: r.versionId,
     chunkId: r.chunkId,
@@ -109,18 +144,32 @@ export async function runExchange(
     officialUrl: r.officialUrl,
     excerpt: r.text.slice(0, EXCERPT_CHARS),
   }));
+  const sources: CitationView[] = [...ledgerCitations, ...kbCitations];
   io.sources(sources);
 
   // 8
-  const promptSources: PromptSource[] = results.map((r, i) => ({
-    marker: i + 1,
-    title: r.title,
-    citation: r.citation,
-    headingPath: r.headingPath,
-    provisionRef: r.provisionRef,
-    isBill: r.kind === 'bill',
-    text: r.text,
-  }));
+  const promptSources: PromptSource[] = [
+    ...ledgerSources.map((l, i) => ({
+      marker: i + 1,
+      title: l.title,
+      citation: l.citation,
+      headingPath: [],
+      provisionRef: null,
+      isBill: false,
+      isLedger: true,
+      text: l.text,
+    })),
+    ...results.map((r, i) => ({
+      marker: offset + i + 1,
+      title: r.title,
+      citation: r.citation,
+      headingPath: r.headingPath,
+      provisionRef: r.provisionRef,
+      isBill: r.kind === 'bill',
+      isLedger: false,
+      text: r.text,
+    })),
+  ];
   const prompt = buildPrompt({
     today: now.toISOString().slice(0, 10),
     jurisdiction,
@@ -181,7 +230,10 @@ export async function runExchange(
     const factValues = factRows.map((row) => formatFact(rowToFact(row)));
     const g = checkGrounding(
       answer,
-      results.map((r, i) => ({ marker: i + 1, text: r.text })),
+      [
+        ...ledgerSources.map((l, i) => ({ marker: i + 1, text: l.text })),
+        ...results.map((r, i) => ({ marker: offset + i + 1, text: r.text })),
+      ],
       factValues,
     );
     status = g.status;

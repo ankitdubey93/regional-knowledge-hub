@@ -11,6 +11,8 @@ import { NOT_COVERED_REPLY, NOT_IN_SOURCES, parseSse, type ChatMessageView } fro
 import { fakeEmbedder } from './fakeEmbedder';
 import { cleanupKb, draftFixture, publishFixture, snapshotKb } from './kbFixtures';
 import { call, createFirm, makePlatformAdmin, mergeCookies, signUp } from './helpers';
+import { AU_TB_CSV } from '../../../src/__tests__/fixtures/tb';
+import { ledgerChatContext } from '../services/ledgerService';
 import { startApp, stopApp } from './server';
 import { stubProvider, type StubProvider } from './stubProvider';
 import { testEnv } from './testEnv';
@@ -473,5 +475,99 @@ describe('chat', () => {
     } finally {
       await ownerQuery('delete from ai_usage where user_id = $1', [marker]);
     }
+  });
+});
+
+const BOOKS_CSV = AU_TB_CSV.replace('Owner Funds Introduced', 'Owner Funds Acme Pty Ltd');
+const PRIOR_BOOKS_CSV = BOOKS_CSV.replace('"30,000.00"', '"25,000.00"').replace('"6,800.00"', '"11,800.00"');
+const AU_MAPPING = { headerRow: 4, code: 1, name: 0, type: 2, debit: 3, credit: 4, balance: null };
+const BOOKS_Q = 'What was our revenue this year?';
+
+describe('chat from the books', () => {
+  let booksId = '';
+  let priorId = '';
+  let currentId = '';
+
+  async function importTb(csvText: string, asAt: string, periodStart: string): Promise<string> {
+    const res = await call('POST', `/api/clients/${booksId}/ledger/imports`, {
+      cookie: cookieA,
+      body: { csvText, originalName: 'tb.csv', source: 'xero', currency: 'AUD', asAt, periodStart, mapping: AU_MAPPING },
+    });
+    if (res.status !== 201) throw new Error(`import failed: ${res.status} ${await res.text()}`);
+    return ((await res.json()) as { import: { id: string } }).import.id;
+  }
+
+  beforeAll(async () => {
+    const created = await call('POST', '/api/clients', {
+      cookie: cookieA,
+      body: { name: 'Ledger Books Pty Ltd', jurisdiction: 'AU', entityType: 'company', fyEndMonth: 6 },
+    });
+    if (created.status !== 201) throw new Error(`create client failed: ${created.status}`);
+    booksId = ((await created.json()) as { client: { id: string } }).client.id;
+    priorId = await importTb(PRIOR_BOOKS_CSV, '2025-06-30', '2024-07-01');
+    currentId = await importTb(BOOKS_CSV, '2026-06-30', '2025-07-01');
+  }, 60_000);
+
+  it('C28 a books question is answered from the ledger and cited to the report', async () => {
+    const s = use({ chunks: ['Revenue was 30,000.00 for the year to 2026-06-30 [1].'] });
+    const id = await newChat(cookieA, { clientId: booksId, scope: null });
+    const a = await ask(cookieA, id, BOOKS_Q);
+    expect(s.calls.length).toBe(1);
+    const call0 = s.calls[0];
+    const last = call0?.messages[call0.messages.length - 1]?.text ?? '';
+    expect(last).toContain(
+      "[1] Profit and loss | Trial balance as at 2026-06-30, imported from Xero | Ledger (entity's imported trial balance, not reviewed)",
+    );
+    expect(last).toContain(
+      "[2] Balance sheet | Trial balance as at 2026-06-30, imported from Xero | Ledger (entity's imported trial balance, not reviewed)",
+    );
+    expect(last).toContain('200 Sales: 30,000.00 (comparison 25,000.00; change +5,000.00, +20%)');
+    expect(last).toContain('960 Owner Funds [NAME_1]: 6,800.00 (comparison 11,800.00; change -5,000.00, -42.37%)');
+    expect(call0?.system ?? '').not.toContain('Acme');
+    for (const m of call0?.messages ?? []) expect(m.text).not.toContain('Acme');
+    const m = doneMessage(a);
+    expect(m.status).toBe('answered');
+    const expected = {
+      kind: 'ledger',
+      sourceId: null,
+      title: 'Profit and loss',
+      sitePath: `/entities/${booksId}/reports?importId=${currentId}&compareId=${priorId}&tab=pnl`,
+      ledger: { importId: currentId, compareImportId: priorId, report: 'pnl', asAt: '2026-06-30' },
+    };
+    expect(m.citations[0]).toMatchObject(expected);
+    const got = await call('GET', `/api/conversations/${id}`, { cookie: cookieA });
+    const body = (await got.json()) as { messages: ChatMessageView[] };
+    expect(body.messages[1]?.citations[0]).toEqual(m.citations[0]);
+  });
+
+  it('C29 a figure the model calculated is flagged', async () => {
+    use({ chunks: ['Sales and purchases came to 39,000.00 [1].'] });
+    const id = await newChat(cookieA, { clientId: booksId, scope: null });
+    const m = doneMessage(await ask(cookieA, id, BOOKS_Q));
+    expect(m.status).toBe('flagged');
+    expect(m.flags).toEqual(expect.arrayContaining([{ code: 'unsupported_number', detail: '39000' }]));
+  });
+
+  it('C30 a books question on an entity with no import is not covered, with no provider call', async () => {
+    const s = use({ chunks: ['x'] });
+    const id = await newChat(cookieA, { clientId: acmeId, scope: null });
+    const m = doneMessage(await ask(cookieA, id, BOOKS_Q));
+    expect(s.calls.length).toBe(0);
+    expect(m.status).toBe('not_covered');
+  });
+
+  it('C31 a hub chat never sees the books', async () => {
+    const s = use({ chunks: ['x'] });
+    const id = await newChat(cookieA, { clientId: null, scope: 'AU' });
+    const m = doneMessage(await ask(cookieA, id, BOOKS_Q));
+    expect(s.calls.length).toBe(0);
+    expect(m.status).toBe('not_covered');
+  });
+
+  it("C32 firm B cannot load firm A's books", async () => {
+    expect(await ledgerChatContext(orgB, booksId)).toBeNull();
+    const ctx = await ledgerChatContext(orgA, booksId);
+    expect(ctx?.current.import.id).toBe(currentId);
+    expect(ctx?.prior?.import.id).toBe(priorId);
   });
 });

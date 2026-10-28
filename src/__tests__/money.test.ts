@@ -26,6 +26,13 @@ describe('money', () => {
     expect(formatRate(1150)).toBe('11.5%');
     expect(formatRate(1225)).toBe('12.25%');
   });
+  it('formatRate keeps the sign of a negative rate', () => {
+    expect(formatRate(-50)).toBe('-0.5%');
+    expect(formatRate(-150)).toBe('-1.5%');
+    expect(formatRate(-1000)).toBe('-10%');
+    expect(formatRate(-4237)).toBe('-42.37%');
+    expect(formatRate(0)).toBe('0%');
+  });
 });
 
 describe('rates', () => {

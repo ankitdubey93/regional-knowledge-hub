@@ -11,11 +11,17 @@ export const NOT_IN_SOURCES = "The Knowledge Hub sources I was given don't cover
 
 export const chatScopeSchema = z.enum(CHAT_SCOPES);
 export const groundingFlagSchema = z.object({ code: z.enum(FLAG_CODES), detail: z.string() });
+export const ledgerCitationRefSchema = z.object({
+  importId: z.string(),
+  compareImportId: z.string().nullable(),
+  report: z.enum(['pnl', 'bs']),
+  asAt: z.string(),
+});
 export const citationViewSchema = z.object({
   marker: z.number().int().min(1),
-  sourceId: z.string(), versionId: z.string(), chunkId: z.string(),
+  sourceId: z.string().nullable(), versionId: z.string().nullable(), chunkId: z.string().nullable(),
   title: z.string(), citation: z.string(),
-  kind: z.enum(['act', 'regulation', 'bill', 'ruling', 'guidance', 'standard', 'curriculum']),
+  kind: z.enum(['act', 'regulation', 'bill', 'ruling', 'guidance', 'standard', 'curriculum', 'ledger']),
   jurisdiction: z.enum(['AU', 'UK', 'INTL']),
   billStatus: z.enum(['introduced', 'passed', 'assented', 'lapsed']).nullable(),
   headingPath: z.array(z.string()),
@@ -23,6 +29,7 @@ export const citationViewSchema = z.object({
   sitePath: z.string().nullable(),
   officialUrl: z.string().nullable(),
   excerpt: z.string(),
+  ledger: ledgerCitationRefSchema.optional(),
 });
 export const chatMessageViewSchema = z.object({
   id: z.string(), role: z.enum(MESSAGE_ROLES), body: z.string(), status: z.enum(MESSAGE_STATUSES),
@@ -43,6 +50,7 @@ export type ChatScope = z.infer<typeof chatScopeSchema>;
 export type MessageStatus = (typeof MESSAGE_STATUSES)[number];
 export type GroundingFlag = z.infer<typeof groundingFlagSchema>;
 export type CitationView = z.infer<typeof citationViewSchema>;
+export type LedgerCitationRef = z.infer<typeof ledgerCitationRefSchema>;
 export type ChatMessageView = z.infer<typeof chatMessageViewSchema>;
 export type ConversationView = z.infer<typeof conversationViewSchema>;
 export type ChatStatus = z.infer<typeof chatStatusSchema>;

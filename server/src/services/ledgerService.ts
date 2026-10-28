@@ -3,6 +3,7 @@ import { and, asc, desc, eq, sql } from 'drizzle-orm';
 import { client, ledgerAccount, ledgerBalance, ledgerImport } from '../db/schema';
 import { withOrg, type Tx } from '../db/withOrg';
 import { CURRENCY_MESSAGES, type LedgerAccount, type LedgerImport, type TbCommitInput } from '../types/ledger';
+import { pickComparison, type LedgerSnapshot } from '../chat/ledgerSources';
 import { parseCsv } from '../../../src/utils/csv';
 import { suggestClass, type AccountClass } from '../../../src/utils/accountClasses';
 import { mapTrialBalance, type ImportIssue } from '../../../src/utils/ledgerImport';
@@ -303,4 +304,25 @@ export async function getBalanceSheet(
   compareImportId: string | null,
 ): Promise<ReportOutcome<BalanceSheet>> {
   return withOrg(orgId, (tx) => buildReport(tx, orgId, clientId, importId, compareImportId, balanceSheet));
+}
+
+/** The latest active import of a client and its comparison (pickComparison), for the chat. null when the client has no active import in this org. */
+export async function ledgerChatContext(
+  orgId: string,
+  clientId: string,
+): Promise<{ current: LedgerSnapshot; prior: LedgerSnapshot | null } | null> {
+  return withOrg(orgId, async (tx) => {
+    const rows = await tx
+      .select()
+      .from(ledgerImport)
+      .where(and(eq(ledgerImport.orgId, orgId), eq(ledgerImport.clientId, clientId), eq(ledgerImport.status, 'active')))
+      .orderBy(desc(ledgerImport.asAt), desc(ledgerImport.createdAt));
+    const top = rows[0];
+    if (!top) return null;
+    const current = await loadImport(tx, orgId, clientId, top.id);
+    if (!current) return null;
+    const pick = pickComparison(rows, top);
+    const prior = pick ? await loadImport(tx, orgId, clientId, pick.id) : null;
+    return { current, prior };
+  });
 }

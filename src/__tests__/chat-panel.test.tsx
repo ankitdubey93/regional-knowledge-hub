@@ -3,6 +3,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { ChatPanel } from '../components/ChatPanel';
+import { ChatMessageView as MessageView } from '../components/chat/ChatMessageView';
 import type { ChatMessageView, CitationView, ConversationView } from '../lib/chatWire';
 
 const NOW = '2026-10-27T09:00:00.000Z';
@@ -217,5 +218,45 @@ describe('ChatPanel', () => {
     expect(await within(log).findByText(/Partial/)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Stop' }));
     await waitFor(() => expect(signal?.aborted).toBe(true));
+  });
+
+  it('CP6 a ledger citation links to the report and carries the books badge', () => {
+    const ledgerMessage: ChatMessageView = {
+      id: 'm-ledger',
+      role: 'assistant',
+      body: 'Revenue was 30,000.00 [1].',
+      status: 'answered',
+      flags: [],
+      createdAt: NOW,
+      citations: [
+        {
+          marker: 1,
+          sourceId: null,
+          versionId: null,
+          chunkId: null,
+          title: 'Profit and loss',
+          citation: 'Trial balance as at 2026-06-30, imported from Xero',
+          kind: 'ledger',
+          jurisdiction: 'AU',
+          billStatus: null,
+          headingPath: [],
+          provisionRef: null,
+          sitePath: '/entities/c1/reports?importId=i1&compareId=i0&tab=pnl',
+          officialUrl: null,
+          excerpt: 'x',
+          ledger: { importId: 'i1', compareImportId: 'i0', report: 'pnl', asAt: '2026-06-30' },
+        },
+      ],
+    };
+    render(
+      <MemoryRouter>
+        <MessageView message={ledgerMessage} />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('link', { name: 'Profit and loss' })).toHaveAttribute(
+      'href',
+      '/entities/c1/reports?importId=i1&compareId=i0&tab=pnl',
+    );
+    expect(screen.getByText('Your books: as imported, not reviewed')).toBeInTheDocument();
   });
 });

@@ -11,7 +11,7 @@ import * as session from '../lib/session';
 import { suggestClass } from '../utils/accountClasses';
 import { parseCsv } from '../utils/csv';
 import { mapTrialBalance, type TbMapping } from '../utils/ledgerImport';
-import { profitAndLoss, type Balance, type ReportAccount } from '../utils/reports';
+import { balanceSheet, profitAndLoss, type Balance, type ReportAccount } from '../utils/reports';
 
 const signedIn = {
   session: { userId: 'u1', email: 'a@firm.test', name: 'A', activeFirmId: 'org1', activeFirmName: 'Firm A', activeWorkspaceKind: 'practice' as const },
@@ -73,8 +73,8 @@ function stubApi(routes: Record<string, Stub>) {
   return fetchMock;
 }
 
-/** The AU fixture run through the same engines, so the stubbed report matches what the server would return. */
-function auReport() {
+/** The AU fixture's balances and accounts, as the books page would send them to the engines. */
+function auBalances() {
   const mapping: TbMapping = { headerRow: 4, code: 1, name: 0, type: 2, debit: 3, credit: 4, balance: null };
   const tb = mapTrialBalance(parseCsv(AU_TB_CSV).rows, mapping);
   const accounts: ReportAccount[] = tb.rows.map((r) => {
@@ -83,6 +83,12 @@ function auReport() {
     return { code: r.code, name: r.name, accountClass };
   });
   const balances: Balance[] = tb.rows.map((r) => ({ code: r.code, debitCents: r.debitCents, creditCents: r.creditCents }));
+  return { balances, accounts };
+}
+
+/** The AU fixture run through the same engines, so the stubbed report matches what the server would return. */
+function auReport() {
+  const { balances, accounts } = auBalances();
   return profitAndLoss(balances, accounts);
 }
 
@@ -235,5 +241,29 @@ describe('Books and reports (D1)', () => {
     });
     renderAt('/entities/c1/reports', '/entities/:id/reports', <EntityReports />);
     expect(await screen.findByRole('link', { name: 'Import a trial balance' })).toHaveAttribute('href', '/entities/c1/books');
+  });
+
+  it('reports opens the balance sheet and comparison named in the query', async () => {
+    vi.mocked(session.useSessionInfo).mockReturnValue(signedIn);
+    const { balances, accounts } = auBalances();
+    const bs = balanceSheet(balances, accounts);
+    const imp2 = importRecord({ id: 'imp2', asAt: '2025-06-30', periodStart: '2024-07-01' });
+    const fetchMock = vi.fn(async (url: string) => {
+      const u = new URL(url, 'http://localhost');
+      if (u.pathname === '/api/clients/c1') return jsonResponse(200, { client: acme });
+      if (u.pathname === '/api/clients/c1/ledger/imports') return jsonResponse(200, { imports: [importRecord(), imp2] });
+      if (u.pathname === '/api/clients/c1/reports/balance-sheet') {
+        const prior = u.searchParams.has('compareImportId') ? { import: imp2, data: bs } : null;
+        return jsonResponse(200, { report: { currency: 'AUD', current: { import: importRecord(), data: bs }, prior } });
+      }
+      return jsonResponse(404, { error: 'No stub' });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    renderAt('/entities/c1/reports?tab=bs&compareId=imp2', '/entities/:id/reports', <EntityReports />);
+    expect(await screen.findByText('Net assets')).toBeInTheDocument();
+    const bsCalls = fetchMock.mock.calls.map(([url]) => new URL(url, 'http://localhost'));
+    expect(
+      bsCalls.some((u) => u.pathname === '/api/clients/c1/reports/balance-sheet' && u.searchParams.get('compareImportId') === 'imp2'),
+    ).toBe(true);
   });
 });
