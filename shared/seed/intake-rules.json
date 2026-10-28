@@ -1,0 +1,249 @@
+{
+  "note": "leadDays is firm practice (how many days before the due date to ask), not law. Items cite the official page that lists the record, or a curriculum doc. verifiedOn is set only when that page was read and supports the item.",
+  "rules": [
+    {
+      "id": "au.bas",
+      "jurisdiction": "AU",
+      "entityTypes": [
+        "sole_trader",
+        "partnership",
+        "company",
+        "trust"
+      ],
+      "taxRegistered": true,
+      "taxPeriods": [
+        "monthly",
+        "quarterly"
+      ],
+      "items": [
+        {
+          "id": "au.bas.bankStatements",
+          "label": "Bank statements for the BAS period",
+          "why": "To reconcile the bank accounts and check that every receipt and payment is in the books before the BAS is prepared.",
+          "docId": "australia/bas-gst-guide",
+          "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/record-keeping-for-business",
+          "verifiedOn": null,
+          "forKind": "au_bas",
+          "leadDays": 14
+        },
+        {
+          "id": "au.bas.salesRecords",
+          "label": "Sales invoices and takings for the BAS period",
+          "why": "To work out GST collected on sales and confirm that the sales figures are complete.",
+          "docId": "australia/bas-gst-guide",
+          "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/record-keeping-for-business",
+          "verifiedOn": null,
+          "forKind": "au_bas",
+          "leadDays": 14
+        },
+        {
+          "id": "au.bas.purchaseRecords",
+          "label": "Supplier invoices and receipts for the BAS period",
+          "why": "To support GST credits claimed on purchases, which need a valid tax invoice.",
+          "docId": "australia/bas-gst-guide",
+          "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/record-keeping-for-business",
+          "verifiedOn": null,
+          "forKind": "au_bas",
+          "leadDays": 14
+        },
+        {
+          "id": "au.bas.payroll",
+          "label": "Payroll summary for the BAS period",
+          "why": "To report wages and the tax withheld from them on the activity statement.",
+          "docId": "australia/bas-gst-guide",
+          "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/record-keeping-for-business",
+          "verifiedOn": null,
+          "forKind": "au_bas",
+          "leadDays": 14
+        }
+      ]
+    },
+    {
+      "id": "au.yearEnd",
+      "jurisdiction": "AU",
+      "entityTypes": [
+        "sole_trader",
+        "partnership",
+        "company",
+        "trust"
+      ],
+      "taxRegistered": null,
+      "taxPeriods": null,
+      "items": [
+        {
+          "id": "au.ye.bankYearEnd",
+          "label": "Bank and card statements at year end",
+          "why": "To confirm the closing cash balances against the books.",
+          "docId": "core-accounting/month-end-close-checklist",
+          "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/record-keeping-for-business",
+          "verifiedOn": null,
+          "forKind": null,
+          "leadDays": null
+        },
+        {
+          "id": "au.ye.fixedAssets",
+          "label": "Asset purchases and sales in the year",
+          "why": "To keep the asset register and depreciation correct.",
+          "docId": "core-accounting/month-end-close-checklist",
+          "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/record-keeping-for-business",
+          "verifiedOn": null,
+          "forKind": null,
+          "leadDays": null
+        },
+        {
+          "id": "au.ye.loans",
+          "label": "Loan and finance statements at year end",
+          "why": "To confirm the closing loan balances and the interest charged.",
+          "docId": "core-accounting/month-end-close-checklist",
+          "source": "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/record-keeping-for-business",
+          "verifiedOn": null,
+          "forKind": null,
+          "leadDays": null
+        }
+      ]
+    },
+    {
+      "id": "uk.vat",
+      "jurisdiction": "UK",
+      "entityTypes": [
+        "sole_trader",
+        "partnership",
+        "company",
+        "llp"
+      ],
+      "taxRegistered": true,
+      "taxPeriods": [
+        "monthly",
+        "quarterly"
+      ],
+      "items": [
+        {
+          "id": "uk.vat.bankStatements",
+          "label": "Bank statements for the VAT period",
+          "why": "General business records such as bank statements support the VAT return and the reconciliation behind it.",
+          "docId": "uk/mtd-vat-guide",
+          "source": "https://www.gov.uk/charge-reclaim-record-vat",
+          "verifiedOn": "2026-10-28",
+          "forKind": "uk_vat",
+          "leadDays": 14
+        },
+        {
+          "id": "uk.vat.salesRecords",
+          "label": "Sales invoices and credit notes for the VAT period",
+          "why": "VAT-registered businesses must keep copies of all invoices they issue, and any debit or credit notes.",
+          "docId": "uk/mtd-vat-guide",
+          "source": "https://www.gov.uk/charge-reclaim-record-vat",
+          "verifiedOn": "2026-10-28",
+          "forKind": "uk_vat",
+          "leadDays": 14
+        },
+        {
+          "id": "uk.vat.purchaseRecords",
+          "label": "Supplier invoices for the VAT period",
+          "why": "VAT-registered businesses must keep all invoices they receive, to support the VAT they reclaim.",
+          "docId": "uk/mtd-vat-guide",
+          "source": "https://www.gov.uk/charge-reclaim-record-vat",
+          "verifiedOn": "2026-10-28",
+          "forKind": "uk_vat",
+          "leadDays": 14
+        }
+      ]
+    },
+    {
+      "id": "uk.companyYearEnd",
+      "jurisdiction": "UK",
+      "entityTypes": [
+        "company",
+        "llp"
+      ],
+      "taxRegistered": null,
+      "taxPeriods": null,
+      "items": [
+        {
+          "id": "uk.ye.bankYearEnd",
+          "label": "Bank statements at the year end",
+          "why": "Bank statements are listed among the records needed to prepare the annual accounts and Company Tax Return.",
+          "docId": "uk/companies-act-2006",
+          "source": "https://www.gov.uk/running-a-limited-company/company-and-accounting-records",
+          "verifiedOn": "2026-10-28",
+          "forKind": "uk_ch_accounts",
+          "leadDays": 60
+        },
+        {
+          "id": "uk.ye.fixedAssets",
+          "label": "Details of assets owned at the year end",
+          "why": "A company must keep details of the assets it owns as part of its accounting records.",
+          "docId": "uk/companies-act-2006",
+          "source": "https://www.gov.uk/running-a-limited-company/company-and-accounting-records",
+          "verifiedOn": "2026-10-28",
+          "forKind": "uk_ch_accounts",
+          "leadDays": 60
+        },
+        {
+          "id": "uk.ye.loans",
+          "label": "Loans and debts owed or owing at the year end",
+          "why": "A company must keep records of the debts it owes or is owed.",
+          "docId": "uk/companies-act-2006",
+          "source": "https://www.gov.uk/running-a-limited-company/company-and-accounting-records",
+          "verifiedOn": "2026-10-28",
+          "forKind": "uk_ch_accounts",
+          "leadDays": 60
+        }
+      ]
+    },
+    {
+      "id": "uk.saYearEnd",
+      "jurisdiction": "UK",
+      "entityTypes": [
+        "sole_trader",
+        "partnership"
+      ],
+      "taxRegistered": null,
+      "taxPeriods": null,
+      "items": [
+        {
+          "id": "uk.sa.incomeRecords",
+          "label": "Records of all sales and business income",
+          "why": "Sole traders and partners must keep records of business income for the Self Assessment tax return.",
+          "docId": null,
+          "source": "https://www.gov.uk/self-employed-records/what-records-to-keep",
+          "verifiedOn": "2026-10-28",
+          "forKind": "uk_sa_return",
+          "leadDays": 60
+        },
+        {
+          "id": "uk.sa.expenseRecords",
+          "label": "Records of business expenses with receipts",
+          "why": "Sole traders and partners must keep records of business expenses, with proof such as receipts and bank statements.",
+          "docId": null,
+          "source": "https://www.gov.uk/self-employed-records/what-records-to-keep",
+          "verifiedOn": "2026-10-28",
+          "forKind": "uk_sa_return",
+          "leadDays": 60
+        }
+      ]
+    },
+    {
+      "id": "uk.payroll",
+      "jurisdiction": "UK",
+      "entityTypes": [
+        "company",
+        "llp"
+      ],
+      "taxRegistered": null,
+      "taxPeriods": null,
+      "items": [
+        {
+          "id": "uk.paye.payrollRecords",
+          "label": "Payroll records: pay, deductions and reports to HMRC",
+          "why": "Employers must keep what they pay employees, the deductions made, their reports to HMRC and their payments to HMRC.",
+          "docId": "uk/paye-cis-overview",
+          "source": "https://www.gov.uk/paye-for-employers/keeping-records",
+          "verifiedOn": "2026-10-28",
+          "forKind": null,
+          "leadDays": null
+        }
+      ]
+    }
+  ]
+}

@@ -20,6 +20,7 @@ import {
   vector,
 } from 'drizzle-orm/pg-core';
 import { ACCOUNT_CLASSES } from '@chub/shared/utils/accountClasses';
+import { REQUEST_SOURCES, REQUEST_STATUSES } from '@chub/shared/utils/intake';
 import type { CurriculumMeta, Fact } from '@chub/shared/data/schemas';
 import type { ImportIssue } from '@chub/shared/utils/ledgerImport';
 import { CHAT_SCOPES, MESSAGE_ROLES, MESSAGE_STATUSES, type GroundingFlag } from '@chub/shared/lib/chatWire';
@@ -396,5 +397,35 @@ export const conversationDocument = pgTable(
       foreignColumns: [document.id, document.clientId, document.orgId],
       name: 'conversation_document_document_fk',
     }).onDelete('cascade'),
+  ],
+);
+
+// Tenant table: RLS is enabled and forced in migration 0025 (Hard rule 11).
+export const documentRequest = pgTable(
+  'document_request',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    clientId: uuid('client_id').notNull(),
+    itemId: text('item_id').notNull(),
+    label: text('label').notNull(),
+    why: text('why').notNull().default(''),
+    docId: text('doc_id'),
+    sourceUrl: text('source_url'),
+    verifiedOn: date('verified_on', { mode: 'string' }),
+    dueOn: date('due_on', { mode: 'string' }),
+    status: text('status', { enum: REQUEST_STATUSES }).notNull().default('open'),
+    source: text('source', { enum: REQUEST_SOURCES }).notNull(),
+    obligationId: text('obligation_id'),
+    createdBy: text('created_by').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'document_request_client_org_fk' }).onDelete('cascade'),
+    unique('document_request_item_unique').on(t.clientId, t.itemId, t.obligationId).nullsNotDistinct(),
+    index('document_request_client_idx').on(t.clientId),
   ],
 );

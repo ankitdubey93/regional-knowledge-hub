@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { OBLIGATION_KINDS } from '../utils/deadlines';
 
 export const jurisdiction = z.enum(['AU', 'UK', 'INTL']);
 export type Jurisdiction = z.infer<typeof jurisdiction>;
@@ -159,3 +160,34 @@ export const checklistsSchema = z.array(
   }),
 );
 export type Checklist = z.infer<typeof checklistsSchema>[number];
+
+const entityTypeEnum = z.enum(['sole_trader', 'partnership', 'company', 'trust', 'llp']);
+
+export const intakeItemSchema = z
+  .object({
+    id: z.string().regex(/^(au|uk)\.[a-zA-Z0-9.]+$/),
+    label: z.string().min(5).max(120),
+    why: z.string().min(10).max(400),
+    docId: docId.nullable(),
+    source: z.url().nullable(),
+    verifiedOn: isoDate.nullable(),
+    forKind: z.enum(OBLIGATION_KINDS).nullable(),
+    leadDays: z.number().int().min(0).max(120).nullable(),
+  })
+  .refine((i) => i.docId !== null || i.source !== null, { message: 'an item needs a docId or a source' })
+  .refine((i) => (i.forKind === null) === (i.leadDays === null), { message: 'forKind and leadDays go together' })
+  .refine((i) => i.verifiedOn === null || i.source !== null, { message: 'verifiedOn needs a source' });
+export type IntakeItem = z.infer<typeof intakeItemSchema>;
+
+export const intakeRuleSchema = z.object({
+  id: z.string().regex(/^(au|uk)\.[a-zA-Z0-9.]+$/),
+  jurisdiction: z.enum(['AU', 'UK']),
+  entityTypes: z.array(entityTypeEnum).min(1),
+  taxRegistered: z.boolean().nullable(), // null: either
+  taxPeriods: z.array(z.enum(['monthly', 'quarterly', 'annual'])).min(1).nullable(), // null: any, including none
+  items: z.array(intakeItemSchema).min(1),
+});
+export type IntakeRule = z.infer<typeof intakeRuleSchema>;
+
+export const intakeRulesSchema = z.object({ note: z.string().min(10), rules: z.array(intakeRuleSchema).min(1) });
+export type IntakeRules = z.infer<typeof intakeRulesSchema>;
