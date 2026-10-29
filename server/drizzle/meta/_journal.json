@@ -211,6 +211,20 @@
       "when": 1793246369284,
       "tag": "0029_rate_bucket_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1793251446399,
+      "tag": "0030_workload",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1793251453436,
+      "tag": "0031_workload_rules",
+      "breakpoints": true
     }
   ]
 }

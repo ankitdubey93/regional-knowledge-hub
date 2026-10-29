@@ -40,7 +40,11 @@ export function EngagementsList() {
   return (
     <div className="space-y-6">
       <PageHeader title="Engagements" lead="Recurring work across every entity in this firm." />
-      <TextLink to="/workspace/templates">Engagement templates</TextLink>
+      <div className="flex flex-wrap gap-4 text-sm">
+        <TextLink to="/board">Board</TextLink>
+        <TextLink to="/workload">Workload</TextLink>
+        <TextLink to="/workspace/templates">Engagement templates</TextLink>
+      </div>
 
       <Card>
         <div className="space-y-3">

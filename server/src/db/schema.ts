@@ -510,3 +510,19 @@ export const task = pgTable(
     index('task_assignee_idx').on(t.assigneeId),
   ],
 );
+
+// Tenant table (W2): RLS is enabled and forced in migration 0031 (Hard rule 11).
+export const memberCapacity = pgTable(
+  'member_capacity',
+  {
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    weeklyMinutes: integer('weekly_minutes').notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.orgId, t.userId], name: 'member_capacity_pk' })],
+);

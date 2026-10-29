@@ -29,7 +29,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 | 4 | `p5b-email.md` | full | 3 | Add `SMTP_URL`, `MAIL_FROM` to your `.env` (Step 2 tells you) | todo |
 | 5 | `c2-intake-checklist.md` | full | 2 | Review the intake rule list | done (approved and landed 2026-10-28) |
 | 6 | `w1-engagements.md` | full | 2 | none | done (landed 2026-10-29) |
-| 7 | `w2-board-capacity.md` | outline | 6 | Confirm weeks use the firm's timezone | todo |
+| 7 | `w2-board-capacity.md` | full | 6 | Confirm weeks use the firm's timezone (Confirmed 2026-10-29: firm timezone) | done (landed 2026-10-29) |
 | 8 | `p5c-audit-retention.md` | outline | 7 | Choose default retention periods | todo |
 | 9 | `c3-requests-chasing.md` | outline | 4, 5, 8 | none | todo |
 | 10 | `p5d-deploy.md` | outline | 8 | Choose the hosting target and region | todo |
@@ -43,7 +43,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 
 `prose-figures-inventory.md` is a working list for debt-sprint item 7. It is not a plan.
 
-**Next:** `w2-board-capacity.md` (outline: run `/code-planner` on it first) and `p5b-email.md`.
+**Next:** `p5c-audit-retention.md` (outline: run `/code-planner` on it first) and `p5b-email.md`.
 
 Later work in the roadmap but not planned here: D2 (GL transactions), D3 (XLSX trial balance), D4 (Xero and QBO connections), the Phase 2 learning simulators and topics, and the four owed content skills. Each gets its own plan when its turn comes.
 

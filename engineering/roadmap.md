@@ -141,7 +141,7 @@ The owner's research on AU and UK firms named four pains: chasing documents, cro
 | **C2** | Intake checklist: deterministic rules (jurisdiction × entity type × registration) produce each entity's document request list; C1 obligations add dated requests | C1 | built 2026-10-28 (`e2e/requests.spec.ts` passed; 7 AU items not checked; requests are listed, not sent) |
 | **C3** | Document requests and chasing (was D5): a tokenised upload link per request batch, uploads into the P4 sealed store, version chains on re-upload, email nudges on a cadence with stop rules | C2, P5a, P5b, P5c | planned, outline (`plans/c3-requests-chasing.md`) |
 | **W1** | Engagements and templates: `engagement_template`, `engagement`, `task`; seeded templates (monthly bookkeeping, BAS quarter, VAT quarter, year-end, payroll run); C1 obligations can open engagements | C1 | built 2026-10-29 |
-| **W2** | Board and capacity: a keyboard-first board by status, `member_capacity`, a workload view per member | W1 | planned, outline (`plans/w2-board-capacity.md`) |
+| **W2** | Board and capacity: a keyboard-first board by status, `member_capacity`, a workload view per member | W1 | built 2026-10-29 |
 | **B1** | Time tracking: `time_entry`, a server-side stopwatch, manual entry, entries locked once invoiced | W1, launch gate | planned, outline (`plans/b1-time.md`) |
 | **B2** | Pricing (hourly, fixed fee, retainer) and invoices: integer-cent engine, GST/VAT on fees from `kb_fact`, sequential numbers, manual FX rate stored per invoice, print-CSS PDF, CSV export | B1 | planned, outline (`plans/b2-invoicing.md`) |
 | **B3** | Profitability: time cost against billed or fixed fee per entity and engagement, realisation and margin in bp | B2 | planned, outline (`plans/b3-profitability.md`) |

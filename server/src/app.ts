@@ -13,6 +13,7 @@ import { kbRoutes } from './routes/kb';
 import { requestRoutes } from './routes/requests';
 import { clientEngagementRoutes, engagementRoutes } from './routes/engagements';
 import { templateRoutes } from './routes/engagementTemplates';
+import { workloadRoutes } from './routes/workload';
 import { ledgerRoutes } from './routes/ledger';
 import { pinForwardedFor } from './middleware/rateLimit';
 
@@ -33,6 +34,7 @@ app.use('/api/clients/:clientId', ledgerRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/engagements', engagementRoutes);
 app.use('/api/engagement-templates', templateRoutes);
+app.use('/api/workload', workloadRoutes);
 app.use('/api/chat', chatStatusRoutes);
 app.use('/api/conversations', conversationRoutes);
 app.use('/api/admin/facts', adminFactRoutes);
