@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { OBLIGATION_KINDS } from '../utils/deadlines';
+import { ENGAGEMENT_KINDS } from '../utils/engagements';
 
 export const jurisdiction = z.enum(['AU', 'UK', 'INTL']);
 export type Jurisdiction = z.infer<typeof jurisdiction>;
@@ -191,3 +192,24 @@ export type IntakeRule = z.infer<typeof intakeRuleSchema>;
 
 export const intakeRulesSchema = z.object({ note: z.string().min(10), rules: z.array(intakeRuleSchema).min(1) });
 export type IntakeRules = z.infer<typeof intakeRulesSchema>;
+
+export const engagementTemplateStepSchema = z.object({
+  title: z.string().trim().min(1).max(300),
+  estimateMinutes: z.number().int().min(0).max(10000).nullable(),
+});
+export type EngagementTemplateStep = z.infer<typeof engagementTemplateStepSchema>;
+export const engagementTemplateStepsSchema = z.array(engagementTemplateStepSchema).min(1).max(100);
+
+export const seedEngagementTemplateSchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/),
+  name: z.string().min(1).max(120),
+  kind: z.enum(ENGAGEMENT_KINDS),
+  jurisdiction: z.enum(['AU', 'UK']).nullable(), // null: either
+  steps: engagementTemplateStepsSchema,
+});
+export type SeedEngagementTemplate = z.infer<typeof seedEngagementTemplateSchema>;
+
+export const engagementTemplatesSchema = z
+  .object({ note: z.string().min(10), templates: z.array(seedEngagementTemplateSchema).min(1) })
+  .refine((t) => new Set(t.templates.map((x) => x.id)).size === t.templates.length, { message: 'template ids must be unique' });
+export type EngagementTemplates = z.infer<typeof engagementTemplatesSchema>;

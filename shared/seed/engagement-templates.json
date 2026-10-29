@@ -1,0 +1,253 @@
+{
+  "note": "Suggested steps from common bookkeeping practice, not law or a regulator's checklist. Estimates are left blank for each firm to set. Edited by code review.",
+  "templates": [
+    {
+      "id": "monthly-bookkeeping",
+      "name": "Monthly bookkeeping",
+      "kind": "bookkeeping",
+      "jurisdiction": null,
+      "steps": [
+        {
+          "title": "Bank feeds are up to date for every account, card and payment platform (Stripe, PayPal, Square).",
+          "estimateMinutes": null
+        },
+        {
+          "title": "All supplier bills dated in the month are entered, including ones still in the inbox.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "All sales invoices for work done in the month are raised.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Payroll for the month is posted, with super (AU) or pension and PAYE/NIC (UK) liabilities.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Every bank and card account reconciles to the statement closing balance.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Clearing and suspense accounts are at zero, or every item in them is explained.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Aged receivables and aged payables agree to the balance sheet control accounts.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "The GST or VAT account agrees to the tax report for the period.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Payroll liabilities (PAYG, super, PAYE, pension) agree to the payroll reports.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Accrue expenses incurred but not yet billed (electricity, audit fees, contractor time).",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Release one month of each prepayment (insurance, annual software) to expense.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Release deferred revenue earned this month; defer amounts billed in advance.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Post depreciation and amortisation from the fixed asset register.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Adjust inventory to the count or the perpetual records, and post write-downs to NRV.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Review old receivables; update the allowance for credit losses or write off what will not be paid.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Set last month's accruals to reverse on the first day of this month.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Read the trial balance: every balance on its normal side, nothing strange or unexplained.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Compare the P&L with last month and with budget; explain big swings.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Set the lock date in Xero or close the books in QBO.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Send the management pack (P&L, balance sheet, cash flow, aged reports).",
+          "estimateMinutes": null
+        }
+      ]
+    },
+    {
+      "id": "bas",
+      "name": "BAS",
+      "kind": "bas",
+      "jurisdiction": "AU",
+      "steps": [
+        {
+          "title": "Reconcile every bank and card account to the end of the period.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Review the GST coding of sales and purchases for the period and correct miscoded transactions.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Check that a tax invoice is held for each purchase where a GST credit is claimed.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Agree PAYG withholding on the BAS to the payroll reports.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Prepare the BAS from the GST report and compare it with the previous period.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Send the BAS to the client for review and approval.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Lodge the BAS and record the lodgment reference.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Tell the client the amount payable or refundable and when it is due.",
+          "estimateMinutes": null
+        }
+      ]
+    },
+    {
+      "id": "vat-return",
+      "name": "VAT return",
+      "kind": "vat",
+      "jurisdiction": "UK",
+      "steps": [
+        {
+          "title": "Reconcile every bank and card account to the end of the VAT period.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Review the VAT codes on sales and purchases for the period and correct miscoded transactions.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Check that a VAT invoice is held for each purchase where input VAT is reclaimed.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Review reverse charge, postponed import VAT and partial exemption entries.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Prepare the VAT return from the VAT report and compare it with the previous period.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Send the VAT return to the client for review and approval.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Submit the return through MTD-compatible software and keep the submission receipt.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Tell the client the amount payable or repayable and when it is due.",
+          "estimateMinutes": null
+        }
+      ]
+    },
+    {
+      "id": "year-end",
+      "name": "Year-end accounts",
+      "kind": "year_end",
+      "jurisdiction": null,
+      "steps": [
+        {
+          "title": "Confirm the last month-end close of the year is complete and the period is locked.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Agree bank, loan and card balances to the year-end statements.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Agree receivables, payables and accruals to supporting schedules.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Update the fixed asset register and post the year's depreciation.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Count or confirm closing inventory and post the adjustment.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Post the year-end adjustments and prepare the final trial balance.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Prepare the financial statements and the tax computation.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Review the accounts and the tax return with the client and get sign-off.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "File the accounts and lodge or submit the tax return.",
+          "estimateMinutes": null
+        }
+      ]
+    },
+    {
+      "id": "payroll-run",
+      "name": "Payroll run",
+      "kind": "payroll",
+      "jurisdiction": null,
+      "steps": [
+        {
+          "title": "Collect timesheets, leave and pay changes for the period.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Add new starters and process leavers.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Process the pay run and compare the payroll summary with the last run.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Approve the pay run with the client.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Pay employees and send payslips.",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Report the pay run to the tax authority (Single Touch Payroll in Australia, RTI in the UK).",
+          "estimateMinutes": null
+        },
+        {
+          "title": "Post the payroll journal and the tax and super or pension liabilities.",
+          "estimateMinutes": null
+        }
+      ]
+    }
+  ]
+}

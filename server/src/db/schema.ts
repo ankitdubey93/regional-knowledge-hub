@@ -21,10 +21,11 @@ import {
 } from 'drizzle-orm/pg-core';
 import { ACCOUNT_CLASSES } from '@chub/shared/utils/accountClasses';
 import { REQUEST_SOURCES, REQUEST_STATUSES } from '@chub/shared/utils/intake';
-import type { CurriculumMeta, Fact } from '@chub/shared/data/schemas';
+import type { CurriculumMeta, EngagementTemplateStep, Fact } from '@chub/shared/data/schemas';
+import { ENGAGEMENT_KINDS, ENGAGEMENT_STATUSES, TASK_STATUSES } from '@chub/shared/utils/engagements';
 import type { ImportIssue } from '@chub/shared/utils/ledgerImport';
 import { CHAT_SCOPES, MESSAGE_ROLES, MESSAGE_STATUSES, type GroundingFlag } from '@chub/shared/lib/chatWire';
-import { organization } from './auth-schema';
+import { organization, user } from './auth-schema';
 
 export * from './auth-schema';
 
@@ -52,6 +53,7 @@ export const client = pgTable(
     registeredOn: date('registered_on', { mode: 'string' }),
     vatStaggerMonth: smallint('vat_stagger_month'),
     mtdItsa: boolean('mtd_itsa').notNull().default(false),
+    autoEngagements: boolean('auto_engagements').notNull().default(false),
     createdBy: text('created_by').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -427,5 +429,77 @@ export const documentRequest = pgTable(
     foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'document_request_client_org_fk' }).onDelete('cascade'),
     unique('document_request_item_unique').on(t.clientId, t.itemId, t.obligationId).nullsNotDistinct(),
     index('document_request_client_idx').on(t.clientId),
+  ],
+);
+
+// Tenant tables (W1): RLS is enabled and forced in migration 0027 (Hard rule 11).
+export const engagementTemplate = pgTable(
+  'engagement_template',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    kind: text('kind', { enum: ENGAGEMENT_KINDS }).notNull(),
+    seedId: text('seed_id'),
+    steps: jsonb('steps').$type<EngagementTemplateStep[]>().notNull(),
+    createdBy: text('created_by').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('engagement_template_org_idx').on(t.orgId)],
+);
+
+export const engagement = pgTable(
+  'engagement',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    clientId: uuid('client_id').notNull(),
+    templateId: text('template_id'),
+    title: text('title').notNull(),
+    kind: text('kind', { enum: ENGAGEMENT_KINDS }).notNull(),
+    periodEnd: date('period_end', { mode: 'string' }),
+    dueOn: date('due_on', { mode: 'string' }).notNull(),
+    status: text('status', { enum: ENGAGEMENT_STATUSES }).notNull().default('planned'),
+    obligationId: text('obligation_id'),
+    createdBy: text('created_by').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'engagement_client_org_fk' }).onDelete('cascade'),
+    unique('engagement_id_org_unique').on(t.id, t.orgId),
+    unique('engagement_obligation_unique').on(t.clientId, t.obligationId),
+    index('engagement_client_idx').on(t.clientId),
+    index('engagement_org_due_idx').on(t.orgId, t.dueOn),
+  ],
+);
+
+export const task = pgTable(
+  'task',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    engagementId: uuid('engagement_id').notNull(),
+    title: text('title').notNull(),
+    position: integer('position').notNull(),
+    assigneeId: text('assignee_id').references(() => user.id, { onDelete: 'set null' }),
+    dueOn: date('due_on', { mode: 'string' }),
+    estimateMinutes: integer('estimate_minutes'),
+    status: text('status', { enum: TASK_STATUSES }).notNull().default('todo'),
+    doneAt: timestamp('done_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.engagementId, t.orgId], foreignColumns: [engagement.id, engagement.orgId], name: 'task_engagement_org_fk' }).onDelete('cascade'),
+    index('task_engagement_idx').on(t.engagementId),
+    index('task_assignee_idx').on(t.assigneeId),
   ],
 );

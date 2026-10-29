@@ -38,6 +38,11 @@ const EntityReports = page(() => import('./pages/entity/EntityReports'), 'Entity
 const EntityDocuments = page(() => import('./pages/entity/EntityDocuments'), 'EntityDocuments');
 const EntityCalendar = page(() => import('./pages/entity/EntityCalendar'), 'EntityCalendar');
 const EntityRequests = page(() => import('./pages/entity/EntityRequests'), 'EntityRequests');
+const EntityEngagements = page(() => import('./pages/entity/EntityEngagements'), 'EntityEngagements');
+const EngagementsList = page(() => import('./pages/engagements/EngagementsList'), 'EngagementsList');
+const EngagementDetail = page(() => import('./pages/engagements/EngagementDetail'), 'EngagementDetail');
+const WorkspaceTemplates = page(() => import('./pages/workspace/WorkspaceTemplates'), 'WorkspaceTemplates');
+const WorkspaceTemplateEdit = page(() => import('./pages/workspace/WorkspaceTemplateEdit'), 'WorkspaceTemplateEdit');
 const AdminHome = page(() => import('./pages/admin/AdminHome'), 'AdminHome');
 const AdminUsers = page(() => import('./pages/admin/AdminUsers'), 'AdminUsers');
 const AdminKb = page(() => import('./pages/admin/AdminKb'), 'AdminKb');
@@ -84,12 +89,17 @@ export function App() {
             <Route path="firm/new" element={<Navigate to="/workspace/new" replace />} />
             <Route path="workspace" element={<WorkspaceHome />} />
             <Route path="workspace/new" element={<WorkspaceSetup />} />
+            <Route path="workspace/templates" element={<WorkspaceTemplates />} />
+            <Route path="workspace/templates/:id" element={<WorkspaceTemplateEdit />} />
+            <Route path="engagements" element={<EngagementsList />} />
+            <Route path="engagements/:id" element={<EngagementDetail />} />
             <Route path="entities/:id" element={<EntityDashboard />} />
             <Route path="entities/:id/settings" element={<EntitySettings />} />
             <Route path="entities/:id/books" element={<EntityBooks />} />
             <Route path="entities/:id/reports" element={<EntityReports />} />
             <Route path="entities/:id/calendar" element={<EntityCalendar />} />
             <Route path="entities/:id/requests" element={<EntityRequests />} />
+            <Route path="entities/:id/engagements" element={<EntityEngagements />} />
             <Route path="entities/:id/documents" element={<EntityDocuments />} />
             <Route path="business" element={<Navigate to="/workspace" replace />} />
             <Route path="clients" element={<Navigate to="/workspace" replace />} />

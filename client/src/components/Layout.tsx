@@ -48,6 +48,7 @@ export function Layout() {
   const nav = session
     ? [
         { to: '/workspace', label: 'Workspace' },
+        { to: '/engagements', label: 'Engagements' },
         { to: '/knowledge', label: 'Knowledge Hub' },
         ...(session.isAdmin ? [{ to: '/admin', label: 'Admin' }] : []),
       ]
