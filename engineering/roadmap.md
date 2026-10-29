@@ -66,7 +66,7 @@ Stack decisions:
 | **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `client/src/lib/chat.ts` | built (2026-10-27); "done" waits on the owner's live check below |
 | **P3b** | Numbers tool: answers from an entity's trial balance, computed by engines and cited to the report or account; amends Hard rule 12 | built (2026-10-28); "done" waits on the live check |
 | **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT, MD) stored encrypted and attachable to an entity chat as context; PII placeholders kept per conversation in a sealed map | built (2026-10-28); "done" waits on the live check below |
-| **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | P5a built (2026-10-29); the rest planned |
+| **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | P5a and P5b built (2026-10-29); the rest planned |
 | Later | Local models, NER-based name detection, private KB per firm, 2FA/SSO, AU and UK data residency | maybe |
 
 ### Gates
@@ -83,7 +83,7 @@ Stack decisions:
 
 ### Owed to the platform track
 
-- P1 ships with `requireEmailVerification: false`; email verification is owed in P5 (needs SMTP).
+- ~~P1 ships with `requireEmailVerification: false`~~ (done in P5b, 2026-10-29: verification is on by default over SMTP; Mailpit in development).
 - Four content skills named in CLAUDE.md (`topic-author`, `fact-check`, `exercise-author`, `new-interactive`) are not written; after P2a they should edit through the admin API or the seed fixtures. `content-sync` was written on 2026-10-26.
 - `/knowledge/laws` is empty until the admin publishes an Act, Bill or standard.
 - ~~Browser-check `/admin/facts` pages as the platform admin and the non-admin `/admin` case~~ (done 2026-10-28 in `e2e/admin.spec.ts`, 161 passed twice).
@@ -137,7 +137,7 @@ The owner's research on AU and UK firms named four pains: chasing documents, cro
 |---|---|---|---|
 | **C1** | Compliance calendar: due dates per entity from its profile (BAS, VAT, Corporation Tax, CT600, Companies House accounts and confirmation statement, Self Assessment, MTD ITSA updates, ASIC review), each rule a `kb_fact`; a "Due soon" panel on `/workspace`, `/entities/:id/calendar`, an `.ics` download; each entity gets a timezone | debt sprint | built 2026-10-28 (`e2e/calendar.spec.ts` passed; 7 AU rules not checked; owner to review before "done") |
 | **P5a** | Rate limits on sign-up, sign-in, chat, uploads and KB fetch; 429 with `Retry-After` | P3 | built (2026-10-29); limits are untuned guesses, not checked on real traffic or behind a real proxy |
-| **P5b** | Email over SMTP: verification, password reset, workspace invitations | P5a | planned (`plans/p5b-email.md`) |
+| **P5b** | Email over SMTP: verification, password reset, workspace invitations | P5a | built 2026-10-29 |
 | **C2** | Intake checklist: deterministic rules (jurisdiction × entity type × registration) produce each entity's document request list; C1 obligations add dated requests | C1 | built 2026-10-28 (`e2e/requests.spec.ts` passed; 7 AU items not checked; requests are listed, not sent) |
 | **C3** | Document requests and chasing (was D5): a tokenised upload link per request batch, uploads into the P4 sealed store, version chains on re-upload, email nudges on a cadence with stop rules | C2, P5a, P5b, P5c | planned, outline (`plans/c3-requests-chasing.md`) |
 | **W1** | Engagements and templates: `engagement_template`, `engagement`, `task`; seeded templates (monthly bookkeeping, BAS quarter, VAT quarter, year-end, payroll run); C1 obligations can open engagements | C1 | built 2026-10-29 |

@@ -15,13 +15,13 @@ export function SignUp() {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const message = await signUpEmail(name, email, password);
+    const result = await signUpEmail(name, email, password);
     setBusy(false);
-    if (message !== null) {
-      setError(message);
+    if (!result.ok) {
+      setError(result.message);
       return;
     }
-    navigate('/workspace');
+    navigate(result.checkEmail ? '/check-email' : '/workspace');
   }
 
   return (

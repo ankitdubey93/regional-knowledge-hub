@@ -46,8 +46,8 @@ if [[ ! -d node_modules || package-lock.json -nt node_modules/.package-lock.json
   npm install
 fi
 
-say "starting Postgres (docker compose)"
-docker compose up -d --wait db
+say "starting Postgres and Mailpit (docker compose)"
+docker compose up -d --wait db mail
 
 say "applying migrations"
 npm run --silent db:migrate -w server

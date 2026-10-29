@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, Card, Field, PageHeader, TextLink, inputClass } from '../../components/ui';
 import { signInEmail } from '../../lib/session';
 
 export function SignIn() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const resetDone = params.get('reset') === '1';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -26,6 +28,7 @@ export function SignIn() {
   return (
     <div className="space-y-6">
       <PageHeader title="Sign in" />
+      {resetDone && <p role="status">Password changed. Sign in with the new one.</p>}
       <Card className="max-w-md">
         <form onSubmit={onSubmit} className="space-y-4">
           <Field label="Email">
@@ -48,6 +51,7 @@ export function SignIn() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </Field>
+          <TextLink to="/forgot-password">Forgot your password?</TextLink>
           {error !== null && (
             <p role="alert" className="text-sm text-bad">
               {error}

@@ -126,17 +126,23 @@ export function useSessionInfo(): { session: SessionInfo | null; pending: boolea
 
 /** Each returns null on success, or the server's error message. */
 export async function signInEmail(email: string, password: string): Promise<string | null> {
-  const res = await send('/sign-in/email', { email, password });
+  const res = await send('/sign-in/email', { email, password, callbackURL: `${window.location.origin}/workspace` });
   if (!res.ok) return messageOf(res, 'Sign-in failed');
   await refreshSession();
   return null;
 }
 
-export async function signUpEmail(name: string, email: string, password: string): Promise<string | null> {
-  const res = await send('/sign-up/email', { name, email, password });
-  if (!res.ok) return messageOf(res, 'Sign-up failed');
-  await refreshSession();
-  return null;
+export type SignUpResult = { ok: true; checkEmail: boolean } | { ok: false; message: string };
+const signUpBody = z.object({ token: z.string().nullish() });
+
+/** ok with checkEmail true when the server needs the address confirmed first (no session yet). */
+export async function signUpEmail(name: string, email: string, password: string): Promise<SignUpResult> {
+  const res = await send('/sign-up/email', { name, email, password, callbackURL: `${window.location.origin}/workspace` });
+  if (!res.ok) return { ok: false, message: await messageOf(res, 'Sign-up failed') };
+  const parsed = signUpBody.safeParse(await res.json().catch(() => null));
+  const checkEmail = !parsed.success || parsed.data.token == null;
+  if (!checkEmail) await refreshSession();
+  return { ok: true, checkEmail };
 }
 
 export interface WorkspaceSummary {

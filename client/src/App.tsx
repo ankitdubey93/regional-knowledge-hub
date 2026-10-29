@@ -29,6 +29,11 @@ const FlashcardsPage = page(() => import('./pages/practice/FlashcardsPage'), 'Fl
 const CodingPage = page(() => import('./pages/practice/CodingPage'), 'CodingPage');
 const SignIn = page(() => import('./pages/auth/SignIn'), 'SignIn');
 const SignUp = page(() => import('./pages/auth/SignUp'), 'SignUp');
+const ForgotPassword = page(() => import('./pages/auth/ForgotPassword'), 'ForgotPassword');
+const ResetPassword = page(() => import('./pages/auth/ResetPassword'), 'ResetPassword');
+const CheckEmail = page(() => import('./pages/auth/CheckEmail'), 'CheckEmail');
+const AcceptInvitation = page(() => import('./pages/auth/AcceptInvitation'), 'AcceptInvitation');
+const Members = page(() => import('./pages/workspace/Members'), 'Members');
 const WorkspaceSetup = page(() => import('./pages/workspace/WorkspaceSetup'), 'WorkspaceSetup');
 const WorkspaceHome = page(() => import('./pages/workspace/WorkspaceHome'), 'WorkspaceHome');
 const EntityDashboard = page(() => import('./pages/entity/EntityDashboard'), 'EntityDashboard');
@@ -88,11 +93,16 @@ export function App() {
             <Route path="laws/*" element={<HubRedirect />} />
             <Route path="sign-in" element={<SignIn />} />
             <Route path="sign-up" element={<SignUp />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
+            <Route path="check-email" element={<CheckEmail />} />
+            <Route path="accept-invitation/:id" element={<AcceptInvitation />} />
             <Route path="firm/new" element={<Navigate to="/workspace/new" replace />} />
             <Route path="workspace" element={<WorkspaceHome />} />
             <Route path="workspace/new" element={<WorkspaceSetup />} />
             <Route path="workspace/templates" element={<WorkspaceTemplates />} />
             <Route path="workspace/templates/:id" element={<WorkspaceTemplateEdit />} />
+            <Route path="workspace/members" element={<Members />} />
             <Route path="engagements" element={<EngagementsList />} />
             <Route path="engagements/:id" element={<EngagementDetail />} />
             <Route path="board" element={<BoardPage />} />

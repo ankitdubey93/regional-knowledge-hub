@@ -18,5 +18,11 @@ services:
       interval: 2s
       timeout: 3s
       retries: 30
+  mail:
+    image: axllent/mailpit:v1.31.5
+    container_name: chub-mail
+    ports:
+      - "5438:1025"
+      - "5439:8025"
 volumes:
   chub-db-data:

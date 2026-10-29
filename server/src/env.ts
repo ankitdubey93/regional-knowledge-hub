@@ -26,6 +26,15 @@ const schema = z.object({
   // P5a: rate limits. Off only in tests (testEnv). TRUST_PROXY_HOPS = trusted reverse-proxy hops in front of the API.
   RATE_LIMITS: z.enum(['on', 'off']).default('on'),
   TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
+  // P5b: mail. SMTP_URL may hold a password: server-only, never logged. Empty counts as unset.
+  SMTP_URL: z.string().optional().transform((v) => (v ? v : undefined)).pipe(z.url().optional()),
+  MAIL_FROM: z.string().optional().transform((v) => (v ? v : undefined)).pipe(z.email().optional()),
+  REQUIRE_EMAIL_VERIFICATION: z.enum(['on', 'off']).default('on'),
+}).superRefine((e, ctx) => {
+  if (e.SMTP_URL && !e.MAIL_FROM) ctx.addIssue({ code: 'custom', path: ['MAIL_FROM'], message: 'MAIL_FROM is required when SMTP_URL is set' });
+  if (e.REQUIRE_EMAIL_VERIFICATION === 'on' && !e.SMTP_URL) {
+    ctx.addIssue({ code: 'custom', path: ['SMTP_URL'], message: 'REQUIRE_EMAIL_VERIFICATION is on but SMTP_URL is not set' });
+  }
 });
 
 export const env = schema.parse(process.env);

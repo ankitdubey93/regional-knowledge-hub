@@ -146,6 +146,7 @@ export function WorkspaceHome() {
         <p className="mb-6 flex flex-wrap gap-4 text-sm">
           <TextLink to="/engagements">Engagements</TextLink>
           <TextLink to="/workspace/templates">Engagement templates</TextLink>
+          <TextLink to="/workspace/members">Members</TextLink>
         </p>
         <h2 className="mb-4 text-xl font-semibold">{isBusiness ? 'Your business' : 'Clients'}</h2>
         {!isBusiness && clients.length === 0 && (

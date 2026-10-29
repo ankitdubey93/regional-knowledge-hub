@@ -10,6 +10,7 @@ export const E2E_ENV: Record<string, string> = {
   BETTER_AUTH_URL: API,
   WEB_ORIGIN: WEB,
   DATA_ENCRYPTION_KEY: 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=',
+  REQUIRE_EMAIL_VERIFICATION: 'off',
   // Empty keys turn both providers off, so no test reaches an AI provider (Hard rule 15).
   ANTHROPIC_API_KEY: '',
   GEMINI_API_KEY: '',
