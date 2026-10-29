@@ -1,5 +1,6 @@
 import express, { Router, type Response } from 'express';
 import { z } from 'zod';
+import { limitByUser } from '../middleware/rateLimit';
 import { requireFirm } from '../middleware/session';
 import {
   commitTrialBalance,
@@ -55,7 +56,7 @@ ledgerRoutes.get<'/ledger/imports', ClientParams>('/ledger/imports', async (req,
   res.status(200).json({ imports });
 });
 
-ledgerRoutes.post<'/ledger/imports', ClientParams>('/ledger/imports', async (req, res) => {
+ledgerRoutes.post<'/ledger/imports', ClientParams>('/ledger/imports', limitByUser('ledgerImport'), async (req, res) => {
   const { orgId, userId } = firmOf(res);
   if (!idSchema.safeParse(req.params.clientId).success) {
     res.status(404).json({ error: 'Client not found' });

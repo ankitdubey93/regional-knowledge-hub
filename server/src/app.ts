@@ -14,15 +14,17 @@ import { requestRoutes } from './routes/requests';
 import { clientEngagementRoutes, engagementRoutes } from './routes/engagements';
 import { templateRoutes } from './routes/engagementTemplates';
 import { ledgerRoutes } from './routes/ledger';
+import { pinForwardedFor } from './middleware/rateLimit';
 
 export const app = express();
+app.set('trust proxy', env.TRUST_PROXY_HOPS);
 
 // No global express.json(): Better Auth's handler (Step 12) must read the raw body itself.
 app.use('/api', cors({ origin: env.WEB_ORIGIN, credentials: true, allowedHeaders: ['Content-Type', 'X-Filename'], methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'] }));
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true });
 });
-app.all('/api/auth/*splat', toNodeHandler(auth));
+app.all('/api/auth/*splat', pinForwardedFor, toNodeHandler(auth));
 app.use('/api/kb', kbRoutes);
 app.use('/api/clients/:clientId', documentRoutes);
 app.use('/api/clients/:clientId', requestRoutes);

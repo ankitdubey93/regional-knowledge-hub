@@ -1,5 +1,6 @@
 import express, { Router, type Response } from 'express';
 import { z } from 'zod';
+import { limitByUser } from '../middleware/rateLimit';
 import { requireFirm } from '../middleware/session';
 import { env } from '../env';
 import { currentChatProvider } from '../ai/chat';
@@ -191,7 +192,7 @@ conversationRoutes.delete<'/:id/documents/:documentId', IdParams & { documentId:
 );
 
 // Order: uuid check, body (400), conversation (404), provider (503), guard (429), then the stream.
-conversationRoutes.post<'/:id/messages', IdParams>('/:id/messages', async (req, res) => {
+conversationRoutes.post<'/:id/messages', IdParams>('/:id/messages', limitByUser('chatMessage'), async (req, res) => {
   const { orgId, userId } = firmOf(res);
   const id = req.params.id;
   if (!idSchema.safeParse(id).success) {

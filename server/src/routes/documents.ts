@@ -1,6 +1,7 @@
 import express, { Router, type ErrorRequestHandler } from 'express';
 import { z } from 'zod';
 import { DocumentRejected, documentKindOf, extractDocument } from '../documents/extract';
+import { limitByUser } from '../middleware/rateLimit';
 import { requireFirm } from '../middleware/session';
 import { MAX_DOCUMENTS_PER_CLIENT, deleteDocument, listDocuments, readDocumentFile, uploadDocument } from '../services/documentService';
 import { firmOf } from '../types';
@@ -30,7 +31,7 @@ documentRoutes.get<'/documents', ClientParams>('/documents', async (req, res) =>
   res.status(200).json({ documents });
 });
 
-documentRoutes.post<'/documents', ClientParams>('/documents', express.raw({ type: () => true, limit: '20mb' }), async (req, res) => {
+documentRoutes.post<'/documents', ClientParams>('/documents', limitByUser('upload'), express.raw({ type: () => true, limit: '20mb' }), async (req, res) => {
   const { orgId, userId } = firmOf(res);
   if (!idSchema.safeParse(req.params.clientId).success) {
     res.status(404).json({ error: 'Client not found' });

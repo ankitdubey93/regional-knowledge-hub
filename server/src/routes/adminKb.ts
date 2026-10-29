@@ -5,6 +5,7 @@ import { ExtractError, extractFile, fileKindOf } from '../kb/extract';
 import { FetchError, fetchOfficial } from '../kb/fetchOfficial';
 import { searchKb } from '../kb/retrieve';
 import { requireAdmin } from '../middleware/admin';
+import { limitByUser } from '../middleware/rateLimit';
 import {
   createDraft,
   createSource,
@@ -40,7 +41,7 @@ function invalid(res: Response, issues: unknown): void {
 }
 
 // Raw file bodies: this route is registered before express.json so the JSON parser never sees it.
-adminKbRoutes.post('/sources/:id/versions/upload', express.raw({ type: () => true, limit: '20mb' }), async (req, res) => {
+adminKbRoutes.post<'/sources/:id/versions/upload', { id: string }>('/sources/:id/versions/upload', limitByUser('kbIngest'), express.raw({ type: () => true, limit: '20mb' }), async (req, res) => {
   if (!idSchema.safeParse(req.params.id).success) {
     res.status(404).json({ error: 'Source not found' });
     return;
@@ -149,7 +150,7 @@ adminKbRoutes.patch('/sources/:id', async (req, res) => {
   res.status(200).json({ source });
 });
 
-adminKbRoutes.post('/sources/:id/versions', async (req, res) => {
+adminKbRoutes.post<'/sources/:id/versions', { id: string }>('/sources/:id/versions', limitByUser('kbIngest'), async (req, res) => {
   if (!idSchema.safeParse(req.params.id).success) {
     res.status(404).json({ error: 'Source not found' });
     return;

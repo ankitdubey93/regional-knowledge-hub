@@ -243,6 +243,13 @@ export const aiUsage = pgTable(
   ],
 );
 
+// Global, not a tenant table: keys are per IP (HMAC) or per user, across firms. No text, no raw IP.
+export const rateBucket = pgTable('rate_bucket', {
+  key: text('key').primaryKey(),
+  windowStart: timestamp('window_start', { withTimezone: true }).notNull(),
+  count: integer('count').notNull(),
+});
+
 // Global, not a tenant table: the platform admin's actions. Append-only for chub_app (migration 0007).
 export const adminAudit = pgTable(
   'admin_audit',

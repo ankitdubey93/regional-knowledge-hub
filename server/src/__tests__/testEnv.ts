@@ -6,5 +6,6 @@ export const testEnv = {
   BETTER_AUTH_SECRET: 'test-secret-test-secret-test-secret-0000',
   BETTER_AUTH_URL: 'http://localhost:5191',
   WEB_ORIGIN: 'http://localhost:5190',
+  RATE_LIMITS: 'off',
   DATA_ENCRYPTION_KEY: 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=',
 };

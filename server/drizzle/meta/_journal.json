@@ -197,6 +197,20 @@
       "when": 1793243608697,
       "tag": "0027_engagements_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1793246365368,
+      "tag": "0028_rate_bucket",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1793246369284,
+      "tag": "0029_rate_bucket_grants",
+      "breakpoints": true
     }
   ]
 }

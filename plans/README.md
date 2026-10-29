@@ -1,6 +1,6 @@
 # Plans: execution guide
 
-Date: 2026-10-28
+Date: 2026-10-29
 
 This folder holds the build plans. Each plan is a file that a fresh session, often on a smaller model, can execute step by step with no decisions left to make. The order below comes from `engineering/roadmap.md`, which takes in:
 - the approved roadmap plan (Stages 0–4)
@@ -25,7 +25,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 | 0b | **L2 demo exports** (no file: see roadmap "Owed from Phase 1") | owner task | — | Export TB and tax codes from the Xero AU/UK, QBO and MYOB demo companies | todo |
 | 1 | `debt-sprint.md` | full | — | none | done (landed) |
 | 2 | `c1-compliance-calendar.md` | full | 1 | Review the Step 2 fact table (values that differ from the candidates) | done (landed, 2026-10-28) |
-| 3 | `p5a-rate-limits.md` | full | 1 (can run alongside 2) | none | todo |
+| 3 | `p5a-rate-limits.md` | full | 1 (can run alongside 2) | none | done (landed 2026-10-29) |
 | 4 | `p5b-email.md` | full | 3 | Add `SMTP_URL`, `MAIL_FROM` to your `.env` (Step 2 tells you) | todo |
 | 5 | `c2-intake-checklist.md` | full | 2 | Review the intake rule list | done (approved and landed 2026-10-28) |
 | 6 | `w1-engagements.md` | full | 2 | none | done (landed 2026-10-29) |
@@ -43,7 +43,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 
 `prose-figures-inventory.md` is a working list for debt-sprint item 7. It is not a plan.
 
-**Next:** `w2-board-capacity.md` (outline: run `/code-planner` on it first) and `p5a-rate-limits.md`.
+**Next:** `w2-board-capacity.md` (outline: run `/code-planner` on it first) and `p5b-email.md`.
 
 Later work in the roadmap but not planned here: D2 (GL transactions), D3 (XLSX trial balance), D4 (Xero and QBO connections), the Phase 2 learning simulators and topics, and the four owed content skills. Each gets its own plan when its turn comes.
 

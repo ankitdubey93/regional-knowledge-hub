@@ -9,6 +9,13 @@ export class ApiError extends Error {
   }
 }
 
+/** 429 text the user sees. */
+export function rateLimitMessage(retryAfterSeconds: number): string {
+  if (retryAfterSeconds < 60) return `Too many requests. Try again in ${retryAfterSeconds} seconds.`;
+  const minutes = Math.ceil(retryAfterSeconds / 60);
+  return `Too many requests. Try again in ${minutes} minute${minutes === 1 ? '' : 's'}.`;
+}
+
 export async function failure(res: Response): Promise<ApiError> {
   let message = `Request failed (${res.status})`;
   let issues: ApiError['issues'] = [];
@@ -28,6 +35,12 @@ export async function failure(res: Response): Promise<ApiError> {
     }
   } catch {
     // Not JSON: keep the generic message.
+  }
+  if (res.status === 429) {
+    const retryAfter = res.headers.get('Retry-After');
+    if (retryAfter !== null && /^\s*\d+\s*$/.test(retryAfter)) {
+      message = rateLimitMessage(Number(retryAfter));
+    }
   }
   return new ApiError(res.status, message, issues);
 }

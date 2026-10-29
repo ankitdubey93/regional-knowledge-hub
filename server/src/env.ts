@@ -23,6 +23,9 @@ const schema = z.object({
     .string()
     .transform((v) => Buffer.from(v, 'base64'))
     .refine((b) => b.length === 32, 'DATA_ENCRYPTION_KEY must be base64 of 32 bytes (openssl rand -base64 32)'),
+  // P5a: rate limits. Off only in tests (testEnv). TRUST_PROXY_HOPS = trusted reverse-proxy hops in front of the API.
+  RATE_LIMITS: z.enum(['on', 'off']).default('on'),
+  TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
 });
 
 export const env = schema.parse(process.env);
