@@ -15,7 +15,12 @@ coverage/
 .env
 .env.*
 !.env.example
+!.env.production.example
+!.env.production.admin.example
 *.local
+
+# Database dumps (scripts/backup.sh)
+backups/
 
 # Logs
 logs/

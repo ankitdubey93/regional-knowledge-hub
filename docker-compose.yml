@@ -1,4 +1,4 @@
-# Local development database. Credentials here are for local use only.
+# Development database and mail; with --profile prod also the API image and its migrate step (engineering/operations.md).
 name: compliance-hub
 services:
   db:
@@ -6,10 +6,10 @@ services:
     container_name: chub-db
     environment:
       POSTGRES_USER: chub
-      POSTGRES_PASSWORD: chub
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-chub}
       POSTGRES_DB: chub
     ports:
-      - "5437:5432"
+      - "127.0.0.1:5437:5432"
     volumes:
       - chub-db-data:/var/lib/postgresql/data
       - ./server/db/init:/docker-entrypoint-initdb.d:ro
@@ -19,10 +19,42 @@ services:
       timeout: 3s
       retries: 30
   mail:
+    profiles: [dev]
     image: axllent/mailpit:v1.31.5
     container_name: chub-mail
     ports:
       - "5438:1025"
       - "5439:8025"
+  migrate:
+    profiles: [prod]
+    image: compliance-hub-api:local
+    env_file:
+      - path: .env.production
+        required: false
+      - path: .env.production.admin
+        required: false
+    command: ["sh", "-c", "node --import tsx scripts/migrate.ts && node --import tsx scripts/seed-facts.ts && node --import tsx scripts/seed-curriculum.ts"]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+  api:
+    profiles: [prod]
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    image: compliance-hub-api:local
+    container_name: chub-api
+    env_file:
+      - path: .env.production
+        required: false
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "127.0.0.1:5191:5191"
+    restart: unless-stopped
 volumes:
   chub-db-data:

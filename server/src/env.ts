@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // The only reader of process.env in the server (CLAUDE.md Hard rule 10).
-const schema = z.object({
+export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(5191),
   DATABASE_URL: z.url(),
@@ -23,6 +23,15 @@ const schema = z.object({
     .string()
     .transform((v) => Buffer.from(v, 'base64'))
     .refine((b) => b.length === 32, 'DATA_ENCRYPTION_KEY must be base64 of 32 bytes (openssl rand -base64 32)'),
+  // P5d key rotation. VERSION is written into every new seal. PREVIOUS (version VERSION - 1) opens older seals until `npm run db:reseal -w server` has run.
+  DATA_ENCRYPTION_KEY_VERSION: z.coerce.number().int().min(1).max(255).default(1),
+  DATA_ENCRYPTION_KEY_PREVIOUS: z
+    .string()
+    .optional()
+    .transform((v) => (v ? Buffer.from(v, 'base64') : undefined))
+    .refine((b) => b === undefined || b.length === 32, 'DATA_ENCRYPTION_KEY_PREVIOUS must be base64 of 32 bytes (openssl rand -base64 32)'),
+  // P5d: the folder of the built web app; set only in the production image, where the API serves it.
+  WEB_DIST_DIR: z.string().optional().transform((v) => (v ? v : undefined)),
   // P5a: rate limits. Off only in tests (testEnv). TRUST_PROXY_HOPS = trusted reverse-proxy hops in front of the API.
   RATE_LIMITS: z.enum(['on', 'off']).default('on'),
   TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
@@ -31,10 +40,19 @@ const schema = z.object({
   MAIL_FROM: z.string().optional().transform((v) => (v ? v : undefined)).pipe(z.email().optional()),
   REQUIRE_EMAIL_VERIFICATION: z.enum(['on', 'off']).default('on'),
 }).superRefine((e, ctx) => {
+  if (e.DATA_ENCRYPTION_KEY_PREVIOUS && e.DATA_ENCRYPTION_KEY_VERSION < 2) {
+    ctx.addIssue({ code: 'custom', path: ['DATA_ENCRYPTION_KEY_VERSION'], message: 'DATA_ENCRYPTION_KEY_PREVIOUS needs DATA_ENCRYPTION_KEY_VERSION of 2 or more' });
+  }
+  if (e.NODE_ENV === 'production') {
+    const u = new URL(e.DATABASE_URL);
+    if (u.username === 'chub_app' && decodeURIComponent(u.password) === 'chub_app') {
+      ctx.addIssue({ code: 'custom', path: ['DATABASE_URL'], message: 'Set a real password for chub_app in production' });
+    }
+  }
   if (e.SMTP_URL && !e.MAIL_FROM) ctx.addIssue({ code: 'custom', path: ['MAIL_FROM'], message: 'MAIL_FROM is required when SMTP_URL is set' });
   if (e.REQUIRE_EMAIL_VERIFICATION === 'on' && !e.SMTP_URL) {
     ctx.addIssue({ code: 'custom', path: ['SMTP_URL'], message: 'REQUIRE_EMAIL_VERIFICATION is on but SMTP_URL is not set' });
   }
 });
 
-export const env = schema.parse(process.env);
+export const env = envSchema.parse(process.env);

@@ -32,7 +32,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 | 7 | `w2-board-capacity.md` | full | 6 | Confirm weeks use the firm's timezone (Confirmed 2026-10-29: firm timezone) | done (landed 2026-10-29) |
 | 8 | `p5c-audit-retention.md` (deleted on landing) | full | 7 | Retention defaults chosen 2026-10-30: keep forever; 30 to 3650 days | done (landed 2026-10-30) |
 | 9 | `c3-requests-chasing.md` | full | 4, 5, 8 | none | done (landed 2026-10-30) |
-| 10 | `p5d-deploy.md` | outline | 8 | Choose the hosting target and region | todo |
+| 10 | `p5d-deploy.md` | full | 8 | Choose the hosting target and region | done (landed 2026-10-30) |
 | — | **Stage 3 launch gate** (no file) | decision | 9, 10 | NER or an upload warning; privacy notice and terms; residency | todo |
 | 11 | `b1-time.md` | outline | 6, launch gate | none | todo |
 | 12 | `b2-invoicing.md` | outline | 11 | Confirm the FX policy; `fact-check` the invoice content | todo |
@@ -43,7 +43,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 
 `prose-figures-inventory.md` is a working list for debt-sprint item 7. It is not a plan.
 
-**Next:** `p5d-deploy.md` (outline: run /code-planner on it first; owner chooses hosting target and region).
+**Next:** the Stage 3 launch gate (owner decisions: NER or an upload warning; privacy notice and terms; data residency), with `a3-kb-mtd-treaties.md` open to run any time.
 
 Later work in the roadmap but not planned here: D2 (GL transactions), D3 (XLSX trial balance), D4 (Xero and QBO connections), the Phase 2 learning simulators and topics, and the four owed content skills. Each gets its own plan when its turn comes.
 

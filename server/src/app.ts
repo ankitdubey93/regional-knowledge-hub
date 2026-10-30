@@ -1,3 +1,4 @@
+import path from 'node:path';
 import express from 'express';
 import cors from 'cors';
 import { toNodeHandler } from 'better-auth/node';
@@ -48,3 +49,29 @@ app.use('/api/conversations', conversationRoutes);
 app.use('/api/admin/facts', adminFactRoutes);
 app.use('/api/admin/kb', adminKbRoutes);
 app.use('/api/admin', adminRoutes);
+
+// P5d: in the production image the API also serves the built web app (one origin). Never reached by /api paths.
+if (env.WEB_DIST_DIR) {
+  const webDir = env.WEB_DIST_DIR;
+  const baseHeaders = (res: express.Response, cache: string): void => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('Cache-Control', cache);
+  };
+  app.use(
+    express.static(webDir, {
+      index: false,
+      setHeaders(res, filePath) {
+        baseHeaders(res, filePath.includes(`${path.sep}assets${path.sep}`) ? 'public, max-age=31536000, immutable' : 'no-cache');
+      },
+    }),
+  );
+  app.get('/{*splat}', (req, res, next) => {
+    if (req.path === '/api' || req.path.startsWith('/api/')) {
+      next();
+      return;
+    }
+    baseHeaders(res, 'no-cache');
+    res.sendFile(path.join(webDir, 'index.html'));
+  });
+}

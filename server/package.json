@@ -13,7 +13,8 @@
     "kb:seed-curriculum": "node --env-file=../.env --import tsx scripts/seed-curriculum.ts",
     "kb:seed-facts": "node --env-file=../.env --import tsx scripts/seed-facts.ts",
     "db:migrate": "node --env-file=../.env --import tsx scripts/migrate.ts",
-    "db:vacuum": "node --env-file=../.env --import tsx scripts/vacuum.ts"
+    "db:vacuum": "node --env-file=../.env --import tsx scripts/vacuum.ts",
+    "db:reseal": "node --env-file=../.env --import tsx scripts/reseal.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.133.0",
@@ -26,6 +27,7 @@
     "nodemailer": "10.0.16",
     "pg": "^8.23.1",
     "read-excel-file": "9.3.12",
+    "tsx": "^4.23.15",
     "turndown": "^7.2.4",
     "unpdf": "^1.9.1",
     "zod": "^4.6.7"
@@ -37,7 +39,6 @@
     "@types/pg": "^8.23.1",
     "@types/turndown": "^5.0.6",
     "drizzle-kit": "^0.31.11",
-    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }
 }
