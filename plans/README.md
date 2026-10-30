@@ -30,7 +30,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 | 5 | `c2-intake-checklist.md` | full | 2 | Review the intake rule list | done (approved and landed 2026-10-28) |
 | 6 | `w1-engagements.md` | full | 2 | none | done (landed 2026-10-29) |
 | 7 | `w2-board-capacity.md` | full | 6 | Confirm weeks use the firm's timezone (Confirmed 2026-10-29: firm timezone) | done (landed 2026-10-29) |
-| 8 | `p5c-audit-retention.md` | outline | 7 | Choose default retention periods | todo |
+| 8 | `p5c-audit-retention.md` (deleted on landing) | full | 7 | Retention defaults chosen 2026-10-30: keep forever; 30 to 3650 days | done (landed 2026-10-30) |
 | 9 | `c3-requests-chasing.md` | outline | 4, 5, 8 | none | todo |
 | 10 | `p5d-deploy.md` | outline | 8 | Choose the hosting target and region | todo |
 | — | **Stage 3 launch gate** (no file) | decision | 9, 10 | NER or an upload warning; privacy notice and terms; residency | todo |
@@ -43,7 +43,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 
 `prose-figures-inventory.md` is a working list for debt-sprint item 7. It is not a plan.
 
-**Next:** `p5c-audit-retention.md` (outline: run `/code-planner` on it first; choose retention periods).
+**Next:** `c3-requests-chasing.md` (outline: run `/code-planner` on it first).
 
 Later work in the roadmap but not planned here: D2 (GL transactions), D3 (XLSX trial balance), D4 (Xero and QBO connections), the Phase 2 learning simulators and topics, and the four owed content skills. Each gets its own plan when its turn comes.
 

@@ -5,6 +5,7 @@ import { withOrg, type Tx } from '../db/withOrg';
 import type { DocumentKind } from '../documents/extract';
 import { aadFor, seal, unseal } from '../privacy/crypto';
 import type { DocumentView } from '../types/documents';
+import { recordEvent, type AuditActor } from './auditEventService';
 
 // Documents are stored sealed (privacy/crypto.ts). Nothing here logs a name, bytes or text (Hard rule 13).
 export const MAX_DOCUMENTS_PER_CLIENT = 200; // untuned
@@ -90,7 +91,7 @@ async function findBySha(orgId: string, clientId: string, sha256: string): Promi
 
 export async function uploadDocument(
   orgId: string,
-  userId: string,
+  actor: AuditActor,
   clientId: string,
   input: { name: string; kind: DocumentKind; bytes: Uint8Array; text: string; truncated: boolean },
 ): Promise<UploadOutcome> {
@@ -120,14 +121,14 @@ export async function uploadDocument(
   const textEnc = seal(Buffer.from(input.text, 'utf8'), aadFor('document.text', orgId, id));
 
   try {
-    const inserted = await withOrg(orgId, async (tx) =>
-      tx
+    const inserted = await withOrg(orgId, async (tx) => {
+      const rows = await tx
         .insert(document)
         .values({
           id,
           orgId,
           clientId,
-          uploadedBy: userId,
+          uploadedBy: actor.userId,
           originalName: input.name,
           kind: input.kind,
           byteSize: input.bytes.length,
@@ -137,8 +138,21 @@ export async function uploadDocument(
           fileEnc,
           textEnc,
         })
-        .returning(viewColumns),
-    );
+        .returning(viewColumns);
+      const created = rows[0];
+      if (created) {
+        await recordEvent(tx, {
+          orgId,
+          actorId: actor.userId,
+          ipKey: actor.ipKey,
+          action: 'document.upload',
+          targetType: 'document',
+          targetId: created.id,
+          detail: { clientId, kind: input.kind, byteSize: input.bytes.length },
+        });
+      }
+      return rows;
+    });
     const row = inserted[0];
     if (!row) throw new Error('insert returned no row');
     return { document: toDocumentView(row), created: true };
@@ -152,6 +166,7 @@ export async function uploadDocument(
 
 export async function readDocumentFile(
   orgId: string,
+  actor: AuditActor,
   clientId: string,
   id: string,
 ): Promise<{ name: string; bytes: Buffer } | null> {
@@ -161,19 +176,40 @@ export async function readDocumentFile(
       .from(document)
       .where(and(eq(document.id, id), eq(document.clientId, clientId), eq(document.orgId, orgId)))
       .limit(1);
-    return rows[0] ?? null;
+    const found = rows[0];
+    if (!found) return null;
+    await recordEvent(tx, {
+      orgId,
+      actorId: actor.userId,
+      ipKey: actor.ipKey,
+      action: 'document.download',
+      targetType: 'document',
+      targetId: id,
+      detail: { clientId },
+    });
+    return found;
   });
   if (!row) return null;
   return { name: row.originalName, bytes: unseal(row.fileEnc, aadFor('document.file', orgId, id)) };
 }
 
-export async function deleteDocument(orgId: string, clientId: string, id: string): Promise<boolean> {
+export async function deleteDocument(orgId: string, actor: AuditActor, clientId: string, id: string): Promise<boolean> {
   return withOrg(orgId, async (tx) => {
     const rows = await tx
       .delete(document)
       .where(and(eq(document.id, id), eq(document.clientId, clientId), eq(document.orgId, orgId)))
       .returning({ id: document.id });
-    return rows.length > 0;
+    if (rows.length === 0) return false;
+    await recordEvent(tx, {
+      orgId,
+      actorId: actor.userId,
+      ipKey: actor.ipKey,
+      action: 'document.delete',
+      targetType: 'document',
+      targetId: id,
+      detail: { clientId },
+    });
+    return true;
   });
 }
 

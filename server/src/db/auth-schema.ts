@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, index, integer } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -93,6 +93,10 @@ export const organization = pgTable("organization", {
   // Hand-added (W2): the firm's timezone for workload weeks, one of CALENDAR_TIMEZONES or null (check in 0031).
   // Not a Better Auth field, so only PATCH /api/workload/timezone writes it.
   timezone: text("timezone"),
+  // Hand-added (P5c): retention in days, 30 to 3650 or null (keep). Check in 0033.
+  // Not Better Auth fields, so only PATCH /api/workspace/retention writes them.
+  retentionDaysDocuments: integer("retention_days_documents"),
+  retentionDaysConversations: integer("retention_days_conversations"),
 });
 
 export const member = pgTable(

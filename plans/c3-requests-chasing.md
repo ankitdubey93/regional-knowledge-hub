@@ -29,6 +29,7 @@ Status: outline
   - It shows no other entity data, no names beyond the firm's display name and the item labels, and never lists earlier uploads.
 - **Public routes** live under `/api/public/requests/:token`, outside `requireFirm`. The token lookup runs as a SECURITY DEFINER function `request_link_resolve(token_hash)` that returns `(org_id, client_id, link_id)`. Every later query runs in `withOrg(org_id)`.
 - **Re-upload** creates a new `document` row with `supersedes_id` (a migration on `document`). The old row is kept.
+- **Audit:** request_link.create and request_link.revoke are added to audit_event_action_check in C3's own migration (P5c deferred them); they record with recordEvent(tx, …) in the same transaction.
 - **Nudges.**
   - Cadence per link: days after send `[3, 7, 14]` by default, editable.
   - Stop rules: all items received or waived, link expired, link revoked, or nudges paused.

@@ -1,11 +1,11 @@
 # Testing
 
 ```bash
-npm run test:web    # all web Vitest files (267 tests, 22 files); `npm test` runs web then server
-npm test -w server  # server tests (358 tests, 26 files); needs the database
+npm run test:web    # all web Vitest files (328 tests, 30 files); `npm test` runs web then server
+npm test -w server  # server tests (443 tests, 32 files); needs the database
 npm test -w client -- src/__tests__/tax.test.ts   # one web file
 npm run typecheck  # three workspaces, then the e2e folder
-npm run test:e2e    # Playwright: 189 tests, about 7 minutes; needs Docker Postgres up and system Chrome
+npm run test:e2e    # Playwright: 193 tests, about 8 minutes; needs Docker Postgres up and system Chrome
 npm run lint        # inside a git repository (oxlint follows .gitignore)
 ```
 
@@ -27,6 +27,9 @@ npm run lint        # inside a git repository (oxlint follows .gitignore)
 | `entity-requests.test.tsx` | C2: ER1 to ER8 (8 cases): the Requests page with `fetch` stubbed (not-sent note, empty state, an unchecked source link, generate, add, mark received and reopen, delete with confirmation, unknown entity) |
 | `engagements.test.ts` | W1: EN1 to EN8 (8 cases): the `engagements.ts` engine and the five seeded templates (monthly bookkeeping matches the month-end checklist, estimates blank) |
 | `workload.test.ts` | W2: WK1 to WK5, WE1 to WE6, WF1 (12 cases): Monday weeks across Sydney and London daylight-saving changes, the worked example, week boundaries, zero capacity, member order, half-away-from-zero rounding, formats |
+| `audit.test.ts` (server) | P5c: AU1 to AU15 (15 cases): upload, download, delete, import and sign-in events, a duplicate upload writes none, an invitation event holds no email, role change and removal, a refused invitation writes nothing, `chub_app` cannot update or delete events, the bare pool and another firm see none (AU9, AU10, AU14), an unknown action fails the check, paging newest first with no `ipKey`, member 403 and bad query 400, no document name in an event |
+| `retention.test.ts` (server) | P5c: RT1 to RT11 (11 cases): default keep forever, the owner sets and it is audited, admin and member get 403, out-of-range and missing values get 400, the database check rejects 10 days, Better Auth cannot set it, a tick purges only expired rows, another firm's old rows survive (RT8), one `retention.purge` event with counts, a tick is skipped while the advisory lock is held, old `rate_bucket` rows are purged |
+| `audit-page.test.tsx` | P5c: AP1 to AP6 (6 cases): the owner's empty form, saving retention, a non-owner sees the settings without a form, events show who did what, a member sees the server's refusal, Load older appends |
 | `email.test.ts` (server) | P5b: EM1 to EM8 (8 cases): reset mail and token, unknown address sends nothing, owner invites, member cannot, accepting adds the member, templates, logs carry no link. Verification is off in server tests and e2e (`REQUIRE_EMAIL_VERIFICATION: 'off'`); mail goes to an in-memory transport (`setTransportForTests`) |
 | `email-pages.test.tsx` | P5b: EP-M1 to EP-M8 (8 cases): forgot password, reset page, check-email, members list and invite form, accept page |
 | `board.test.tsx` | W2: BD1 to BD6 (6 cases): the three columns, Move right with focus kept, Move left disabled in Planned, Done removes the card, a failed move, empty columns |
@@ -73,6 +76,8 @@ npm test -w server
 ## Browser check (`npm run test:e2e`)
 
 `npm run test:e2e` runs Playwright (`playwright.config.ts`, specs in `e2e/`). It starts its own stack: the database `chub_e2e` on the Docker Postgres at 5437 (dropped, migrated and seeded each run by `server/scripts/e2e-db.ts`), the API on 5193 and the web app on 5192 (the Vite proxy follows `CHUB_API_ORIGIN`). The dev servers on 5190 and 5191 are not touched. It uses the system Chrome (`channel: 'chrome'`, nothing downloaded) and both AI keys are empty, so no provider is called. A `setup` project creates three users through the API (`e2e-user`, with a practice, the AU client "Browser Books Pty Ltd", a trial-balance import and a text document; `e2e-admin`, promoted by `scripts/admin-role.ts`; `e2e-plain`, no workspace) and saves their sessions in `e2e/.auth/` (gitignored). Four projects then run every spec: `mobile-light`, `mobile-dark` (375 px), `desktop-light` and `desktop-dark` (1440 px). `checkPage` fails a route that scrolls sideways, logs a console error or page error, or whose first Tab is not the skip link and second does not reach the content. Specs: `public.spec.ts` (18 routes and two cases), `workspace.spec.ts` (9 signed-in routes), `admin.spec.ts` (8 admin routes, a source and its published version, and a signed-in non-admin getting Page not found at `/admin` three times and at `/admin/facts`).
+
+`e2e/audit.spec.ts` (1 test per project: `/workspace/audit` as the signed-in user, the "Imported a trial balance" event from the setup visible, Tab reaches Save retention without clicking it) was added after (2026-10-30): `npm run test:e2e -- audit` gave `5 passed (24.4s)` and the full run `193 passed (8.4m)`.
 
 `e2e/email-pages.spec.ts` (2 tests per project: the four signed-out email pages with Tab to Send reset link and Set new password, and `/workspace/members` with Tab to Send invitation) was added after: `npm run test:e2e -- email-pages` gave `9 passed (50.8s)` and the full run (2026-10-29) `189 passed (7.4m)`.
 

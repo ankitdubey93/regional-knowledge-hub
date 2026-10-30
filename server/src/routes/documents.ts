@@ -4,6 +4,7 @@ import { DocumentRejected, documentKindOf, extractDocument } from '../documents/
 import { limitByUser } from '../middleware/rateLimit';
 import { requireFirm } from '../middleware/session';
 import { MAX_DOCUMENTS_PER_CLIENT, deleteDocument, listDocuments, readDocumentFile, uploadDocument } from '../services/documentService';
+import { actorFrom } from '../services/auditEventService';
 import { firmOf } from '../types';
 
 // Mounted at /api/clients/:clientId, before ledgerRoutes (see app.ts). Never logs a name, bytes or text (Hard rule 13).
@@ -67,7 +68,7 @@ documentRoutes.post<'/documents', ClientParams>('/documents', limitByUser('uploa
     }
     throw e;
   }
-  const outcome = await uploadDocument(orgId, userId, req.params.clientId, {
+  const outcome = await uploadDocument(orgId, actorFrom(userId, req.ip), req.params.clientId, {
     name,
     kind,
     bytes,
@@ -86,12 +87,12 @@ documentRoutes.post<'/documents', ClientParams>('/documents', limitByUser('uploa
 });
 
 documentRoutes.get<'/documents/:docId/file', DocParams>('/documents/:docId/file', async (req, res) => {
-  const { orgId } = firmOf(res);
+  const { orgId, userId } = firmOf(res);
   if (!idSchema.safeParse(req.params.clientId).success || !idSchema.safeParse(req.params.docId).success) {
     res.status(404).json({ error: 'Document not found' });
     return;
   }
-  const file = await readDocumentFile(orgId, req.params.clientId, req.params.docId);
+  const file = await readDocumentFile(orgId, actorFrom(userId, req.ip), req.params.clientId, req.params.docId);
   if (!file) {
     res.status(404).json({ error: 'Document not found' });
     return;
@@ -105,7 +106,7 @@ documentRoutes.get<'/documents/:docId/file', DocParams>('/documents/:docId/file'
 });
 
 documentRoutes.delete<'/documents/:docId', DocParams>('/documents/:docId', async (req, res) => {
-  const { orgId, role } = firmOf(res);
+  const { orgId, userId, role } = firmOf(res);
   if (!idSchema.safeParse(req.params.clientId).success || !idSchema.safeParse(req.params.docId).success) {
     res.status(404).json({ error: 'Document not found' });
     return;
@@ -114,7 +115,7 @@ documentRoutes.delete<'/documents/:docId', DocParams>('/documents/:docId', async
     res.status(403).json({ error: 'Only firm owners and admins can delete documents' });
     return;
   }
-  const deleted = await deleteDocument(orgId, req.params.clientId, req.params.docId);
+  const deleted = await deleteDocument(orgId, actorFrom(userId, req.ip), req.params.clientId, req.params.docId);
   if (!deleted) {
     res.status(404).json({ error: 'Document not found' });
     return;

@@ -3,6 +3,7 @@ import { and, asc, desc, eq, sql } from 'drizzle-orm';
 import { client, ledgerAccount, ledgerBalance, ledgerImport } from '../db/schema';
 import { withOrg, type Tx } from '../db/withOrg';
 import { CURRENCY_MESSAGES, type LedgerAccount, type LedgerImport, type TbCommitInput } from '../types/ledger';
+import { recordEvent, type AuditActor } from './auditEventService';
 import { pickComparison, type LedgerSnapshot } from '../chat/ledgerSources';
 import { parseCsv } from '@chub/shared/utils/csv';
 import { suggestClass, type AccountClass } from '@chub/shared/utils/accountClasses';
@@ -52,7 +53,7 @@ export async function listImports(orgId: string, clientId: string): Promise<Ledg
 
 export async function commitTrialBalance(
   orgId: string,
-  userId: string,
+  actor: AuditActor,
   clientId: string,
   input: TbCommitInput,
 ): Promise<CommitOutcome> {
@@ -174,7 +175,7 @@ export async function commitTrialBalance(
         rowCount: mapped.rows.length,
         totalDebitCents: mapped.totalDebitCents,
         warnings: issues.filter((i) => i.level === 'warn'),
-        createdBy: userId,
+        createdBy: actor.userId,
       })
       .returning();
     const importRow = inserted[0];
@@ -190,12 +191,27 @@ export async function commitTrialBalance(
       );
     }
 
+    await recordEvent(tx, {
+      orgId,
+      actorId: actor.userId,
+      ipKey: actor.ipKey,
+      action: 'ledger.import',
+      targetType: 'ledger_import',
+      targetId: importRow.id,
+      detail: { clientId, supersededId: supersededId ?? null },
+    });
+
     return { import: importRow, supersededId };
   });
 }
 
 // Deleting the active import makes the newest import it superseded (same as-at date) active again.
-export async function deleteImport(orgId: string, clientId: string, importId: string): Promise<'deleted' | 'not_found'> {
+export async function deleteImport(
+  orgId: string,
+  actor: AuditActor,
+  clientId: string,
+  importId: string,
+): Promise<'deleted' | 'not_found'> {
   return withOrg(orgId, async (tx) => {
     const rows = await tx
       .delete(ledgerImport)
@@ -224,6 +240,15 @@ export async function deleteImport(orgId: string, clientId: string, importId: st
           .where(and(eq(ledgerImport.id, prev.id), eq(ledgerImport.orgId, orgId), eq(ledgerImport.clientId, clientId)));
       }
     }
+    await recordEvent(tx, {
+      orgId,
+      actorId: actor.userId,
+      ipKey: actor.ipKey,
+      action: 'ledger.delete',
+      targetType: 'ledger_import',
+      targetId: importId,
+      detail: { clientId },
+    });
     return 'deleted';
   });
 }

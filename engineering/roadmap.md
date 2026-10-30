@@ -66,7 +66,7 @@ Stack decisions:
 | **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `client/src/lib/chat.ts` | built (2026-10-27); "done" waits on the owner's live check below |
 | **P3b** | Numbers tool: answers from an entity's trial balance, computed by engines and cited to the report or account; amends Hard rule 12 | built (2026-10-28); "done" waits on the live check |
 | **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT, MD) stored encrypted and attachable to an entity chat as context; PII placeholders kept per conversation in a sealed map | built (2026-10-28); "done" waits on the live check below |
-| **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | P5a and P5b built (2026-10-29); the rest planned |
+| **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | P5a and P5b built (2026-10-29), P5c built (2026-10-30); the rest planned |
 | Later | Local models, NER-based name detection, private KB per firm, 2FA/SSO, AU and UK data residency | maybe |
 
 ### Gates
@@ -102,9 +102,9 @@ Stack decisions:
 - **The live check:** attach a PDF and an XLSX that contain a client's name and an email address to an entity chat, ask a question, and confirm (from the provider request) that placeholders were sent, that the screen shows the real names, and that a figure found only in a document carries the `from_document` flag. No test calls a provider.
 - NER for names that are not in the client list (staff, directors): the largest privacy gap left.
 - Key rotation: the seal has a version byte, but re-encryption of documents and maps is not built. Losing `DATA_ENCRYPTION_KEY` loses them all, so the key must be backed up apart from the database.
-- `VACUUM` for deleted `bytea` space.
+- ~~`VACUUM` for deleted `bytea` space.~~ Script built in P5c (`npm run db:vacuum -w server`); scheduling is P5d.
 - Tune the untuned limits: `MAX_DOCUMENT_TEXT_CHARS`, `MAX_XLSX_CELLS`, `MAX_ZIP_UNCOMPRESSED_BYTES`, `MAX_DOCUMENTS_PER_CLIENT`, `MAX_DOCUMENT_CHARS_IN_PROMPT`.
-- Retention of documents and maps (P5).
+- ~~Retention of documents and maps (P5).~~ Built in P5c (2026-10-30): owner-set, default keep forever.
 - ~~Found in review: the admin KB PDF upload failed on a Node `Buffer`; the Attach panel was an empty box when every document was attached; an attach or detach reply could land on another chat; `EntityDocuments` bypassed `page()`.~~ Fixed 2026-10-28: `extractFile` hands pdf.js a plain `Uint8Array` (K25, DO15), the panel says "Every document for this entity is already attached." (CP12), `ChatPanel` drops a reply for a chat that is no longer open (CP11), and the page is a named export loaded by `page()`.
 
 ## Data track: the entity's own numbers (decided 2026-10-26)
@@ -140,6 +140,7 @@ The owner's research on AU and UK firms named four pains: chasing documents, cro
 | **P5b** | Email over SMTP: verification, password reset, workspace invitations | P5a | built 2026-10-29 |
 | **C2** | Intake checklist: deterministic rules (jurisdiction × entity type × registration) produce each entity's document request list; C1 obligations add dated requests | C1 | built 2026-10-28 (`e2e/requests.spec.ts` passed; 7 AU items not checked; requests are listed, not sent) |
 | **C3** | Document requests and chasing (was D5): a tokenised upload link per request batch, uploads into the P4 sealed store, version chains on re-upload, email nudges on a cadence with stop rules | C2, P5a, P5b, P5c | planned, outline (`plans/c3-requests-chasing.md`) |
+| **P5c** | Audit log (`audit_event`, append-only, `/workspace/audit`) and retention (owner-set days for documents and conversations, a locked 6-hourly purge job, `scripts/vacuum.ts`); also purges `rate_bucket` rows older than a day (P5a's "never purged" note is retired) | P3, P4, W2 | built 2026-10-30; limits and interval untuned, `VACUUM` unscheduled until P5d |
 | **W1** | Engagements and templates: `engagement_template`, `engagement`, `task`; seeded templates (monthly bookkeeping, BAS quarter, VAT quarter, year-end, payroll run); C1 obligations can open engagements | C1 | built 2026-10-29 |
 | **W2** | Board and capacity: a keyboard-first board by status, `member_capacity`, a workload view per member | W1 | built 2026-10-29 |
 | **B1** | Time tracking: `time_entry`, a server-side stopwatch, manual entry, entries locked once invoiced | W1, launch gate | planned, outline (`plans/b1-time.md`) |
@@ -149,7 +150,7 @@ The owner's research on AU and UK firms named four pains: chasing documents, cro
 | **A2** | Extraction: an invoice or receipt (text layer only) becomes a draft journal; every extracted figure must appear verbatim in the document; the tax split comes from the engines; an accountant approves | P4, launch gate | planned, outline (`plans/a2-extraction.md`) |
 | **A3** | KB content: MTD for VAT and ITSA, the AU–UK double tax agreement, through `/admin/kb` | P2a | planned, outline (`plans/a3-kb-mtd-treaties.md`) |
 
-P5c (audit and retention) and P5d (deploy shape) keep their place: after W2, before the Stage 3 launch gate. Their plans are `plans/p5c-audit-retention.md` and `plans/p5d-deploy.md` (outlines). D5 is merged into C3.
+P5c (audit and retention) is built; P5d (deploy shape) keeps its place before the Stage 3 launch gate. Its plan is `plans/p5d-deploy.md` (outline). D5 is merged into C3.
 
 "Outline" means the plan names its tables, routes and steps but is **not dispatchable**: its starting state depends on plans that have not landed. Re-run `code-planner` on an outline once its gates are done; that turns it into a full plan.
 

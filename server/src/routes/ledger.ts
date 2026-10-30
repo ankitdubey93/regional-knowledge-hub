@@ -12,6 +12,7 @@ import {
   updateAccountClass,
   type ReportOutcome,
 } from '../services/ledgerService';
+import { actorFrom } from '../services/auditEventService';
 import { firmOf } from '../types';
 import { accountPatchSchema, reportQuerySchema, tbCommitSchema } from '../types/ledger';
 
@@ -67,7 +68,7 @@ ledgerRoutes.post<'/ledger/imports', ClientParams>('/ledger/imports', limitByUse
     invalid(res, parsed.error.issues);
     return;
   }
-  const outcome = await commitTrialBalance(orgId, userId, req.params.clientId, parsed.data);
+  const outcome = await commitTrialBalance(orgId, actorFrom(userId, req.ip), req.params.clientId, parsed.data);
   if ('notFound' in outcome) {
     res.status(404).json({ error: 'Client not found' });
     return;
@@ -84,7 +85,7 @@ ledgerRoutes.post<'/ledger/imports', ClientParams>('/ledger/imports', limitByUse
 });
 
 ledgerRoutes.delete<'/ledger/imports/:importId', ImportParams>('/ledger/imports/:importId', async (req, res) => {
-  const { orgId, role } = firmOf(res);
+  const { orgId, userId, role } = firmOf(res);
   if (!idSchema.safeParse(req.params.clientId).success) {
     res.status(404).json({ error: 'Client not found' });
     return;
@@ -97,7 +98,7 @@ ledgerRoutes.delete<'/ledger/imports/:importId', ImportParams>('/ledger/imports/
     res.status(403).json({ error: 'Only firm owners and admins can delete imports' });
     return;
   }
-  const outcome = await deleteImport(orgId, req.params.clientId, req.params.importId);
+  const outcome = await deleteImport(orgId, actorFrom(userId, req.ip), req.params.clientId, req.params.importId);
   if (outcome === 'not_found') {
     res.status(404).json({ error: 'Import not found' });
     return;

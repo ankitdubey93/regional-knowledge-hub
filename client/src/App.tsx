@@ -34,6 +34,7 @@ const ResetPassword = page(() => import('./pages/auth/ResetPassword'), 'ResetPas
 const CheckEmail = page(() => import('./pages/auth/CheckEmail'), 'CheckEmail');
 const AcceptInvitation = page(() => import('./pages/auth/AcceptInvitation'), 'AcceptInvitation');
 const Members = page(() => import('./pages/workspace/Members'), 'Members');
+const AuditLog = page(() => import('./pages/workspace/AuditLog'), 'AuditLog');
 const WorkspaceSetup = page(() => import('./pages/workspace/WorkspaceSetup'), 'WorkspaceSetup');
 const WorkspaceHome = page(() => import('./pages/workspace/WorkspaceHome'), 'WorkspaceHome');
 const EntityDashboard = page(() => import('./pages/entity/EntityDashboard'), 'EntityDashboard');
@@ -103,6 +104,7 @@ export function App() {
             <Route path="workspace/templates" element={<WorkspaceTemplates />} />
             <Route path="workspace/templates/:id" element={<WorkspaceTemplateEdit />} />
             <Route path="workspace/members" element={<Members />} />
+            <Route path="workspace/audit" element={<AuditLog />} />
             <Route path="engagements" element={<EngagementsList />} />
             <Route path="engagements/:id" element={<EngagementDetail />} />
             <Route path="board" element={<BoardPage />} />

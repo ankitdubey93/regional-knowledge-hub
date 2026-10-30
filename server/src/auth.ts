@@ -9,6 +9,7 @@ import * as schema from './db/schema';
 import { env } from './env';
 import { sendMail } from './mail/mailer';
 import { invitation, resetPassword, verifyEmail } from './mail/templates';
+import { auditAfterHook } from './services/authAudit';
 import { consume, LIMITS } from './services/rateLimitService';
 import { workspaceKindSchema } from './types';
 
@@ -31,6 +32,8 @@ export const auth = betterAuth({
     customStorage: { consume: (key, rule) => consume(`auth:${createHash('sha256').update(key).digest('hex').slice(0, 32)}`, rule) },
   },
   advanced: { ipAddress: { ipAddressHeaders: ['x-forwarded-for'] } },
+  // P5c: sign-in and member changes write audit_event rows (services/authAudit.ts).
+  hooks: { after: auditAfterHook },
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,

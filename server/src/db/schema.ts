@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 import {
   type AnyPgColumn,
   bigint,
+  bigserial,
   boolean,
   customType,
   date,
@@ -263,6 +264,35 @@ export const adminAudit = pgTable(
     at: timestamp('at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index('admin_audit_at_idx').on(t.at)],
+);
+
+// Tenant table (P5c): the firm's append-only audit trail. RLS, checks and the REVOKE of UPDATE and DELETE are in 0033.
+// detail holds ids, counts and role names only: never a file name, an email, a message or upload text (Hard rule 13).
+export const AUDIT_EVENT_ACTIONS = [
+  'sign_in',
+  'document.upload', 'document.download', 'document.delete',
+  'ledger.import', 'ledger.delete',
+  'member.invite', 'member.remove', 'member.role',
+  'retention.update', 'retention.purge',
+] as const;
+export const AUDIT_TARGET_TYPES = ['user', 'document', 'ledger_import', 'invitation', 'member', 'organization'] as const;
+
+export const auditEvent = pgTable(
+  'audit_event',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    actorId: text('actor_id'),
+    action: text('action', { enum: AUDIT_EVENT_ACTIONS }).notNull(),
+    targetType: text('target_type', { enum: AUDIT_TARGET_TYPES }).notNull(),
+    targetId: text('target_id').notNull(),
+    ipKey: text('ip_key'),
+    detail: jsonb('detail').$type<Record<string, string | number | boolean | null>>().notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('audit_event_org_id_idx').on(t.orgId, t.id)],
 );
 
 export const KB_JURISDICTIONS = ['AU', 'UK', 'INTL'] as const;

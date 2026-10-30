@@ -12,7 +12,8 @@
     "db:generate": "drizzle-kit generate",
     "kb:seed-curriculum": "node --env-file=../.env --import tsx scripts/seed-curriculum.ts",
     "kb:seed-facts": "node --env-file=../.env --import tsx scripts/seed-facts.ts",
-    "db:migrate": "node --env-file=../.env --import tsx scripts/migrate.ts"
+    "db:migrate": "node --env-file=../.env --import tsx scripts/migrate.ts",
+    "db:vacuum": "node --env-file=../.env --import tsx scripts/vacuum.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.133.0",
