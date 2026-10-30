@@ -45,6 +45,13 @@ export function extractNumbers(text: string): string[] {
 }
 
 const PREVIEW = 60;
+const CITED_LEAD_IN = /\[\d+(?:\s*,\s*\d+)*\]:\s*$/;
+
+/** True when every non-empty line is a list item ("- ", "* " or "1. "). */
+function isListBlock(block: string): boolean {
+  const lines = block.split('\n').filter((l) => l.trim() !== '');
+  return lines.length > 0 && lines.every((l) => /^\s*(?:[-*]|\d+\.)\s+/.test(l));
+}
 
 export function checkGrounding(answer: string, sources: CitedChunk[], factValues: string[], documentTexts: string[] = []): GroundingResult {
   if (answer.trim() === NOT_IN_SOURCES) return { status: 'not_covered', flags: [], usedMarkers: [] };
@@ -60,10 +67,15 @@ export function checkGrounding(answer: string, sources: CitedChunk[], factValues
   if (markers.length === 0) {
     flags.push({ code: 'uncited', detail: 'No citations' });
   } else {
+    let prev = '';
     for (const block of answer.split(/\n\s*\n/)) {
+      const leadIn = prev;
+      prev = block;
       if (parseMarkers(block).length > 0) continue;
+      // A list right after a lead-in that ends "[n]:" is cited by that lead-in.
+      if (CITED_LEAD_IN.test(leadIn) && isListBlock(block)) continue;
       const plain = block
-        .replace(/[#*_>]/g, '')
+        .replace(/[#*>]|_(?!\d+\])/g, '')
         .replace(/^\s*(?:[-*]|\d+\.)\s+/gm, '')
         .trim();
       if (plain.length >= MIN_UNCITED_BLOCK_CHARS) {

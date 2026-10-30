@@ -136,6 +136,16 @@ describe('prompt', () => {
     expect(built.messages.length).toBe(10);
     expect(built.messages[0]?.role).toBe('user');
   });
+  it('PR3a past assistant turns lose their markers; user turns are unchanged', () => {
+    const history: PromptTurn[] = [
+      { role: 'user', text: 'What is GST [1]?' },
+      { role: 'assistant', text: 'GST is 10% [1]. Register at A$75,000 [2, 3].' },
+    ];
+    const built = buildPrompt({ today: 'd', jurisdiction: 'AU', sources: [], history, question: 'q' });
+    expect(built.messages[0]?.text).toBe('What is GST [1]?');
+    expect(built.messages[1]?.text).toBe('GST is 10%. Register at A$75,000.');
+    expect(SYSTEM_PROMPT).toContain('Do not review, correct or withdraw an earlier answer');
+  });
   it('PR4 jurisdiction line', () => {
     const built = buildPrompt({ today: 'd', jurisdiction: undefined, sources: [], history: [], question: 'q' });
     expect(built.messages[built.messages.length - 1]?.text).toContain('Jurisdiction: Australia and the UK');
@@ -212,6 +222,36 @@ describe('grounding', () => {
     const uncited = r.flags.filter((f) => f.code === 'uncited');
     expect(uncited).toHaveLength(1);
     expect(uncited[0]?.detail.startsWith('You should also register')).toBe(true);
+  });
+  it('GR3a a list after a lead-in ending "[n]:" is cited by the lead-in', () => {
+    const sources = [{ marker: 1, text: 'Q1 (Jul–Sep): 28 Oct. Q2 (Oct–Dec): 28 Feb. Q3 (Jan–Mar): 28 Apr.' }];
+    const r = checkGrounding(
+      'A quarterly BAS is due on these dates [1]:\n\n- Q1 (Jul–Sep): 28 Oct\n- Q2 (Oct–Dec): 28 Feb\n- Q3 (Jan–Mar): 28 Apr',
+      sources,
+      [],
+    );
+    expect(r).toEqual({ status: 'answered', flags: [], usedMarkers: [1] });
+  });
+  it('GR3b a list after an uncited lead-in, or prose after "[n]:", is still flagged', () => {
+    const sources = [{ marker: 1, text: 'x' }];
+    const list = '- Register for PAYG withholding before you hire\n- Keep records of every payment you make';
+    const afterProse = checkGrounding(`GST is charged [1].\n\nYou also need these:\n\n${list}`, sources, []);
+    expect(afterProse.flags.filter((f) => f.code === 'uncited')).toHaveLength(1);
+    const prose = checkGrounding(
+      'The dates are these [1]:\n\nYou should also register for PAYG withholding before you hire anyone at all.',
+      sources,
+      [],
+    );
+    expect(prose.flags.filter((f) => f.code === 'uncited')).toHaveLength(1);
+  });
+  it('GR3c an uncited block keeps its placeholders intact in the flag detail', () => {
+    const r = checkGrounding(
+      'GST is charged [1].\n\n**Contact:** the _invoice_ lists [EMAIL_1] as the contact for [NAME_2].',
+      [{ marker: 1, text: 'x' }],
+      [],
+    );
+    const detail = r.flags.find((f) => f.code === 'uncited')?.detail ?? '';
+    expect(detail.startsWith('Contact: the invoice lists [EMAIL_1] as')).toBe(true);
   });
   it('GR4 bad marker', () => {
     const sources = [1, 2, 3].map((marker) => ({ marker, text: 'x' }));

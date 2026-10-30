@@ -21,7 +21,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 
 | # | Plan | Kind | Gate (must be done first) | Owner checkpoint | Status |
 |---|---|---|---|---|---|
-| 0a | **L1 live check** (no file: see roadmap "Owed to P3") | owner task | — | Run the live Anthropic session with your key | todo |
+| 0a | **L1 live check** (no file: see roadmap "Owed to P3") | owner task | — | Run the live Anthropic session with your key | done (2026-10-30; two findings in roadmap "Owed to P3") |
 | 0b | **L2 demo exports** (no file: see roadmap "Owed from Phase 1") | owner task | — | Export TB and tax codes from the Xero AU/UK, QBO and MYOB demo companies | todo |
 | 1 | `debt-sprint.md` | full | — | none | done (landed) |
 | 2 | `c1-compliance-calendar.md` | full | 1 | Review the Step 2 fact table (values that differ from the candidates) | done (landed, 2026-10-28) |

@@ -63,9 +63,9 @@ Stack decisions:
 | **P1.2** | Workspace dashboard with entity tiles, entity dashboard, Knowledge Hub at /knowledge filtered by the selected entity's jurisdiction, chat UI (not connected) in the hub and on the entity dashboard | done (2026-10-26) |
 | **P2a** | A platform admin (one, promoted from the command line), a users page with ban and unban, and the knowledge base in Postgres (sources, versions, chunks; draft → preview → publish) fed by paste, file upload or an allowlisted official URL, with hybrid search and a "test a question" page; the 14 curriculum docs seeded | done (2026-10-26) |
 | **P2b** | `kb_fact` and facts editing in the admin, a `/laws` page, the web reading the KB from the API | done (2026-10-28) |
-| **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `client/src/lib/chat.ts` | built (2026-10-27); "done" waits on the owner's live check below |
-| **P3b** | Numbers tool: answers from an entity's trial balance, computed by engines and cited to the report or account; amends Hard rule 12 | built (2026-10-28); "done" waits on the live check |
-| **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT, MD) stored encrypted and attachable to an entity chat as context; PII placeholders kept per conversation in a sealed map | built (2026-10-28); "done" waits on the live check below |
+| **P3** | Conversations and messages per client heading, SSE streaming, hybrid retrieval, `ChatProvider` (Anthropic, Gemini), citations, grounding checks; replaces the placeholder in `client/src/lib/chat.ts` | done (built 2026-10-27; live check L1 passed 2026-10-30, two findings owed below) |
+| **P3b** | Numbers tool: answers from an entity's trial balance, computed by engines and cited to the report or account; amends Hard rule 12 | done (built 2026-10-28; live check L1 passed 2026-10-30) |
+| **P4** | Uploads (PDF, DOCX, XLSX/CSV, TXT, MD) stored encrypted and attachable to an entity chat as context; PII placeholders kept per conversation in a sealed map | done (built 2026-10-28; live check passed 2026-10-30, findings owed below) |
 | **P5** | Rate limits, daily spend cap, audit log, retention, email verification over SMTP, server container and backups | P5a to P5d built (P5d 2026-10-30; the owner's hosting choice is still open) |
 | Later | Local models, NER-based name detection, private KB per firm, 2FA/SSO, AU and UK data residency | maybe |
 
@@ -90,16 +90,22 @@ Stack decisions:
 
 ### Owed to P3
 
-- **The live check:** run one live Anthropic session (an AU GST question, an off-topic question, a question containing an email address, and, for an entity with two imports, "what was revenue and how did it change?") and record the result in CLAUDE.md. No test or browser check has called a real provider. P3 and P3b stay "built" until then.
+- ~~**The live check (L1)**~~ (done 2026-10-30, `claude-opus-5-5`, 3 provider calls for 4 questions, US$0.057 in `ai_usage`): the AU GST question answered with two citations; the off-topic question got "not covered" with no provider call; the email question reached the provider as `[EMAIL_1]` (shown by running `redactQuestionAndNames` on the same text, not by capturing the request) and the reader saw the address restored; the entity question quoted revenue 30,000.00 AUD against 24,000.00, +25%, from the profit-and-loss ledger source (the percentage is in the source, not computed by the model). Two findings, both fixed the same day:
+  - ~~**Grounding false positive.**~~ Fixed: a list block straight after a lead-in ending `[n]:` counts as cited by it (GR3a, GR3b). A bulleted list in its own paragraph after a lead-in ending `[1]:` is flagged `uncited` (`server/src/chat/grounding.ts`, the per-block check), so a correct BAS-dates answer showed as flagged.
+  - **Earlier turns lose their sources.** History is sent but the earlier turns' sources are not, so on turn 3 the model told the user that its turn-1 GST registration figures "aren't in the sources I have" and should be checked, although they had been cited correctly. Fixed: `buildPrompt` strips markers from past assistant turns and the system prompt says not to review or withdraw an earlier answer against the current sources (PR3a). The re-run of the same three questions on 2026-10-30 answered turn 3 with no flag and no retraction.
 - Tune `MIN_SIMILARITY_BP` and `MIN_LEXEME_COVERAGE_BP` (`server/src/chat/coverage.ts`) on real questions; both are untuned guesses.
-- Price row added for `gemini-2.5-flash` (2026-10-28); the Gemini request shape is still owed to L1 (a live call).
+- Price row added for `gemini-2.5-flash` (2026-10-28); Gemini embeddings answered live on 2026-10-30 (768 dimensions; all 530 `kb_chunk` rows have an embedding); the Gemini **chat** request shape is still not checked against a live call.
 - ~~Re-check `PRICES`~~ (done 2026-10-28 against both pricing pages).
 - ~~A signed-in user briefly sees the signed-out card on a cold load of `/knowledge`~~ (fixed 2026-10-28; KH2).
 - ~~The per-conversation placeholder map is P4~~ (paid in P4); real rate limits are P5. Names not in a workspace's client list are not redacted.
 
 ### Owed to P4
 
-- **The live check:** attach a PDF and an XLSX that contain a client's name and an email address to an entity chat, ask a question, and confirm (from the provider request) that placeholders were sent, that the screen shows the real names, and that a figure found only in a document carries the `from_document` flag. No test calls a provider.
+- ~~**The live check:**~~ (done 2026-10-30): a PDF invoice and an XLSX payroll summary for Harbour Lane Pty Ltd, each with an email address, attached to an entity chat; the API was pointed at a local proxy (`ANTHROPIC_BASE_URL`) that saved request bodies only. In the captured request the client name was `[NAME_1]` and both addresses `[EMAIL_1]`/`[EMAIL_2]`, in the question and inside `<documents>`; the stored answer holds placeholders; the reader saw the real name and addresses; 4,370.00, 18250 and 1047, found only in the documents, were flagged `from_document`. Findings:
+  - **A short form of a client name is not redacted.** The question said "Harbour Lane" (the client is "Harbour Lane Pty Ltd") and it went to the provider as typed; the model then saw `[NAME_1]` in the invoice and "Harbour Lane" in the question and wrote a confused line. Owed: match common short forms (without Pty Ltd, Ltd, Limited) or leave this to NER.
+  - **Document paragraphs are flagged twice.** A paragraph that relays a document figure, as the prompt asks, has no `[n]` and so is also flagged `uncited` beside its `from_document` flag. Owed: decide whether a block that names an attached document should skip the `uncited` check.
+  - ~~**Flag details lost their placeholders.**~~ Fixed: the uncited preview stripped `_`, so `[EMAIL_1]` showed as `[EMAIL1]` and was never restored (GR3c). A preview cut at 60 characters can still end mid-placeholder.
+  - The invoice's customer, "Bayside Cafe Supplies", is not a client and went as typed: the NER gap below.
 - NER for names that are not in the client list (staff, directors): the largest privacy gap left.
 - ~~Key rotation.~~ Built in P5d (2026-10-30): a version-to-key keyring and `npm run db:reseal -w server` (`engineering/operations.md` section 7). Losing `DATA_ENCRYPTION_KEY` still loses every sealed row, so the key is backed up apart from the database.
 - ~~`VACUUM` for deleted `bytea` space.~~ Script built in P5c (`npm run db:vacuum -w server`); scheduled by host cron in P5d (`engineering/operations.md`).
