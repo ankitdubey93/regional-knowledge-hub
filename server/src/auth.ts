@@ -12,6 +12,7 @@ import { invitation, resetPassword, verifyEmail } from './mail/templates';
 import { auditAfterHook } from './services/authAudit';
 import { consume, LIMITS } from './services/rateLimitService';
 import { workspaceKindSchema } from './types';
+import { LEGAL_VERSION } from '@chub/shared/lib/legal';
 
 // A workspace is a Better Auth organization with a kind ('business' or 'practice', fixed at create); roles are owner, admin, member.
 // Email (P5b): verification follows REQUIRE_EMAIL_VERIFICATION (off only in tests and e2e). Links are built by Better Auth and point at the API, which redirects to the web.
@@ -34,6 +35,25 @@ export const auth = betterAuth({
   advanced: { ipAddress: { ipAddressHeaders: ['x-forwarded-for'] } },
   // P5c: sign-in and member changes write audit_event rows (services/authAudit.ts).
   hooks: { after: auditAfterHook },
+  // Stage 3: sign-up records the legal version accepted and when; the server sets the time, never the client.
+  user: {
+    additionalFields: {
+      termsVersion: { type: 'string', required: true, input: true },
+      termsAcceptedAt: { type: 'date', required: false, input: false },
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          if (user.termsVersion !== LEGAL_VERSION) {
+            throw new APIError('BAD_REQUEST', { message: 'Accept the current terms of service and privacy notice to create an account.' });
+          }
+          return { data: { ...user, termsAcceptedAt: new Date() } };
+        },
+      },
+    },
+  },
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,

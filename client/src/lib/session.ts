@@ -136,8 +136,8 @@ export type SignUpResult = { ok: true; checkEmail: boolean } | { ok: false; mess
 const signUpBody = z.object({ token: z.string().nullish() });
 
 /** ok with checkEmail true when the server needs the address confirmed first (no session yet). */
-export async function signUpEmail(name: string, email: string, password: string): Promise<SignUpResult> {
-  const res = await send('/sign-up/email', { name, email, password, callbackURL: `${window.location.origin}/workspace` });
+export async function signUpEmail(name: string, email: string, password: string, termsVersion: string): Promise<SignUpResult> {
+  const res = await send('/sign-up/email', { name, email, password, termsVersion, callbackURL: `${window.location.origin}/workspace` });
   if (!res.ok) return { ok: false, message: await messageOf(res, 'Sign-up failed') };
   const parsed = signUpBody.safeParse(await res.json().catch(() => null));
   const checkEmail = !parsed.success || parsed.data.token == null;

@@ -1,4 +1,5 @@
 import pg from 'pg';
+import { LEGAL_VERSION } from '@chub/shared/lib/legal';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { pool } from '../db/client';
 import { setPlatformAdmin } from '../services/platformAdmin';
@@ -72,7 +73,7 @@ describe('admin', () => {
   it('A5 sign-up cannot set a role', async () => {
     const email = `u-role-${Date.now()}@example.test`;
     const res = await call('POST', '/api/auth/sign-up/email', {
-      body: { name: 'Sneaky', email, password: 'correct-horse-9', role: 'platform_admin' },
+      body: { name: 'Sneaky', email, password: 'correct-horse-9', role: 'platform_admin', termsVersion: LEGAL_VERSION },
     });
     const body = (await res.json()) as { user?: { id: string } };
     const id = body.user?.id;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { BookOpen, Menu, Moon, Sun, X } from 'lucide-react';
-import { cx } from './ui';
+import { cx, TextLink } from './ui';
 import { WorkspaceSwitcher } from './WorkspaceSwitcher';
 import { ActiveEntityChip } from './ActiveEntityChip';
 import { useProgress } from '../progress/ProgressContext';
@@ -141,6 +141,12 @@ export function Layout() {
             Educational material, not tax, legal or accounting advice. Figures link to their official source with the date they were last checked; check the source
             before relying on a figure.
           </p>
+          <nav aria-label="Legal" className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+            <TextLink to="/legal/privacy">Privacy notice</TextLink>
+            <TextLink to="/legal/terms">Terms of service</TextLink>
+            <TextLink to="/legal/processing">Data processing terms</TextLink>
+            <TextLink to="/legal/subprocessors">Sub-processors</TextLink>
+          </nav>
         </div>
       </footer>
     </div>

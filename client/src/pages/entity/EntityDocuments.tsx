@@ -1,5 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
 import { useParams } from 'react-router-dom';
+import { RedactionNotice } from '../../components/RedactionNotice';
 import { Button, Callout, Card, Field, PageHeader, TableScroll, TextLink } from '../../components/ui';
 import { ApiError, apiJson } from '../../lib/api';
 import type { ClientRecord } from '../../lib/entity';
@@ -19,9 +20,6 @@ const KIND_LABELS: Record<DocumentView['kind'], string> = {
   text: 'Text',
   markdown: 'Markdown',
 };
-
-const PRIVACY_NOTE =
-  "Before a document reaches the AI, emails, phone numbers, bank, tax and NI numbers and your clients' names are replaced. Other people's names (staff, directors) are not caught. Documents are context only: answers never cite them.";
 
 const linkClass = 'font-medium text-accent underline underline-offset-2 hover:text-accent-hover';
 
@@ -126,7 +124,7 @@ export function EntityDocuments() {
       <TextLink to={`/entities/${c.id}`}>{`Back to ${c.name}`}</TextLink>
       <PageHeader title="Documents" lead={`Files for ${c.name}. Attach them to a chat on the entity's dashboard.`} />
 
-      <Callout tone="warn">{PRIVACY_NOTE}</Callout>
+      <RedactionNotice variant="documents" />
 
       <Card>
         <Field label="Upload a document" hint="PDF, Word (.docx), Excel (.xlsx), CSV, text or Markdown, up to 20 MB">

@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { LEGAL_VERSION } from '@chub/shared/lib/legal';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { auth } from '../auth';
 import { pool } from '../db/client';
@@ -111,7 +112,7 @@ describe('email', () => {
     expect(invitationId).toBeTruthy();
 
     const signedUp = await call('POST', '/api/auth/sign-up/email', {
-      body: { name: 'Test User', email: inviteeEmail, password: 'correct-horse-9' },
+      body: { name: 'Test User', email: inviteeEmail, password: 'correct-horse-9', termsVersion: LEGAL_VERSION },
     });
     expect(signedUp.status).toBe(200);
     const accepted = await call('POST', '/api/auth/organization/accept-invitation', {

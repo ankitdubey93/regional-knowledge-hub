@@ -23,6 +23,10 @@ const ROUTES = [
   '/knowledge/practice/coding',
   '/sign-in',
   '/sign-up',
+  '/legal/privacy',
+  '/legal/terms',
+  '/legal/processing',
+  '/legal/subprocessors',
 ];
 
 for (const path of ROUTES) {
@@ -39,4 +43,16 @@ test('signed out: an unknown URL shows Page not found', async ({ page }) => {
 test('signed out: /knowledge asks you to sign in', async ({ page }) => {
   await checkPage(page, '/knowledge');
   await expect(page.locator('main').getByRole('link', { name: 'Sign in', exact: true })).toBeVisible();
+});
+
+test('signed out: sign-up shows the region and the terms box', async ({ page }) => {
+  await checkPage(page, '/sign-up');
+  await expect(page.getByText("Your firm's data will be stored in Australia.")).toBeVisible();
+  const box = page.getByRole('checkbox');
+  await expect(box).toBeVisible();
+  for (let i = 0; i < 10; i++) {
+    if (await box.evaluate((el) => el === document.activeElement)) break;
+    await page.keyboard.press('Tab');
+  }
+  await expect(box).toBeFocused();
 });

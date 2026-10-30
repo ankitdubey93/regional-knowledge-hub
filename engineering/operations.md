@@ -64,6 +64,17 @@ Weekly, after the retention purges:
 
 A second rotation must wait until step 7 is done, because only one previous key is supported.
 
-## 8. Not decided yet
+## 8. One deployment per country
+
+Stage 3 decision (2026-10-31): Australian firms use the AU deployment and UK firms the UK deployment. Each is a full, separate stack (database, API image, backups, `DATA_ENCRYPTION_KEY`), run from its own checkout or directory with its own `.env.production` and `.env.production.admin`. Nothing is shared between them, and no data moves between them.
+
+- Set `DEPLOYMENT_REGION=AU` on the Australian stack and `DEPLOYMENT_REGION=UK` on the UK one. The API refuses to start in production without it.
+- Set `OTHER_REGION_URL` on each to the other stack's web address, so the sign-up page can send a firm to the right one.
+- Host each stack in its own country's region, and keep its backups there too.
+- Generate a separate `DATA_ENCRYPTION_KEY`, `BETTER_AUTH_SECRET` and database password for each stack.
+- The AI providers are the same for both: Anthropic, pinned to US inference with `ANTHROPIC_INFERENCE_GEO=us`, and Google Gemini for embeddings, on paid quota only. On the Anthropic Console, set the workspace's allowed inference geos to `us` as well, so a request without the parameter cannot run elsewhere.
+- Run the restore drill (section 5) on each stack separately.
+
+## 9. Not decided yet
 
 The hosting provider and region (AU and UK data residency is a Stage 3 launch-gate question); the reverse proxy and TLS certificates; the SMTP provider (`SMTP_URL`, `MAIL_FROM`); where off-server dump copies go and how long dumps are kept; monitoring and alerts. None of these is configured by the repository.

@@ -10,12 +10,25 @@ function messages(r: ReturnType<typeof envSchema.safeParse>): string[] {
 
 describe('env', () => {
   it('EV1 production refuses the development chub_app password', () => {
-    const dev = { ...testEnv, NODE_ENV: 'production', DATABASE_URL: 'postgres://chub_app:chub_app@db:5432/chub' };
+    const dev = { ...testEnv, NODE_ENV: 'production', DEPLOYMENT_REGION: 'AU', DATABASE_URL: 'postgres://chub_app:chub_app@db:5432/chub' };
     const r = envSchema.safeParse(dev);
     expect(r.success).toBe(false);
     expect(messages(r)).toContain('Set a real password for chub_app in production');
     expect(envSchema.safeParse({ ...dev, NODE_ENV: 'development' }).success).toBe(true);
     expect(envSchema.safeParse({ ...dev, DATABASE_URL: 'postgres://chub_app:s3cret@db:5432/chub' }).success).toBe(true);
+  });
+
+  it('EV4 production refuses a missing DEPLOYMENT_REGION', () => {
+    const prod = { ...testEnv, NODE_ENV: 'production', DATABASE_URL: 'postgres://chub_app:s3cret@db:5432/chub' };
+    const r = envSchema.safeParse(prod);
+    expect(r.success).toBe(false);
+    expect(!r.success && r.error.issues.some((i) => i.path[0] === 'DEPLOYMENT_REGION')).toBe(true);
+    expect(envSchema.safeParse({ ...prod, DEPLOYMENT_REGION: 'AU' }).success).toBe(true);
+  });
+
+  it('EV5 DEPLOYMENT_REGION takes AU or UK only', () => {
+    expect(envSchema.safeParse({ ...testEnv, DEPLOYMENT_REGION: 'UK' }).success).toBe(true);
+    expect(envSchema.safeParse({ ...testEnv, DEPLOYMENT_REGION: 'EU' }).success).toBe(false);
   });
 
   it('EV2 a previous key needs version 2 or more', () => {
@@ -41,5 +54,15 @@ describe('env', () => {
       expect(r.data.WEB_DIST_DIR).toBeUndefined();
       expect(r.data.DATA_ENCRYPTION_KEY_VERSION).toBe(1);
     }
+  });
+
+  it('EV3a an empty ANTHROPIC_INFERENCE_GEO means us; a bad value is refused', () => {
+    const empty = envSchema.safeParse({ ...testEnv, ANTHROPIC_INFERENCE_GEO: '' });
+    expect(empty.success).toBe(true);
+    if (empty.success) expect(empty.data.ANTHROPIC_INFERENCE_GEO).toBe('us');
+    const global = envSchema.safeParse({ ...testEnv, ANTHROPIC_INFERENCE_GEO: 'global' });
+    expect(global.success).toBe(true);
+    if (global.success) expect(global.data.ANTHROPIC_INFERENCE_GEO).toBe('global');
+    expect(envSchema.safeParse({ ...testEnv, ANTHROPIC_INFERENCE_GEO: 'eu' }).success).toBe(false);
   });
 });

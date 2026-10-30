@@ -10,6 +10,10 @@ import { WorkspaceHome } from '../pages/workspace/WorkspaceHome';
 import { EntityDashboard } from '../pages/entity/EntityDashboard';
 import { EntitySettings } from '../pages/entity/EntitySettings';
 import * as session from '../lib/session';
+import { useDeployment } from '../lib/deployment';
+import { LEGAL_VERSION } from '@chub/shared/lib/legal';
+
+vi.mock('../lib/deployment', () => ({ useDeployment: vi.fn(() => null) }));
 
 const signedIn = {
   session: { userId: 'u1', email: 'a@firm.test', name: 'A', activeFirmId: 'org1', activeFirmName: 'Firm A', activeWorkspaceKind: 'practice' as const },
@@ -66,6 +70,7 @@ function jsonResponse(status: number, body: unknown): Response {
 beforeEach(() => {
   // Call history only: the mocked implementations from setup.ts stay in place.
   vi.clearAllMocks();
+  vi.mocked(useDeployment).mockReturnValue(null);
 });
 
 describe('SignIn', () => {
@@ -117,8 +122,9 @@ describe('SignUp', () => {
     await user.type(screen.getByLabelText('Email'), 'ann@firm.test');
     // The password label also carries its hint text, so match its start.
     await user.type(screen.getByLabelText(/^Password/), 'password123');
+    await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'Create account' }));
-    expect(session.signUpEmail).toHaveBeenCalledWith('Ann Lee', 'ann@firm.test', 'password123');
+    expect(session.signUpEmail).toHaveBeenCalledWith('Ann Lee', 'ann@firm.test', 'password123', LEGAL_VERSION);
   });
 
   it('goes to the workspace after signing up', async () => {
@@ -135,8 +141,28 @@ describe('SignUp', () => {
     await user.type(screen.getByLabelText('Your name'), 'Ann Lee');
     await user.type(screen.getByLabelText('Email'), 'ann@firm.test');
     await user.type(screen.getByLabelText(/^Password/), 'password123');
+    await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'Create account' }));
     expect(await screen.findByText('workspace page')).toBeInTheDocument();
+  });
+
+  it('SU3 shows the deployment region', async () => {
+    vi.mocked(session.useSessionInfo).mockReturnValue(signedOut);
+    vi.mocked(useDeployment).mockReturnValue({ region: 'UK', otherRegionUrl: 'https://au.example.test', legalVersion: LEGAL_VERSION });
+    renderAt('/sign-up', '/sign-up', <SignUp />);
+    expect(screen.getByText("Your firm's data will be stored in the United Kingdom.")).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Firm based in Australia? Sign up there instead' })).toHaveAttribute('href', 'https://au.example.test');
+  });
+
+  it('SU4 does not submit until the terms box is ticked', async () => {
+    vi.mocked(session.useSessionInfo).mockReturnValue(signedOut);
+    const user = userEvent.setup();
+    renderAt('/sign-up', '/sign-up', <SignUp />);
+    await user.type(screen.getByLabelText('Your name'), 'Ann Lee');
+    await user.type(screen.getByLabelText('Email'), 'ann@firm.test');
+    await user.type(screen.getByLabelText(/^Password/), 'password123');
+    await user.click(screen.getByRole('button', { name: 'Create account' }));
+    expect(session.signUpEmail).not.toHaveBeenCalled();
   });
 });
 

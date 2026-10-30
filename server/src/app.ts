@@ -20,6 +20,7 @@ import { auditRoutes } from './routes/audit';
 import { workloadRoutes } from './routes/workload';
 import { workspaceRoutes } from './routes/workspace';
 import { ledgerRoutes } from './routes/ledger';
+import { metaRoutes } from './routes/meta';
 import { pinForwardedFor } from './middleware/rateLimit';
 
 export const app = express();
@@ -30,6 +31,7 @@ app.use('/api', cors({ origin: env.WEB_ORIGIN, credentials: true, allowedHeaders
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true });
 });
+app.use('/api/meta', metaRoutes);
 app.all('/api/auth/*splat', pinForwardedFor, toNodeHandler(auth));
 app.use('/api/kb', kbRoutes);
 app.use('/api/public/requests', publicRequestRoutes);

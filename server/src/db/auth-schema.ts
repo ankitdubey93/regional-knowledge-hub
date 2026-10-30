@@ -17,6 +17,9 @@ export const user = pgTable("user", {
   banned: boolean("banned").default(false),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
+  // Hand-added (Stage 3): the legal version accepted at sign-up and when. Null for accounts created before it.
+  termsVersion: text("terms_version"),
+  termsAcceptedAt: timestamp("terms_accepted_at", { withTimezone: true }),
 });
 
 export const session = pgTable(

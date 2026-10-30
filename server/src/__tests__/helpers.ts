@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import pg from 'pg';
+import { LEGAL_VERSION } from '@chub/shared/lib/legal';
 import { testEnv } from './testEnv';
 import { startApp } from './server';
 
@@ -31,7 +32,7 @@ export function mergeCookies(previous: string, res: Response): string {
 export async function signUp(): Promise<{ cookie: string; userId: string; email: string }> {
   const email = `u-${randomUUID()}@example.test`;
   const res = await call('POST', '/api/auth/sign-up/email', {
-    body: { name: 'Test User', email, password: 'correct-horse-9' },
+    body: { name: 'Test User', email, password: 'correct-horse-9', termsVersion: LEGAL_VERSION },
   });
   if (res.status !== 200) throw new Error(`sign-up failed: ${res.status} ${await res.text()}`);
   const body = (await res.json()) as { user: { id: string } };

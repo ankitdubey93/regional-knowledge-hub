@@ -48,7 +48,7 @@ export async function recordUsage(row: {
     outputTokens: row.tokens.outputTokens,
     cacheWriteTokens: row.tokens.cacheWriteTokens,
     cacheReadTokens: row.tokens.cacheReadTokens,
-    costMicroUsd: costMicroUsd(row.model, row.tokens),
+    costMicroUsd: costMicroUsd(row.model, row.tokens, { usOnly: row.provider === 'anthropic' && env.ANTHROPIC_INFERENCE_GEO === 'us' }),
     estimated: row.estimated,
   });
 }

@@ -7,6 +7,7 @@ export interface ModelPrice {
   cacheReadFortieths: number;
 }
 
+// Anthropic data residency page, read 2026-10-31: US-only inference is 1.1x on Claude 4.6 and later.
 // Anthropic: https://platform.claude.com/docs/en/about-claude/pricing, read 2026-10-28. Gemini: https://ai.google.dev/gemini-api/docs/pricing (updated 2026-10-27), read 2026-10-28; gemini-3.8-flash read 2026-10-30.
 // Haiku 5.5 is priced at its >100k-token tier so the spend guard never under-counts a long prompt.
 // gemini-3.8-flash is priced at the rate the page gives from 2027-01-01 (double the 2026 rate), for the same reason.
@@ -36,15 +37,13 @@ export function isPriced(model: string): boolean {
   return Object.prototype.hasOwnProperty.call(PRICES, model);
 }
 
-/** Integer micro-USD: input x1, cache writes x1.25, cache reads at the model's cacheReadFortieths/40 of the input price; output at the output price. */
-export function costMicroUsd(model: string, u: UsageTokens): number {
+/** Integer micro-USD: input x1, cache writes x1.25, cache reads at the model's cacheReadFortieths/40 of the input price; output at the output price. US-only inference (Anthropic inference_geo "us") is 1.1x every category. */
+export function costMicroUsd(model: string, u: UsageTokens, opts: { usOnly?: boolean } = {}): number {
   const p = (isPriced(model) ? PRICES[model] : undefined) ?? UNKNOWN_MODEL_PRICE;
   const pin = p.inputMicroUsdPerMTok;
   const pout = p.outputMicroUsdPerMTok;
-  return roundDiv(
-    40 * u.inputTokens * pin + 50 * u.cacheWriteTokens * pin + p.cacheReadFortieths * u.cacheReadTokens * pin + 40 * u.outputTokens * pout,
-    40_000_000,
-  );
+  const numerator = 40 * u.inputTokens * pin + 50 * u.cacheWriteTokens * pin + p.cacheReadFortieths * u.cacheReadTokens * pin + 40 * u.outputTokens * pout;
+  return opts.usOnly === true ? roundDiv(numerator * 11, 400_000_000) : roundDiv(numerator, 40_000_000);
 }
 
 /** '5' -> 5_000_000; '2.5' -> 2_500_000. Throws RangeError on anything but up to 6 digits and 2 decimals. */

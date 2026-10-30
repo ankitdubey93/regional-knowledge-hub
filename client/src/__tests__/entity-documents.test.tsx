@@ -79,7 +79,7 @@ describe('Entity documents (P4b)', () => {
     });
     renderPage();
     expect(await screen.findByText('No documents yet.')).toBeInTheDocument();
-    expect(screen.getByText("Other people's names (staff, directors) are not caught.", { exact: false })).toBeInTheDocument();
+    expect(screen.getByText('Other names are not caught: staff, directors, suppliers and customers reach the AI as written', { exact: false })).toBeInTheDocument();
   });
 
   it('ED2 lists documents with type and size', async () => {

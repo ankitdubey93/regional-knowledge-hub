@@ -28,7 +28,7 @@ export function setChatProviderForTests(p: ChatProvider | null | undefined): voi
 export function currentChatProvider(): ChatProvider | null {
   if (override !== undefined) return override;
   if (env.CHAT_PROVIDER === 'anthropic') {
-    return env.ANTHROPIC_API_KEY ? anthropicProvider(env.ANTHROPIC_API_KEY, env.ANTHROPIC_MODEL) : null;
+    return env.ANTHROPIC_API_KEY ? anthropicProvider(env.ANTHROPIC_API_KEY, env.ANTHROPIC_MODEL, { inferenceGeo: env.ANTHROPIC_INFERENCE_GEO }) : null;
   }
   return env.GEMINI_API_KEY && env.GEMINI_MODEL ? geminiChatProvider(env.GEMINI_API_KEY, env.GEMINI_MODEL) : null;
 }

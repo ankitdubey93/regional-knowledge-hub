@@ -16,7 +16,7 @@ function mapError(e: unknown, signal: AbortSignal): unknown {
   return new ChatProviderError('The AI provider failed', 'unknown');
 }
 
-export function anthropicProvider(apiKey: string, model: string, opts?: { fetch?: typeof fetch; maxRetries?: number }): ChatProvider {
+export function anthropicProvider(apiKey: string, model: string, opts?: { fetch?: typeof fetch; maxRetries?: number; inferenceGeo?: 'us' | 'global' }): ChatProvider {
   const client = new Anthropic({
     apiKey,
     maxRetries: opts?.maxRetries ?? 1,
@@ -32,6 +32,7 @@ export function anthropicProvider(apiKey: string, model: string, opts?: { fetch?
           {
             model,
             max_tokens: req.maxTokens,
+            inference_geo: opts?.inferenceGeo ?? 'us',
             system: [{ type: 'text', text: req.system, cache_control: { type: 'ephemeral' } }],
             messages: req.messages.map((m) => ({ role: m.role, content: m.text })),
             output_config: { effort: 'medium' },

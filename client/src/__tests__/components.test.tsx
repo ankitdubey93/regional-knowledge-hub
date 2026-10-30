@@ -10,6 +10,7 @@ import { CodingPage } from '../pages/practice/CodingPage';
 import { PracticeIndex } from '../pages/practice/PracticeIndex';
 import { CompanySizePage } from '../pages/tools/CompanySizePage';
 import { journalScenarios, quizzes } from '../data';
+import { RedactionNotice } from '../components/RedactionNotice';
 import { STORAGE_KEY } from '../utils/progress';
 
 describe('JournalSimulator', () => {
@@ -125,5 +126,22 @@ describe('PracticeIndex', () => {
     await user.click(screen.getByRole('button', { name: 'Reset practice data' }));
     await user.click(screen.getByRole('button', { name: 'Yes, erase practice data' }));
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).quiz).toEqual({});
+  });
+});
+
+describe('RedactionNotice', () => {
+  it('RN1 documents variant names what is not caught', () => {
+    renderAt('/', '/', <RedactionNotice variant="documents" />);
+    expect(screen.getByText('Other names are not caught: staff, directors, suppliers and customers reach the AI as written', { exact: false })).toBeInTheDocument();
+  });
+
+  it('RN2 chat variant links to the sub-processors page', () => {
+    renderAt('/', '/', <RedactionNotice variant="chat" />);
+    expect(screen.getByRole('link', { name: 'Who processes your data' })).toHaveAttribute('href', '/legal/subprocessors');
+  });
+
+  it('RN3 client-upload variant uses the firm name', () => {
+    renderAt('/', '/', <RedactionNotice variant="client-upload" firmName="Lane & Co" />);
+    expect(screen.getByText(/^Lane & Co may use/)).toBeInTheDocument();
   });
 });

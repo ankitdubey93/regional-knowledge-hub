@@ -62,6 +62,7 @@ const AdminFacts = page(() => import('./pages/admin/AdminFacts'), 'AdminFacts');
 const AdminFactNew = page(() => import('./pages/admin/AdminFact'), 'AdminFactNew');
 const AdminFactEdit = page(() => import('./pages/admin/AdminFact'), 'AdminFactEdit');
 const UploadRequest = page(() => import('./pages/public/UploadRequest'), 'UploadRequest');
+const LegalPage = page(() => import('./pages/legal/LegalPage'), 'LegalPage');
 
 export function App() {
   return (
@@ -96,6 +97,7 @@ export function App() {
             <Route path="laws/*" element={<HubRedirect />} />
             <Route path="sign-in" element={<SignIn />} />
             <Route path="sign-up" element={<SignUp />} />
+            <Route path="legal/:doc" element={<LegalPage />} />
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="check-email" element={<CheckEmail />} />

@@ -67,10 +67,25 @@ describe('anthropic', () => {
     expect(headers.get('anthropic-beta')).toContain('server-side-fallback-2026-07-01');
     expect(body.model).toBe('claude-opus-5-5');
     expect(body.max_tokens).toBe(8000);
+    expect(body.inference_geo).toBe('us');
     expect((body.system as { cache_control: { type: string } }[])[0]?.cache_control.type).toBe('ephemeral');
     expect(body.fallbacks).toBe('default');
     expect((body.output_config as { effort: string }).effort).toBe('medium');
     expect('temperature' in body).toBe(false);
+  });
+
+  it('AN7 inference_geo defaults to us', async () => {
+    const f = sseFetch();
+    const p = anthropicProvider('test-key', 'claude-opus-5-5', { fetch: f, maxRetries: 0 });
+    await collect(p.stream(req()));
+    expect(sentRequest(f).body.inference_geo).toBe('us');
+  });
+
+  it('AN8 inference_geo global is passed through', async () => {
+    const f = sseFetch();
+    const p = anthropicProvider('test-key', 'claude-opus-5-5', { fetch: f, maxRetries: 0, inferenceGeo: 'global' });
+    await collect(p.stream(req()));
+    expect(sentRequest(f).body.inference_geo).toBe('global');
   });
 
   it('AN3 no fallback for models without one', async () => {

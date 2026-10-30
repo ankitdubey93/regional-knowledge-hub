@@ -12,6 +12,8 @@ import { AcceptInvitation } from '../pages/auth/AcceptInvitation';
 import { Members } from '../pages/workspace/Members';
 import * as session from '../lib/session';
 
+vi.mock('../lib/deployment', () => ({ useDeployment: vi.fn(() => null) }));
+
 const signedOut = { session: null, pending: false };
 const signedIn = {
   session: { userId: 'u1', email: 'a@firm.test', name: 'A', activeFirmId: 'org1', activeFirmName: 'Firm A', activeWorkspaceKind: 'practice' as const },
@@ -98,6 +100,7 @@ describe('Email pages (P5b)', () => {
     await user.type(screen.getByLabelText('Your name'), 'Ann Lee');
     await user.type(screen.getByLabelText('Email'), 'ann@firm.test');
     await user.type(screen.getByLabelText(/^Password/), 'password123');
+    await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'Create account' }));
     expect(await screen.findByRole('heading', { name: 'Check your email' })).toBeInTheDocument();
   });

@@ -173,6 +173,17 @@ P5c (audit and retention) and P5d (deploy shape: image, Compose `prod` profile, 
 - **US GAAP**: dropped. Outside the AU and UK scope.
 - **GDPR and data residency**: already in the Stage 3 launch gate.
 
+### Stage 3 launch gate (decided 2026-10-31)
+
+The gate stands before the first outside firm puts real client data in the app. The owner's decisions:
+
+1. **Names not in the client list:** a clear warning on upload and in the chat, saying what `redact()` removes and what it does not; NER stays owed as its own project after launch.
+2. **Residency:** one deployment per country (an Australian region and a UK region). Each firm picks its home region at sign-up and all its clients, AU or UK, are stored there; the notice says so. Questions and document text still go to the AI provider, wherever it processes them, and the notice must say that honestly.
+2a. **AI processing (decided 2026-10-31):** Anthropic's first-party API offers only `inference_geo` "global" or "us", and workspace geo (data at rest) only "us" ([data residency](https://platform.claude.com/docs/en/manage-claude/data-residency), read 2026-10-31). The owner chose to stay on the first-party API and pin every request to `inference_geo: "us"`, so the notice can name one country; US-only inference is priced at 1.1x on Claude 4.6 and later, and the spend guard must count it. Conversation content is not retained by default except on Covered Models (Fable and Mythos), and API data is not used for training without express permission ([API and data retention](https://platform.claude.com/docs/en/manage-claude/api-and-data-retention), read 2026-10-31). Moving to Amazon Bedrock or Vertex AI in Sydney and London stays possible as its own plan.
+3. **Legal documents:** Claude drafts a privacy notice, terms of service, a UK GDPR Article 28 data processing agreement and a sub-processor list from what the code actually does, each marked "draft: needs legal review". They are reviewed by a lawyer before any outside firm signs up.
+
+**Status (2026-10-31): built (code); legal review and hosting owed.** Landed: `inference_geo: "us"` on every Anthropic request, priced 1.1x; `DEPLOYMENT_REGION` and `GET /api/meta`; terms acceptance at sign-up (migration 0036); the redaction warning on documents, chat and the client upload page; eight draft legal pages (AU and UK) linked from the footer. Owed by the owner: legal review of all eight drafts and every `[To be confirmed: ...]` point; choosing the hosting and SMTP providers for each region; setting `allowed_inference_geos: ["us"]` on the Anthropic workspace in the Console; making sure the Gemini key runs on paid quota; and NER (still owed as its own project).
+
 ### Owed to the practice track
 
 - Every C1 due-date rule is checked against its ATO, ASIC, HMRC or Companies House page before C1 is "done"; a rule that cannot be confirmed ships `verifiedOn: null` with the badge.

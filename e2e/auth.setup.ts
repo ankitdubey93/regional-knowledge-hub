@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { expect, test as setup } from '@playwright/test';
+import { LEGAL_VERSION } from '@chub/shared/lib/legal';
 import { E2E_ENV, WEB } from './env';
 import { IDS_FILE, STATE_ADMIN, STATE_PLAIN, STATE_USER } from './helpers';
 
@@ -14,7 +15,7 @@ setup('create the e2e users, entity, import, document and admin', async ({ playw
   // User: a practice with one AU client, a trial-balance import and a document.
   const user = await newCtx();
   let res = await user.post('/api/auth/sign-up/email', {
-    data: { name: 'E2E User', email: 'e2e-user@example.test', password: PASSWORD },
+    data: { name: 'E2E User', email: 'e2e-user@example.test', password: PASSWORD, termsVersion: LEGAL_VERSION },
   });
   expect(res.status(), 'sign up user').toBe(200);
   res = await user.post('/api/auth/organization/create', {
@@ -54,7 +55,7 @@ setup('create the e2e users, entity, import, document and admin', async ({ playw
   // Admin: promoted through the CLI script, never by SQL.
   const admin = await newCtx();
   res = await admin.post('/api/auth/sign-up/email', {
-    data: { name: 'E2E Admin', email: 'e2e-admin@example.test', password: PASSWORD },
+    data: { name: 'E2E Admin', email: 'e2e-admin@example.test', password: PASSWORD, termsVersion: LEGAL_VERSION },
   });
   expect(res.status(), 'sign up admin').toBe(200);
   execFileSync('node', ['--import', 'tsx', 'scripts/admin-role.ts', 'promote', 'e2e-admin@example.test'], {
@@ -70,7 +71,7 @@ setup('create the e2e users, entity, import, document and admin', async ({ playw
   // Plain: signed in, no workspace.
   const plain = await newCtx();
   res = await plain.post('/api/auth/sign-up/email', {
-    data: { name: 'E2E Plain', email: 'e2e-plain@example.test', password: PASSWORD },
+    data: { name: 'E2E Plain', email: 'e2e-plain@example.test', password: PASSWORD, termsVersion: LEGAL_VERSION },
   });
   expect(res.status(), 'sign up plain').toBe(200);
   await plain.storageState({ path: STATE_PLAIN });

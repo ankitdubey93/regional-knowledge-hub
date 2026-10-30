@@ -15,6 +15,7 @@ import {
 import type { AttachedDocument, ChatMessageView as Msg, ChatScope, ChatStatus, CitationView, ConversationView } from '@chub/shared/lib/chatWire';
 import { listDocuments, type DocumentView } from '../lib/documents';
 import { ChatMessageView } from './chat/ChatMessageView';
+import { RedactionNotice } from './RedactionNotice';
 import { Button, Callout, Card, cx, inputClass, TextLink } from './ui';
 
 const NOT_CONFIGURED_TEXT = "The assistant isn't configured on this server.";
@@ -430,6 +431,8 @@ export function ChatPanel({ title, lead, contextLine, placeholder, suggestions, 
           )}
         </div>
       )}
+
+      <RedactionNotice variant="chat" />
 
       <form
         className="flex flex-col gap-2 sm:flex-row sm:items-end"

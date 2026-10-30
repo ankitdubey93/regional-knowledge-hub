@@ -364,6 +364,17 @@ describe('pricing', () => {
     expect(isPriced('gemini-3.8-flash')).toBe(true);
     expect(costMicroUsd('gemini-3.8-flash', { inputTokens: 1000, outputTokens: 1000, cacheWriteTokens: 0, cacheReadTokens: 1000 })).toBe(9150);
   });
+
+  it('PC9 US-only inference is 1.1x', () => {
+    const u = { inputTokens: 1000, outputTokens: 1000, cacheWriteTokens: 0, cacheReadTokens: 0 };
+    expect(costMicroUsd('claude-opus-5-5', u, { usOnly: true })).toBe(26400);
+  });
+
+  it('PC10 usOnly false or absent is the standard price', () => {
+    const u = { inputTokens: 1000, outputTokens: 1000, cacheWriteTokens: 0, cacheReadTokens: 0 };
+    expect(costMicroUsd('claude-opus-5-5', u, { usOnly: false })).toBe(24000);
+    expect(costMicroUsd('claude-opus-5-5', u)).toBe(24000);
+  });
 });
 
 describe('sse', () => {

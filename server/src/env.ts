@@ -14,6 +14,8 @@ export const envSchema = z.object({
   // Chat (P3). Same rules: server-only, keys only in headers, never logged.
   ANTHROPIC_API_KEY: z.string().optional().transform((v) => (v ? v : undefined)),
   ANTHROPIC_MODEL: z.string().optional().transform((v) => (v ? v : 'claude-opus-5-5')),
+  // Stage 3: where Anthropic runs inference. 'us' keeps it in US infrastructure (priced 1.1x); 'global' lets it run anywhere.
+  ANTHROPIC_INFERENCE_GEO: z.string().optional().transform((v) => (v ? v : 'us')).pipe(z.enum(['us', 'global'])),
   GEMINI_MODEL: z.string().optional().transform((v) => (v ? v : undefined)),
   CHAT_PROVIDER: z.enum(['anthropic', 'gemini']).default('anthropic'),
   DAILY_SPEND_CAP_USD: z.string().regex(/^\d{1,6}(\.\d{1,2})?$/).default('5'),
@@ -32,6 +34,10 @@ export const envSchema = z.object({
     .refine((b) => b === undefined || b.length === 32, 'DATA_ENCRYPTION_KEY_PREVIOUS must be base64 of 32 bytes (openssl rand -base64 32)'),
   // P5d: the folder of the built web app; set only in the production image, where the API serves it.
   WEB_DIST_DIR: z.string().optional().transform((v) => (v ? v : undefined)),
+  // Stage 3: one deployment per country. Required in production; development and tests default to AU.
+  DEPLOYMENT_REGION: z.enum(['AU', 'UK']).optional(),
+  // The other region's web address, shown at sign-up. Empty counts as unset.
+  OTHER_REGION_URL: z.string().optional().transform((v) => (v ? v : undefined)).pipe(z.url().optional()),
   // P5a: rate limits. Off only in tests (testEnv). TRUST_PROXY_HOPS = trusted reverse-proxy hops in front of the API.
   RATE_LIMITS: z.enum(['on', 'off']).default('on'),
   TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
@@ -48,6 +54,7 @@ export const envSchema = z.object({
     if (u.username === 'chub_app' && decodeURIComponent(u.password) === 'chub_app') {
       ctx.addIssue({ code: 'custom', path: ['DATABASE_URL'], message: 'Set a real password for chub_app in production' });
     }
+    if (!e.DEPLOYMENT_REGION) ctx.addIssue({ code: 'custom', path: ['DEPLOYMENT_REGION'], message: 'Set DEPLOYMENT_REGION to AU or UK in production' });
   }
   if (e.SMTP_URL && !e.MAIL_FROM) ctx.addIssue({ code: 'custom', path: ['MAIL_FROM'], message: 'MAIL_FROM is required when SMTP_URL is set' });
   if (e.REQUIRE_EMAIL_VERIFICATION === 'on' && !e.SMTP_URL) {
@@ -56,3 +63,8 @@ export const envSchema = z.object({
 });
 
 export const env = envSchema.parse(process.env);
+
+/** This deployment's region (Stage 3). */
+export function deploymentRegion(): 'AU' | 'UK' {
+  return env.DEPLOYMENT_REGION ?? 'AU';
+}

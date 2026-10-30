@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { formatDay } from '@chub/shared/utils/deadlines';
 import { Button, Callout, Card, PageHeader } from '../../components/ui';
 import { ApiError } from '../../lib/api';
+import { RedactionNotice } from '../../components/RedactionNotice';
 import { DOCUMENT_ACCEPT } from '../../lib/documents';
 import { getPublicRequest, uploadToRequest, type PublicItem, type PublicRequest } from '../../lib/requestLinks';
 
@@ -96,6 +97,7 @@ export function UploadRequest() {
           title="Documents requested"
           lead={`${request.firmName} has asked you for the documents below. This link works until ${formatDay(request.expiresOn)}.`}
         />
+        <RedactionNotice variant="client-upload" firmName={request.firmName} />
         <Callout>
           Files go only to {request.firmName}. Upload a PDF, Word (.docx), Excel (.xlsx), CSV, text or Markdown file, up to 20 MB.
         </Callout>
