@@ -41,6 +41,14 @@ describe('kb rules', () => {
     expect(isOfficialUrl('not a url')).toBe(false);
   });
 
+  it('R11 the hosts used for MTD and the Australia–UK treaty are official, AustLII is not', () => {
+    expect(isOfficialUrl('https://www.legislation.gov.uk/uksi/2003/3199/made')).toBe(true);
+    expect(isOfficialUrl('https://www.gov.uk/government/publications/australia-tax-treaties')).toBe(true);
+    expect(isOfficialUrl('https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates')).toBe(true);
+    expect(isOfficialUrl('https://www.ato.gov.au/')).toBe(true);
+    expect(isOfficialUrl('https://www.austlii.edu.au/au/other/dfat/treaties/')).toBe(false);
+  });
+
   it('R3 an act with no URL, no effective date and no chunks has three blocking issues', () => {
     const issues = validateVersion({
       kind: 'act', officialUrl: null, billStatus: null, effectiveFrom: null,

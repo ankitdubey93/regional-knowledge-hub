@@ -224,6 +224,54 @@
     "verifiedOn": "2026-10-26",
     "note": "Over £30,000 from 6 April 2027; over £20,000 from 6 April 2028."
   },
+  "uk.mtd.itsaThreshold2026": {
+    "label": "MTD for Income Tax: qualifying income threshold, first group (from 6 April 2026)",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 5000000,
+    "effectiveFrom": "2026-04-06",
+    "source": "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax",
+    "verifiedOn": "2026-10-30",
+    "note": "Qualifying income over this amount on the 2024 to 2025 Self Assessment return."
+  },
+  "uk.mtd.itsaThreshold2027": {
+    "label": "MTD for Income Tax: qualifying income threshold, second group (from 6 April 2027)",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 3000000,
+    "effectiveFrom": "2027-04-06",
+    "source": "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax",
+    "verifiedOn": "2026-10-30",
+    "note": "Qualifying income over this amount on the 2025 to 2026 Self Assessment return."
+  },
+  "uk.mtd.itsaThreshold2028": {
+    "label": "MTD for Income Tax: qualifying income threshold, third group (from 6 April 2028)",
+    "jurisdiction": "UK",
+    "unit": "cents",
+    "value": 2000000,
+    "effectiveFrom": "2028-04-06",
+    "source": "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax",
+    "verifiedOn": "2026-10-30",
+    "note": "Qualifying income over this amount on the 2026 to 2027 Self Assessment return. GOV.UK states it; whether the enabling legislation is in force was not checked."
+  },
+  "uk.mtd.itsaStart2027": {
+    "label": "MTD for Income Tax: second group starts",
+    "jurisdiction": "UK",
+    "unit": "date",
+    "value": "2027-04-06",
+    "effectiveFrom": "2027-04-06",
+    "source": "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax",
+    "verifiedOn": "2026-10-30"
+  },
+  "uk.mtd.itsaStart2028": {
+    "label": "MTD for Income Tax: third group starts",
+    "jurisdiction": "UK",
+    "unit": "date",
+    "value": "2028-04-06",
+    "effectiveFrom": "2028-04-06",
+    "source": "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax",
+    "verifiedOn": "2026-10-30"
+  },
   "uk.nic.employerRate": {
     "label": "Employer Class 1 NIC rate above the secondary threshold",
     "jurisdiction": "UK",

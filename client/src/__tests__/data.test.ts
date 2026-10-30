@@ -8,8 +8,8 @@ import { checkEntry } from '@chub/shared/utils/ledger';
 const docIds = new Set(docs.map((d) => d.id));
 
 describe('curriculum docs', () => {
-  it('has the 14 docs of the blueprint', () => {
-    expect(docs).toHaveLength(14);
+  it('has the 15 docs of the blueprint', () => {
+    expect(docs).toHaveLength(15);
   });
   it.each(docs.map((d) => [d.id, d] as const))('%s has frontmatter and uses only known facts', (_id, d) => {
     expect(d.title.length).toBeGreaterThan(3);

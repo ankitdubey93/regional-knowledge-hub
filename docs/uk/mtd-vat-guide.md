@@ -4,7 +4,7 @@ summary: UK VAT rates and treatments, registration, VAT invoices, the nine boxes
 jurisdiction: UK
 level: beginner
 order: 1
-facts: [uk.vat.standardRate, uk.vat.reducedRate, uk.vat.registrationThreshold, uk.vat.deregistrationThreshold, uk.vat.returnDeadline, uk.mtd.itsaStart]
+facts: [uk.vat.standardRate, uk.vat.reducedRate, uk.vat.registrationThreshold, uk.vat.deregistrationThreshold, uk.vat.returnDeadline, uk.mtd.itsaStart, uk.mtd.itsaThreshold2026, uk.mtd.itsaThreshold2027, uk.mtd.itsaStart2027, uk.mtd.itsaThreshold2028, uk.mtd.itsaStart2028]
 tools: [tax, coding, journal]
 ---
 
@@ -71,7 +71,7 @@ For a fully taxable business the reverse charge nets to zero, but both sides mus
 
 Digital records means the figures flow from software to HMRC without retyping; copying numbers by hand between systems breaks the **digital link** rule.
 
-**MTD for Income Tax** started on {{fact:uk.mtd.itsaStart}} for sole traders and landlords with qualifying income over £50,000 (over £30,000 from April 2027, over £20,000 from April 2028). They keep digital records and send quarterly updates.
+**MTD for Income Tax** started on {{fact:uk.mtd.itsaStart}} for sole traders and landlords with qualifying income over {{fact:uk.mtd.itsaThreshold2026}} (over {{fact:uk.mtd.itsaThreshold2027}} from {{fact:uk.mtd.itsaStart2027}}, over {{fact:uk.mtd.itsaThreshold2028}} from {{fact:uk.mtd.itsaStart2028}}). They keep digital records and send quarterly updates. The *Making Tax Digital* guide in this path covers both schemes in more detail.
 
 ## VAT in the ledger
 

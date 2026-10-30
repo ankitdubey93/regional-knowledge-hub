@@ -852,5 +852,10 @@
     "jurisdiction": "UK",
     "front": "QBO UK codes",
     "back": "Shorter names (e.g. 20.0% S, 0.0% Z) mapped to the same boxes."
-  }
+  },
+  { "id": "f-making-tax-digital-1", "doc": "uk/making-tax-digital", "jurisdiction": "UK", "front": "MTD for Income Tax: who is in it", "back": "Sole traders and landlords whose qualifying income is over the threshold for that year. Partnerships join later, on a date HMRC has not set." },
+  { "id": "f-making-tax-digital-2", "doc": "uk/making-tax-digital", "jurisdiction": "UK", "front": "Qualifying income (MTD for Income Tax)", "back": "Total income from self-employment and UK property before expenses (turnover), taken from a Self Assessment return HMRC already has." },
+  { "id": "f-making-tax-digital-3", "doc": "uk/making-tax-digital", "jurisdiction": "UK", "front": "Digital link (MTD)", "back": "Data moving between programs goes electronically: linked cells, file import and export, or an API. HMRC does not count cut and paste or copy and paste." },
+  { "id": "f-making-tax-digital-4", "doc": "uk/making-tax-digital", "jurisdiction": "UK", "front": "Quarterly update (MTD for Income Tax)", "back": "A summary of income and expenses sent from compatible software for each quarter of the tax year. The tax return after the year still follows." },
+  { "id": "f-making-tax-digital-5", "doc": "uk/making-tax-digital", "jurisdiction": "UK", "front": "Exempt from MTD for Income Tax", "back": "HMRC can exempt some people, for example if they are digitally excluded. An exempt person still reports on a Self Assessment tax return." }
 ]

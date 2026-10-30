@@ -2602,5 +2602,70 @@
     ],
     "answer": 0,
     "facts": []
+  },
+  {
+    "id": "q-making-tax-digital-1",
+    "doc": "uk/making-tax-digital",
+    "jurisdiction": "UK",
+    "question": "A bookkeeper keeps VAT records in a spreadsheet and types the totals into bridging software to file the return. What is wrong?",
+    "options": [
+      { "text": "Nothing: bridging software is allowed", "why": "Bridging software is allowed, but the figures must reach it by a digital link, not by retyping." },
+      { "text": "Typing the totals across breaks the digital link rule", "why": "Right: data moving between programs must go by a digital link, and HMRC does not count copying by hand or copy and paste as one." },
+      { "text": "Spreadsheets can never be part of MTD records", "why": "Spreadsheets can hold the records if they are digitally linked to the filing software." }
+    ],
+    "answer": 1,
+    "facts": []
+  },
+  {
+    "id": "q-making-tax-digital-2",
+    "doc": "uk/making-tax-digital",
+    "jurisdiction": "UK",
+    "question": "What does HMRC count as qualifying income for MTD for Income Tax?",
+    "options": [
+      { "text": "Self-employment and UK property income before expenses (turnover)", "why": "Right: HMRC uses the gross amount, so a landlord with a small profit can still be in scope." },
+      { "text": "Profit after expenses", "why": "Expenses are not deducted for this test; it uses turnover." },
+      { "text": "All income, including wages and dividends", "why": "Wages and dividends are not qualifying income; only self-employment and property income count." }
+    ],
+    "answer": 0,
+    "facts": ["uk.mtd.itsaThreshold2026"]
+  },
+  {
+    "id": "q-making-tax-digital-3",
+    "doc": "uk/making-tax-digital",
+    "jurisdiction": "UK",
+    "question": "How does HMRC decide whether a sole trader must start MTD for Income Tax from a given April?",
+    "options": [
+      { "text": "From the qualifying income on a Self Assessment return for an earlier tax year", "why": "Right: for the first group HMRC looked at the 2024 to 2025 return, so people know before their start date." },
+      { "text": "From the income earned in the year they would start", "why": "The test looks back at a return already filed, not at the year that has not happened yet." },
+      { "text": "From the business's VAT taxable turnover", "why": "VAT registration has its own test; MTD for Income Tax uses qualifying income from Self Assessment." }
+    ],
+    "answer": 0,
+    "facts": ["uk.mtd.itsaStart"]
+  },
+  {
+    "id": "q-making-tax-digital-4",
+    "doc": "uk/making-tax-digital",
+    "jurisdiction": "UK",
+    "question": "Under MTD for Income Tax, what replaces the Self Assessment tax return?",
+    "options": [
+      { "text": "Nothing: a tax return is still submitted after the tax year", "why": "Right: the quarterly updates come in addition to the return, which is still filed after the year ends." },
+      { "text": "The four quarterly updates", "why": "Quarterly updates summarise income and expenses during the year; they do not replace the return." },
+      { "text": "An annual VAT return", "why": "VAT is a separate tax with its own returns." }
+    ],
+    "answer": 0,
+    "facts": ["uk.mtdItsa.updateDueDay"]
+  },
+  {
+    "id": "q-making-tax-digital-5",
+    "doc": "uk/making-tax-digital",
+    "jurisdiction": "UK",
+    "question": "A limited company has turnover well above every MTD for Income Tax threshold. Does MTD for Income Tax apply to it?",
+    "options": [
+      { "text": "No: it covers sole traders and landlords, and a company's profits are taxed through Corporation Tax", "why": "Right: the thresholds test an individual's qualifying income, not a company's turnover." },
+      { "text": "Yes, from the first start date", "why": "The start dates apply to individuals with qualifying income over the threshold, not to companies." },
+      { "text": "Only if the company is VAT registered", "why": "VAT registration brings MTD for VAT, which is a separate scheme." }
+    ],
+    "answer": 0,
+    "facts": []
   }
 ]

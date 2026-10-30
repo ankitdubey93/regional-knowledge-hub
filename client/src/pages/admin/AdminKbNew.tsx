@@ -307,7 +307,7 @@ function NewPanel() {
                 <input
                   type="file"
                   accept=".txt,.md,.markdown,.html,.htm,.pdf,.docx"
-                  className={inputClass}
+                  className="block w-full text-sm text-ink file:mr-3 file:min-h-10 file:cursor-pointer file:rounded-lg file:border file:border-line file:bg-panel-2 file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
                   onChange={(e) => setFile(e.target.files?.[0] ?? null)}
                 />
               </Field>

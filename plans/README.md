@@ -39,7 +39,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 | 13 | `b3-profitability.md` | outline | 12 | none | todo |
 | 14 | `a1-practice-router.md` | outline | 7, 11 | Approve the Hard rule 12 amendment | todo |
 | 15 | `a2-extraction.md` | outline | launch gate, 0b | none | todo |
-| any | `a3-kb-mtd-treaties.md` | outline | — (P2a built) | Ingest and publish the sources in `/admin/kb` | todo |
+| any | `a3-kb-mtd-treaties.md` | full | — (P2a built) | Ingested 2026-10-30 (K1 to K8 all published) | done (landed 2026-10-30) |
 
 `prose-figures-inventory.md` is a working list for debt-sprint item 7. It is not a plan.
 

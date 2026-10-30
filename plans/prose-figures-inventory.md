@@ -34,9 +34,6 @@ Working file, not a record of verification. Nothing here is marked verified (Har
 | docs/uk/companies-act-2006.md | 15 | For periods beginning on or after 6 April 2025 | date | uk.ca.sizeThresholdsEffective | legislation.gov.uk |
 | docs/uk/mtd-vat-guide.md | 29 | expect it to in the next 30 days alone | threshold | uk.vat.registrationForwardLookDays | gov.uk |
 | docs/uk/mtd-vat-guide.md | 51 | enough points trigger a £200 penalty | penalty | uk.vat.latePointsPenalty | gov.uk |
-| docs/uk/mtd-vat-guide.md | 74 | qualifying income over £50,000 | threshold | uk.mtd.itsaThreshold2026 | gov.uk |
-| docs/uk/mtd-vat-guide.md | 74 | over £30,000 from April 2027 | threshold | uk.mtd.itsaThreshold2027 | gov.uk |
-| docs/uk/mtd-vat-guide.md | 74 | over £20,000 from April 2028 | threshold | uk.mtd.itsaThreshold2028 | gov.uk |
 | docs/uk/mtd-vat-guide.md | 19 | Zero-rated 0% | rate | uk.vat.zeroRate | gov.uk |
 | docs/uk/paye-cis-overview.md | 20 | paid to HMRC by the 22nd of the following month electronically (19th by post) | deadline | uk.paye.paymentDayElectronic, uk.paye.paymentDayPost | gov.uk |
 | docs/uk/paye-cis-overview.md | 22 | give each employee a P60 by 31 May | deadline | uk.paye.p60Deadline | gov.uk |

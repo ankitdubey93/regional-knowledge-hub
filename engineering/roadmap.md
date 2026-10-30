@@ -149,7 +149,7 @@ The owner's research on AU and UK firms named four pains: chasing documents, cro
 | **B3** | Profitability: time cost against billed or fixed fee per entity and engagement, realisation and margin in bp | B2 | planned, outline (`plans/b3-profitability.md`) |
 | **A1** | Practice-data router: typed read-only queries ("due this week", "over capacity", "unbilled time") become cited practice sources in chat; amends Hard rule 12 | W2, B1 | planned, outline (`plans/a1-practice-router.md`) |
 | **A2** | Extraction: an invoice or receipt (text layer only) becomes a draft journal; every extracted figure must appear verbatim in the document; the tax split comes from the engines; an accountant approves | P4, launch gate | planned, outline (`plans/a2-extraction.md`) |
-| **A3** | KB content: MTD for VAT and ITSA, the AU–UK double tax agreement, through `/admin/kb` | P2a | planned, outline (`plans/a3-kb-mtd-treaties.md`) |
+| **A3** | KB content: MTD for VAT and ITSA, the AU–UK double tax agreement, through `/admin/kb` | P2a | built 2026-10-30 (guide, 5 facts, K1 to K8 published; **not checked:** whether the third-group threshold is in force in legislation, the ATO page chosen for K4, Article chunking beyond the owner's review, treaty answers with a live provider) |
 
 P5c (audit and retention) and P5d (deploy shape: image, Compose `prod` profile, backups and restore drill, key rotation, `engineering/operations.md`; built 2026-10-30) are built. The hosting target and region, TLS, the reverse proxy, the SMTP provider and off-server backup storage are still the owner's to decide. D5 was done in C3 (built 2026-10-30).
 
