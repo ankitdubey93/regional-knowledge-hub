@@ -61,12 +61,14 @@ const AdminKbSearch = page(() => import('./pages/admin/AdminKbSearch'), 'AdminKb
 const AdminFacts = page(() => import('./pages/admin/AdminFacts'), 'AdminFacts');
 const AdminFactNew = page(() => import('./pages/admin/AdminFact'), 'AdminFactNew');
 const AdminFactEdit = page(() => import('./pages/admin/AdminFact'), 'AdminFactEdit');
+const UploadRequest = page(() => import('./pages/public/UploadRequest'), 'UploadRequest');
 
 export function App() {
   return (
     <Suspense fallback={<p className="p-8 text-muted">Loading…</p>}>
       <KbGate>
         <Routes>
+          <Route path="r/:token" element={<UploadRequest />} />
           <Route element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="knowledge" element={<KnowledgeLayout />}>

@@ -2,8 +2,8 @@
 import { z } from 'zod';
 import { apiJson } from './api';
 
-export const AUDIT_ACTIONS = ['sign_in', 'document.upload', 'document.download', 'document.delete', 'ledger.import', 'ledger.delete', 'member.invite', 'member.remove', 'member.role', 'retention.update', 'retention.purge'] as const;
-export const AUDIT_TARGET_TYPES = ['user', 'document', 'ledger_import', 'invitation', 'member', 'organization'] as const;
+export const AUDIT_ACTIONS = ['sign_in', 'document.upload', 'document.download', 'document.delete', 'ledger.import', 'ledger.delete', 'member.invite', 'member.remove', 'member.role', 'retention.update', 'retention.purge', 'request_link.create', 'request_link.pause', 'request_link.resume', 'request_link.revoke', 'request_link.nudge'] as const;
+export const AUDIT_TARGET_TYPES = ['user', 'document', 'ledger_import', 'invitation', 'member', 'organization', 'request_link'] as const;
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
 export type AuditTargetType = (typeof AUDIT_TARGET_TYPES)[number];
 
@@ -19,10 +19,15 @@ export const ACTION_LABELS: Record<AuditAction, string> = {
   'member.role': "Changed a member's role",
   'retention.update': 'Changed retention',
   'retention.purge': 'Purged old records',
+  'request_link.create': 'Sent a document request link',
+  'request_link.pause': 'Paused reminders on a request link',
+  'request_link.resume': 'Resumed reminders on a request link',
+  'request_link.revoke': 'Revoked a request link',
+  'request_link.nudge': 'Sent a reminder for a request link',
 };
 export const TARGET_LABELS: Record<AuditTargetType, string> = {
   user: 'User', document: 'Document', ledger_import: 'Trial balance import',
-  invitation: 'Invitation', member: 'Member', organization: 'Workspace',
+  invitation: 'Invitation', member: 'Member', organization: 'Workspace', request_link: 'Request link',
 };
 
 export const auditEventSchema = z.object({

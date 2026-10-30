@@ -274,8 +274,9 @@ export const AUDIT_EVENT_ACTIONS = [
   'ledger.import', 'ledger.delete',
   'member.invite', 'member.remove', 'member.role',
   'retention.update', 'retention.purge',
+  'request_link.create', 'request_link.pause', 'request_link.resume', 'request_link.revoke', 'request_link.nudge',
 ] as const;
-export const AUDIT_TARGET_TYPES = ['user', 'document', 'ledger_import', 'invitation', 'member', 'organization'] as const;
+export const AUDIT_TARGET_TYPES = ['user', 'document', 'ledger_import', 'invitation', 'member', 'organization', 'request_link'] as const;
 
 export const auditEvent = pgTable(
   'audit_event',
@@ -401,6 +402,10 @@ export const document = pgTable(
     truncated: boolean('truncated').notNull().default(false),
     fileEnc: bytea('file_enc').notNull(),
     textEnc: bytea('text_enc').notNull(),
+    // C3: set for uploads through a client request link. Their FKs (ON DELETE SET NULL of one column) are in 0035, because drizzle cannot express them.
+    requestId: uuid('request_id'),
+    requestLinkId: uuid('request_link_id'),
+    supersedesId: uuid('supersedes_id'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
@@ -466,6 +471,63 @@ export const documentRequest = pgTable(
     foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'document_request_client_org_fk' }).onDelete('cascade'),
     unique('document_request_item_unique').on(t.clientId, t.itemId, t.obligationId).nullsNotDistinct(),
     index('document_request_client_idx').on(t.clientId),
+    unique('document_request_id_client_org_unique').on(t.id, t.clientId, t.orgId),
+  ],
+);
+
+// Tenant tables (C3): RLS, checks, the document FKs and request_link_resolve are in migration 0035 (Hard rule 11).
+// token_hash finds a link; token_enc (sealed) lets a reminder carry the link. Never logged.
+export const requestLink = pgTable(
+  'request_link',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    clientId: uuid('client_id').notNull(),
+    tokenHash: bytea('token_hash').notNull(),
+    tokenEnc: bytea('token_enc').notNull(),
+    recipientEmail: text('recipient_email').notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    paused: boolean('paused').notNull().default(false),
+    cadenceDays: integer('cadence_days').array().notNull().default(sql`'{3,7,14}'::integer[]`),
+    nudgeCount: integer('nudge_count').notNull().default(0),
+    lastNudgedAt: timestamp('last_nudged_at', { withTimezone: true }),
+    createdBy: text('created_by').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'request_link_client_org_fk' }).onDelete('cascade'),
+    unique('request_link_id_client_org_unique').on(t.id, t.clientId, t.orgId),
+    uniqueIndex('request_link_token_hash_idx').on(t.tokenHash),
+    index('request_link_client_idx').on(t.clientId),
+  ],
+);
+
+export const requestLinkItem = pgTable(
+  'request_link_item',
+  {
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    clientId: uuid('client_id').notNull(),
+    linkId: uuid('link_id').notNull(),
+    requestId: uuid('request_id').notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.linkId, t.requestId], name: 'request_link_item_pk' }),
+    foreignKey({
+      columns: [t.linkId, t.clientId, t.orgId],
+      foreignColumns: [requestLink.id, requestLink.clientId, requestLink.orgId],
+      name: 'request_link_item_link_fk',
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [t.requestId, t.clientId, t.orgId],
+      foreignColumns: [documentRequest.id, documentRequest.clientId, documentRequest.orgId],
+      name: 'request_link_item_request_fk',
+    }).onDelete('cascade'),
+    index('request_link_item_request_idx').on(t.requestId),
   ],
 );
 

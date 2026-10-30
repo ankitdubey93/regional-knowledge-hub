@@ -9,7 +9,8 @@ const IV_BYTES = 12;
 const TAG_BYTES = 16;
 
 /** `${table}:${orgId}:${id}` — binds a ciphertext to its row and firm. */
-export function aadFor(table: 'conversation' | 'document.file' | 'document.text', orgId: string, id: string): string {
+export function aadFor(table: 'conversation' | 'document.file' | 'document.text' | 'request_link.token',
+  orgId: string, id: string): string {
   return `${table}:${orgId}:${id}`;
 }
 

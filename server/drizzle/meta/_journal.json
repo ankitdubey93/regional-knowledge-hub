@@ -239,6 +239,20 @@
       "when": 1793337484206,
       "tag": "0033_audit_retention_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1793346000937,
+      "tag": "0034_c3_request_links",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1793346009993,
+      "tag": "0035_c3_request_links_rules",
+      "breakpoints": true
     }
   ]
 }

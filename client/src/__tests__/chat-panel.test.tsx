@@ -274,6 +274,9 @@ describe('ChatPanel', () => {
       textChars: 40,
       truncated: false,
       uploadedBy: 'u1',
+      requestId: null,
+      supersedesId: null,
+      fromClientLink: false,
       createdAt: NOW,
     };
     const engagement: DocumentView = { ...sales, id: 'doc-2', originalName: 'Engagement.pdf', kind: 'pdf' };

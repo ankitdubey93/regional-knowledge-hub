@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { formatDay } from '@chub/shared/utils/deadlines';
 import { Button, Callout, Card, Field, inputClass, PageHeader, TableScroll, TextLink } from '../../components/ui';
+import { RequestLinks } from '../../components/RequestLinks';
 import { ApiError, apiJson } from '../../lib/api';
 import type { ClientRecord } from '../../lib/entity';
 import { addRequest, deleteRequest, generateRequests, listRequests, setRequestStatus, type RequestView } from '../../lib/requests';
@@ -160,7 +161,7 @@ export function EntityRequests() {
     <div className="space-y-6">
       <TextLink to={`/entities/${c.id}`}>{`Back to ${c.name}`}</TextLink>
       <PageHeader title="Requests" lead={`Documents to ask ${c.name} for, worked out from its profile and due dates.`} />
-      <Callout tone="warn">Requests are listed here, not sent. Items marked Not checked have not been confirmed against their official source.</Callout>
+      <Callout tone="warn">Send open requests to the client with an upload link below. Items marked Not checked have not been confirmed against their official source.</Callout>
 
       <Card>
         <h2 className="font-semibold">Generate</h2>
@@ -260,6 +261,8 @@ export function EntityRequests() {
           </TableScroll>
         )}
       </Card>
+
+      <RequestLinks clientId={c.id} requests={requests} />
     </div>
   );
 }

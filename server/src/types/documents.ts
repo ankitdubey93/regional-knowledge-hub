@@ -10,5 +10,8 @@ export interface DocumentView {
   textChars: number;
   truncated: boolean;
   uploadedBy: string;
+  requestId: string | null;
+  supersedesId: string | null;
+  fromClientLink: boolean;
   createdAt: string;
 }

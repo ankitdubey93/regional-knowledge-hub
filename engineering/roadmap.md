@@ -117,9 +117,9 @@ The goal is to give each entity its own numbers, so that answers can come from t
 | D2 | GL transactions, record search, account drill-down, tax-code summary against `basWorksheet`/`vat100` using `tax-codes.json`, `parseLedgerDate` | planned |
 | D3 | XLSX import (`read-excel-file` 9.3.12 is installed since P4; the trial-balance import still has to use it) | planned |
 | D4 | Live Xero, then QBO, connection (OAuth, token storage, sync; check Xero's current API access terms) | planned |
-| D5 | Document requests and chasing | merged into C3 of the practice track (2026-10-28) |
+| D5 | Document requests and chasing | merged into C3, built 2026-10-30 |
 
-Gates: D2 needs D1; D4 needs D1; D5 is now C3 (practice track).
+Gates: D2 needs D1; D4 needs D1; D5 was done in C3 (practice track).
 
 P3b note: resolved in P3b (2026-10-28); Hard rule 12 was amended so an entity's figures are grounded in ledger sources built by the report engines and cited as the report.
 
@@ -139,7 +139,7 @@ The owner's research on AU and UK firms named four pains: chasing documents, cro
 | **P5a** | Rate limits on sign-up, sign-in, chat, uploads and KB fetch; 429 with `Retry-After` | P3 | built (2026-10-29); limits are untuned guesses, not checked on real traffic or behind a real proxy |
 | **P5b** | Email over SMTP: verification, password reset, workspace invitations | P5a | built 2026-10-29 |
 | **C2** | Intake checklist: deterministic rules (jurisdiction × entity type × registration) produce each entity's document request list; C1 obligations add dated requests | C1 | built 2026-10-28 (`e2e/requests.spec.ts` passed; 7 AU items not checked; requests are listed, not sent) |
-| **C3** | Document requests and chasing (was D5): a tokenised upload link per request batch, uploads into the P4 sealed store, version chains on re-upload, email nudges on a cadence with stop rules | C2, P5a, P5b, P5c | planned, outline (`plans/c3-requests-chasing.md`) |
+| **C3** | Document requests and chasing (was D5): a tokenised upload link per request batch, uploads into the P4 sealed store, version chains on re-upload, email nudges on a cadence with stop rules | C2, P5a, P5b, P5c | built 2026-10-30 (`npm run test:e2e` gave `201 passed (9.3m)`; request mail not tried through a real SMTP provider; limits, cadence and interval untuned; no malware scan or NER on client uploads) |
 | **P5c** | Audit log (`audit_event`, append-only, `/workspace/audit`) and retention (owner-set days for documents and conversations, a locked 6-hourly purge job, `scripts/vacuum.ts`); also purges `rate_bucket` rows older than a day (P5a's "never purged" note is retired) | P3, P4, W2 | built 2026-10-30; limits and interval untuned, `VACUUM` unscheduled until P5d |
 | **W1** | Engagements and templates: `engagement_template`, `engagement`, `task`; seeded templates (monthly bookkeeping, BAS quarter, VAT quarter, year-end, payroll run); C1 obligations can open engagements | C1 | built 2026-10-29 |
 | **W2** | Board and capacity: a keyboard-first board by status, `member_capacity`, a workload view per member | W1 | built 2026-10-29 |
@@ -150,7 +150,7 @@ The owner's research on AU and UK firms named four pains: chasing documents, cro
 | **A2** | Extraction: an invoice or receipt (text layer only) becomes a draft journal; every extracted figure must appear verbatim in the document; the tax split comes from the engines; an accountant approves | P4, launch gate | planned, outline (`plans/a2-extraction.md`) |
 | **A3** | KB content: MTD for VAT and ITSA, the AU–UK double tax agreement, through `/admin/kb` | P2a | planned, outline (`plans/a3-kb-mtd-treaties.md`) |
 
-P5c (audit and retention) is built; P5d (deploy shape) keeps its place before the Stage 3 launch gate. Its plan is `plans/p5d-deploy.md` (outline). D5 is merged into C3.
+P5c (audit and retention) is built; P5d (deploy shape) keeps its place before the Stage 3 launch gate. Its plan is `plans/p5d-deploy.md` (outline). D5 was done in C3 (built 2026-10-30).
 
 "Outline" means the plan names its tables, routes and steps but is **not dispatchable**: its starting state depends on plans that have not landed. Re-run `code-planner` on an outline once its gates are done; that turns it into a full plan.
 

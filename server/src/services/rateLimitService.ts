@@ -14,6 +14,9 @@ export const LIMITS = {
   upload: { window: 3600, max: 60 }, // per user, POST /api/clients/:clientId/documents
   ledgerImport: { window: 3600, max: 30 }, // per user, POST /api/clients/:clientId/ledger/imports
   kbIngest: { window: 3600, max: 60 }, // per user, POST /api/admin/kb/sources/:id/versions and .../upload
+  publicView: { window: 3600, max: 120 }, // per IP, GET /api/public/requests/:token
+  publicUpload: { window: 3600, max: 20 }, // per IP, POST /api/public/requests/:token/items/:requestId/upload
+  requestLink: { window: 3600, max: 30 }, // per user, POST /api/clients/:clientId/request-links
 } as const;
 
 export type LimitName = keyof typeof LIMITS;

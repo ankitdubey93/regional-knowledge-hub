@@ -170,6 +170,8 @@ export function EntityDocuments() {
                   <tr key={d.id}>
                     <td className="border-b border-line px-2 py-1">
                       {d.originalName}
+                      {d.fromClientLink && <span className="block text-xs text-muted">From the client's upload link</span>}
+                      {d.supersedesId !== null && <span className="block text-xs text-muted">Replaces an earlier upload</span>}
                       {d.truncated && ' (only the first part is used)'}
                     </td>
                     <td className="border-b border-line px-2 py-1">{KIND_LABELS[d.kind]}</td>

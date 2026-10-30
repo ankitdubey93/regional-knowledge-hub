@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
-import { client, document } from '../db/schema';
+import { client, document, documentRequest } from '../db/schema';
 import { withOrg, type Tx } from '../db/withOrg';
 import type { DocumentKind } from '../documents/extract';
 import { aadFor, seal, unseal } from '../privacy/crypto';
@@ -9,6 +9,10 @@ import { recordEvent, type AuditActor } from './auditEventService';
 
 // Documents are stored sealed (privacy/crypto.ts). Nothing here logs a name, bytes or text (Hard rule 13).
 export const MAX_DOCUMENTS_PER_CLIENT = 200; // untuned
+
+/** uploaded_by for files that came through a client request link (C3). Not a user id. */
+export const CLIENT_LINK_UPLOADER = 'client_link';
+export interface LinkUpload { linkId: string; requestId: string }
 
 interface ViewRow {
   id: string;
@@ -19,6 +23,8 @@ interface ViewRow {
   textChars: number;
   truncated: boolean;
   uploadedBy: string;
+  requestId: string | null;
+  supersedesId: string | null;
   createdAt: Date;
 }
 
@@ -32,6 +38,8 @@ const viewColumns = {
   textChars: document.textChars,
   truncated: document.truncated,
   uploadedBy: document.uploadedBy,
+  requestId: document.requestId,
+  supersedesId: document.supersedesId,
   createdAt: document.createdAt,
 };
 
@@ -45,6 +53,9 @@ export function toDocumentView(r: ViewRow): DocumentView {
     textChars: r.textChars,
     truncated: r.truncated,
     uploadedBy: r.uploadedBy,
+    requestId: r.requestId,
+    supersedesId: r.supersedesId,
+    fromClientLink: r.uploadedBy === CLIENT_LINK_UPLOADER,
     createdAt: r.createdAt.toISOString(),
   };
 }
@@ -77,6 +88,20 @@ export async function listDocuments(orgId: string, clientId: string): Promise<Do
 
 export type UploadOutcome = { document: DocumentView; created: boolean } | { notFound: true } | { full: true };
 
+async function markReceived(tx: Tx, orgId: string, clientId: string, requestId: string): Promise<void> {
+  await tx
+    .update(documentRequest)
+    .set({ status: 'received', updatedAt: sql`now()` })
+    .where(
+      and(
+        eq(documentRequest.id, requestId),
+        eq(documentRequest.clientId, clientId),
+        eq(documentRequest.orgId, orgId),
+        eq(documentRequest.status, 'open'),
+      ),
+    );
+}
+
 async function findBySha(orgId: string, clientId: string, sha256: string): Promise<DocumentView | null> {
   return withOrg(orgId, async (tx) => {
     const rows = await tx
@@ -94,9 +119,11 @@ export async function uploadDocument(
   actor: AuditActor,
   clientId: string,
   input: { name: string; kind: DocumentKind; bytes: Uint8Array; text: string; truncated: boolean },
+  link: LinkUpload | null = null,
 ): Promise<UploadOutcome> {
   const sha256 = createHash('sha256').update(input.bytes).digest('hex');
 
+  let supersedesId: string | null = null;
   const pre = await withOrg(orgId, async (tx): Promise<UploadOutcome | null> => {
     if (!(await clientExists(tx, orgId, clientId))) return { notFound: true };
     const dup = await tx
@@ -105,7 +132,19 @@ export async function uploadDocument(
       .where(and(eq(document.orgId, orgId), eq(document.clientId, clientId), eq(document.sha256, sha256)))
       .limit(1);
     const found = dup[0];
-    if (found) return { document: toDocumentView(found), created: false };
+    if (found) {
+      if (link) await markReceived(tx, orgId, clientId, link.requestId);
+      return { document: toDocumentView(found), created: false };
+    }
+    if (link) {
+      const prior = await tx
+        .select({ id: document.id })
+        .from(document)
+        .where(and(eq(document.orgId, orgId), eq(document.clientId, clientId), eq(document.requestId, link.requestId)))
+        .orderBy(desc(document.createdAt))
+        .limit(1);
+      supersedesId = prior[0]?.id ?? null;
+    }
     const counted = await tx
       .select({ n: sql<number>`count(*)::int` })
       .from(document)
@@ -128,7 +167,10 @@ export async function uploadDocument(
           id,
           orgId,
           clientId,
-          uploadedBy: actor.userId,
+          uploadedBy: link ? CLIENT_LINK_UPLOADER : actor.userId,
+          requestId: link?.requestId ?? null,
+          requestLinkId: link?.linkId ?? null,
+          supersedesId: link ? supersedesId : null,
           originalName: input.name,
           kind: input.kind,
           byteSize: input.bytes.length,
@@ -141,14 +183,17 @@ export async function uploadDocument(
         .returning(viewColumns);
       const created = rows[0];
       if (created) {
+        if (link) await markReceived(tx, orgId, clientId, link.requestId);
         await recordEvent(tx, {
           orgId,
-          actorId: actor.userId,
+          actorId: link ? null : actor.userId,
           ipKey: actor.ipKey,
           action: 'document.upload',
           targetType: 'document',
           targetId: created.id,
-          detail: { clientId, kind: input.kind, byteSize: input.bytes.length },
+          detail: link
+            ? { clientId, kind: input.kind, byteSize: input.bytes.length, via: 'request_link', linkId: link.linkId, requestId: link.requestId }
+            : { clientId, kind: input.kind, byteSize: input.bytes.length },
         });
       }
       return rows;

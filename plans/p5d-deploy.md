@@ -18,7 +18,7 @@ Status: outline
 - **The web build** is served by Express static from the same container (one origin, no CORS). This is simpler than an nginx stage, and the owner can override it.
 - **Compose `prod` profile**: `db`, `api`, no Mailpit. `TRUST_PROXY_HOPS` is set to match the host's proxy.
 - **Backups.** `scripts/backup.sh` runs `pg_dump -Fc` to a dated file. `scripts/restore-drill.sh` restores into a scratch database and runs `/api/health` plus a row-count check. `engineering/operations.md` (new) documents both.
-- **Key rotation.** The seal already has a version byte. Add `DATA_ENCRYPTION_KEY_PREVIOUS` and a version-to-key map. `server/scripts/reseal.ts` re-seals every `document` and `conversation.redaction_map` under the new key in batches, and is resumable.
+- **Key rotation.** The seal already has a version byte. Add `DATA_ENCRYPTION_KEY_PREVIOUS` and a version-to-key map. `server/scripts/reseal.ts` re-seals every `document` and `conversation.redaction_map` and `request_link.token_enc` (C3) under the new key in batches, and is resumable.
 
 ## Step skeleton
 
@@ -33,4 +33,5 @@ Status: outline
 
 ## Risks
 
+- Do not log request paths for `/r/` and `/api/public/requests/`: they carry link tokens (C3).
 - **Losing `DATA_ENCRYPTION_KEY` loses every sealed document.** The operations doc puts its off-database backup first.

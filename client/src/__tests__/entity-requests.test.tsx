@@ -78,14 +78,14 @@ describe('Entity requests (C2)', () => {
     vi.clearAllMocks();
   });
 
-  it('ER1 shows the not-sent note and the empty state', async () => {
+  it('ER1 shows the send note and the empty state', async () => {
     stubApi({
       'GET /api/clients/c1': ok({ client: acme }),
       'GET /api/clients/c1/requests': ok({ requests: [] }),
     });
     renderPage();
     expect(await screen.findByText(EMPTY_TEXT)).toBeInTheDocument();
-    expect(screen.getByText('Requests are listed here, not sent.', { exact: false })).toBeInTheDocument();
+    expect(screen.getByText('Send open requests to the client with an upload link below.', { exact: false })).toBeInTheDocument();
   });
 
   it('ER2 lists a request with its due date and an unchecked source', async () => {

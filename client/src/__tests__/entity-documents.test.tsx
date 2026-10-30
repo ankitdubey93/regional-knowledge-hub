@@ -32,6 +32,9 @@ function doc(over: Partial<DocumentView> = {}): DocumentView {
     textChars: 120,
     truncated: false,
     uploadedBy: 'u1',
+    requestId: null,
+    supersedesId: null,
+    fromClientLink: false,
     createdAt: '2026-10-27T00:00:00.000Z',
     ...over,
   };

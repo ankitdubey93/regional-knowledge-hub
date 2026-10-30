@@ -15,6 +15,9 @@ export const documentViewSchema = z.object({
   textChars: z.number().int(),
   truncated: z.boolean(),
   uploadedBy: z.string(),
+  requestId: z.string().nullable(),
+  supersedesId: z.string().nullable(),
+  fromClientLink: z.boolean(),
   createdAt: z.string(),
 });
 

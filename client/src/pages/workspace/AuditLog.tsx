@@ -218,7 +218,7 @@ export function AuditLog() {
                       <td className="py-2 pr-4">
                         {new Date(e.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
                       </td>
-                      <td className="py-2 pr-4">{e.actorName ?? (e.actorId === null ? 'System' : 'Former member')}</td>
+                      <td className="py-2 pr-4">{e.actorName ?? (e.actorId === null ? (e.detail.via === 'request_link' ? 'Client (upload link)' : 'System') : 'Former member')}</td>
                       <td className="py-2 pr-4">{ACTION_LABELS[e.action]}</td>
                       <td className="py-2">
                         {e.action === 'retention.purge'
