@@ -53,7 +53,24 @@ function isListBlock(block: string): boolean {
   return lines.length > 0 && lines.every((l) => /^\s*(?:[-*]|\d+\.)\s+/.test(l));
 }
 
-export function checkGrounding(answer: string, sources: CitedChunk[], factValues: string[], documentTexts: string[] = []): GroundingResult {
+/** True when the block names an attached document by file name or label (D1), whole word, case-insensitive. */
+function namesDocument(block: string, documentNames: string[]): boolean {
+  return documentNames.some((n) => {
+    const name = n.trim();
+    if (name === '') return false;
+    const body = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`(?<![\\p{L}\\p{N}])${body}(?![\\p{L}\\p{N}])`, 'iu').test(block);
+  });
+}
+
+/** documentNames are the attached documents' file names and labels: a block that names one relays that document, which is never cited, so it skips the uncited check (its numbers are still checked). */
+export function checkGrounding(
+  answer: string,
+  sources: CitedChunk[],
+  factValues: string[],
+  documentTexts: string[] = [],
+  documentNames: string[] = [],
+): GroundingResult {
   if (answer.trim() === NOT_IN_SOURCES) return { status: 'not_covered', flags: [], usedMarkers: [] };
 
   const flags: GroundingFlag[] = [];
@@ -74,6 +91,7 @@ export function checkGrounding(answer: string, sources: CitedChunk[], factValues
       if (parseMarkers(block).length > 0) continue;
       // A list right after a lead-in that ends "[n]:" is cited by that lead-in.
       if (CITED_LEAD_IN.test(leadIn) && isListBlock(block)) continue;
+      if (namesDocument(block, documentNames)) continue;
       const plain = block
         .replace(/[#*>]|_(?!\d+\])/g, '')
         .replace(/^\s*(?:[-*]|\d+\.)\s+/gm, '')

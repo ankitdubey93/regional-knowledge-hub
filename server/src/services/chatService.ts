@@ -274,6 +274,7 @@ export async function runExchange(
       ],
       factValues,
       docs.map((d) => d.text),
+      docs.flatMap((d) => [d.name, d.label]),
     );
     status = g.status;
     flags = g.flags;

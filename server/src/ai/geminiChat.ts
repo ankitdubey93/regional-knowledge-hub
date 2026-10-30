@@ -15,6 +15,7 @@ const chunkSchema = z.object({
     .object({
       promptTokenCount: z.number().optional(),
       candidatesTokenCount: z.number().optional(),
+      thoughtsTokenCount: z.number().optional(),
       cachedContentTokenCount: z.number().optional(),
     })
     .optional(),
@@ -32,7 +33,7 @@ function statusError(status: number): ChatProviderError {
   return new ChatProviderError(message, code);
 }
 
-/** Gemini streamGenerateContent over plain fetch. Request shape from Google's public docs; not checked against a live call. */
+/** Gemini streamGenerateContent over plain fetch. Request shape from Google's public docs, checked live on 2026-10-30 with gemini-3.8-flash. */
 export function geminiChatProvider(apiKey: string, model: string, fetchImpl: typeof fetch = fetch): ChatProvider {
   return {
     name: 'gemini',
@@ -101,7 +102,8 @@ export function geminiChatProvider(apiKey: string, model: string, fetchImpl: typ
         type: 'usage',
         model,
         inputTokens: usage?.promptTokenCount ?? 0,
-        outputTokens: usage?.candidatesTokenCount ?? 0,
+        // Thinking tokens are billed as output.
+        outputTokens: (usage?.candidatesTokenCount ?? 0) + (usage?.thoughtsTokenCount ?? 0),
         cacheWriteTokens: 0,
         cacheReadTokens: usage?.cachedContentTokenCount ?? 0,
       };

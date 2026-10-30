@@ -29,8 +29,8 @@ interface State {
 
 const collapse = (s: string): string => s.replace(/\s+/g, ' ').trim().toLowerCase();
 
-function placeholder(state: State, kind: RedactionKind, matched: string): string {
-  const key = `${kind}:${collapse(matched)}`;
+function placeholder(state: State, kind: RedactionKind, matched: string, keyText: string = matched): string {
+  const key = `${kind}:${collapse(keyText)}`;
   const known = state.seen.get(key);
   if (known) return known;
   const n = (state.counts.get(kind) ?? 0) + 1;
@@ -58,6 +58,15 @@ function luhn(digits: string): boolean {
 
 const escapeRegex = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+const COMPANY_SUFFIX = /[\s,]+(?:pty\.?\s+ltd\.?|pty\.?\s+limited|proprietary\s+limited|ltd\.?|limited|plc|llp)$/i;
+
+/** The name without a company suffix ("Harbour Lane Pty Ltd" gives "Harbour Lane"), or null. Only when two or more words are left, so "Cash Pty Ltd" never redacts "cash". */
+export function shortName(name: string): string | null {
+  const short = name.trim().replace(COMPANY_SUFFIX, '').trim();
+  if (short === name.trim() || short.split(/\s+/).length < 2) return null;
+  return short;
+}
+
 /** Replaces personal details with typed placeholders ([EMAIL_1], [NAME_2]). Pure; never logs. */
 export function redact(text: string, opts: RedactOptions): string {
   return redactWith(text, opts, emptyRedactionMap()).text;
@@ -76,14 +85,25 @@ export function redactWith(text: string, opts: RedactOptions, map: RedactionMap)
     out = out.replace(re, (m) => placeholder(state, kind, m));
   };
 
-  // 1. NAME
-  const names = opts.names
-    .map((n) => n.trim())
-    .filter((n) => n.length >= 3)
-    .sort((a, b) => b.length - a.length);
-  for (const name of names) {
-    const body = name.split(/\s+/).map(escapeRegex).join('\\s+');
-    apply('NAME', new RegExp(`(?<![\\p{L}\\p{N}])${body}(?![\\p{L}\\p{N}])`, 'giu'));
+  // 1. NAME, longest first; a short form shares its full name's placeholder
+  const forms: { text: string; key: string }[] = [];
+  const fullNames = opts.names.map((n) => n.trim()).filter((n) => n.length >= 3);
+  const shortCount = new Map<string, number>();
+  for (const name of fullNames) {
+    const short = shortName(name);
+    if (short !== null) shortCount.set(collapse(short), (shortCount.get(collapse(short)) ?? 0) + 1);
+  }
+  for (const name of fullNames) {
+    forms.push({ text: name, key: name });
+    const short = shortName(name);
+    // A short form shared by two names gets its own placeholder rather than one name's.
+    if (short !== null) forms.push({ text: short, key: (shortCount.get(collapse(short)) ?? 0) > 1 ? short : name });
+  }
+  forms.sort((a, b) => b.text.length - a.text.length);
+  for (const form of forms) {
+    const body = form.text.split(/\s+/).map(escapeRegex).join('\\s+');
+    const re = new RegExp(`(?<![\\p{L}\\p{N}])${body}(?![\\p{L}\\p{N}])`, 'giu');
+    out = out.replace(re, (m) => placeholder(state, 'NAME', m, form.key));
   }
 
   // 2. EMAIL

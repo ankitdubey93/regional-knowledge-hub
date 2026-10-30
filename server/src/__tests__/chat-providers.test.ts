@@ -177,6 +177,24 @@ describe('gemini', () => {
     expect(events[events.length - 1]).toEqual({ type: 'stop', reason: 'refusal' });
   });
 
+  it('GM5 thinking tokens count as output; an empty part with a thoughtSignature yields no text', async () => {
+    // Shape of a live gemini-3.8-flash stream, 2026-10-30.
+    const events = [
+      { candidates: [{ content: { parts: [{ text: 'Hello!' }], role: 'model' }, index: 0 }], usageMetadata: { promptTokenCount: 7, candidatesTokenCount: 2, thoughtsTokenCount: 72 } },
+      {
+        candidates: [{ content: { parts: [{ text: '', thoughtSignature: 'abc' }], role: 'model' }, finishReason: 'STOP', index: 0 }],
+        usageMetadata: { promptTokenCount: 7, candidatesTokenCount: 2, totalTokenCount: 81, thoughtsTokenCount: 72, serviceTier: 'standard' },
+        modelVersion: 'gemini-3.8-flash',
+      },
+    ];
+    const p = geminiChatProvider('gkey', 'gemini-3.8-flash', geminiFetch(events));
+    expect(await collect(p.stream(req()))).toEqual([
+      { type: 'text', text: 'Hello!' },
+      { type: 'usage', model: 'gemini-3.8-flash', inputTokens: 7, outputTokens: 74, cacheWriteTokens: 0, cacheReadTokens: 0 },
+      { type: 'stop', reason: 'end' },
+    ]);
+  });
+
   it('GM4 429 maps to rate_limited', async () => {
     const p = geminiChatProvider('gkey', 'gemini-test', geminiFetch([], 429));
     const err: unknown = await collect(p.stream(req())).then(

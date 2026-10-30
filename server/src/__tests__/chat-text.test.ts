@@ -4,7 +4,7 @@ import { PRICES_CHECKED_ON, costMicroUsd, isPriced, usdToMicroUsd } from '../ai/
 import { isCovered } from '../chat/coverage';
 import { checkGrounding, extractNumbers } from '../chat/grounding';
 import { HISTORY_TURNS, MAX_DOCUMENT_CHARS_IN_PROMPT, SYSTEM_PROMPT, buildPrompt, stripMarkers, type PromptSource, type PromptTurn } from '../chat/prompt';
-import { createRestorer, emptyRedactionMap, redact, redactWith, restore } from '../privacy/redact';
+import { createRestorer, emptyRedactionMap, redact, redactWith, restore, shortName } from '../privacy/redact';
 import { formatSse } from '../chat/sse';
 import { parseSse } from '@chub/shared/lib/chatWire';
 
@@ -43,6 +43,25 @@ describe('redact', () => {
   it('RD10 names whole-word, case-insensitive, longest first', () => {
     expect(r('acme pty ltd owes Acme; Acmes is fine', ['Acme', 'Acme Pty Ltd'])).toBe(
       '[NAME_1] owes [NAME_2]; Acmes is fine',
+    );
+  });
+  it('RD10a a short form without the company suffix shares the full name placeholder', () => {
+    expect(r('The Harbour Lane invoice is from Harbour Lane Pty Ltd', ['Harbour Lane Pty Ltd'])).toBe(
+      'The [NAME_1] invoice is from [NAME_1]',
+    );
+    expect(r('harbour  lane and Northgate Trading', ['Northgate Trading Limited', 'Harbour Lane Pty. Ltd.'])).toBe(
+      '[NAME_2] and [NAME_1]',
+    );
+  });
+  it('RD10b a one-word short form is never used', () => {
+    expect(shortName('Cash Pty Ltd')).toBeNull();
+    expect(r('Cash at bank for Cash Pty Ltd', ['Cash Pty Ltd'])).toBe('Cash at bank for [NAME_1]');
+    expect(shortName('Bluegum Cafe')).toBeNull();
+    expect(shortName('Riverside Ventures LLP')).toBe('Riverside Ventures');
+  });
+  it('RD10c a short form shared by two names gets its own placeholder', () => {
+    expect(r('Harbour Lane, Harbour Lane Ltd, Harbour Lane Pty Ltd', ['Harbour Lane Pty Ltd', 'Harbour Lane Ltd'])).toBe(
+      '[NAME_3], [NAME_2], [NAME_1]',
     );
   });
   it('RD11 repeats reuse the placeholder', () => {
@@ -289,6 +308,17 @@ describe('grounding documents', () => {
     const r = checkGrounding('The total is 980.00 [1].', [{ marker: 1, text: 'Total 980.00' }], [], ['Invoice total 980.00']);
     expect(r.status).toBe('answered');
   });
+  it('GR-D3 a paragraph that names an attached document is not flagged uncited, but its figures are from_document', () => {
+    const answer =
+      'Revenue was 30,000.00 [1].\n\nThe attached invoice (invoice.pdf) shows a total of 4,370.00, from the document only and not checked.';
+    const r = checkGrounding(answer, [{ marker: 1, text: 'Revenue 30,000.00' }], [], ['Invoice total: 4,370.00'], ['invoice.pdf', 'D1']);
+    expect(r.flags).toEqual([{ code: 'from_document', detail: '4370' }]);
+  });
+  it('GR-D4 a document name or label must match as a whole word', () => {
+    const answer = 'Revenue was 30,000.00 [1].\n\nSee D10 and myinvoice.pdfx for the rest of the year, which no source here covers.';
+    const r = checkGrounding(answer, [{ marker: 1, text: 'Revenue 30,000.00' }], [], [], ['invoice.pdf', 'D1']);
+    expect(r.flags.filter((f) => f.code === 'uncited')).toHaveLength(1);
+  });
 });
 
 describe('coverage', () => {
@@ -329,6 +359,10 @@ describe('pricing', () => {
   it('PC7 gemini-2.5-flash is priced', () => {
     expect(isPriced('gemini-2.5-flash')).toBe(true);
     expect(costMicroUsd('gemini-2.5-flash', { inputTokens: 1000, outputTokens: 1000, cacheWriteTokens: 0, cacheReadTokens: 0 })).toBe(2800);
+  });
+  it('PC8 gemini-3.8-flash is priced at its 2027 rate', () => {
+    expect(isPriced('gemini-3.8-flash')).toBe(true);
+    expect(costMicroUsd('gemini-3.8-flash', { inputTokens: 1000, outputTokens: 1000, cacheWriteTokens: 0, cacheReadTokens: 1000 })).toBe(9150);
   });
 });
 

@@ -7,8 +7,10 @@ export interface ModelPrice {
   cacheReadFortieths: number;
 }
 
-// Anthropic: https://platform.claude.com/docs/en/about-claude/pricing, read 2026-10-28. Gemini: https://ai.google.dev/gemini-api/docs/pricing (updated 2026-10-27), read 2026-10-28.
+// Anthropic: https://platform.claude.com/docs/en/about-claude/pricing, read 2026-10-28. Gemini: https://ai.google.dev/gemini-api/docs/pricing (updated 2026-10-27), read 2026-10-28; gemini-3.8-flash read 2026-10-30.
 // Haiku 5.5 is priced at its >100k-token tier so the spend guard never under-counts a long prompt.
+// gemini-3.8-flash is priced at the rate the page gives from 2027-01-01 (double the 2026 rate), for the same reason.
+// Gemini bills thinking tokens at the output price, so geminiChat counts them as output.
 export const PRICES_CHECKED_ON = '2026-10-28';
 export const PRICES: Readonly<Record<string, ModelPrice>> = {
   'claude-opus-5-5': { inputMicroUsdPerMTok: 4_000_000, outputMicroUsdPerMTok: 20_000_000, cacheReadFortieths: 2 },
@@ -17,6 +19,7 @@ export const PRICES: Readonly<Record<string, ModelPrice>> = {
   'claude-sonnet-5-5': { inputMicroUsdPerMTok: 2_000_000, outputMicroUsdPerMTok: 10_000_000, cacheReadFortieths: 2 },
   'claude-haiku-5-5': { inputMicroUsdPerMTok: 500_000, outputMicroUsdPerMTok: 2_500_000, cacheReadFortieths: 4 },
   'gemini-2.5-flash': { inputMicroUsdPerMTok: 300_000, outputMicroUsdPerMTok: 2_500_000, cacheReadFortieths: 4 },
+  'gemini-3.8-flash': { inputMicroUsdPerMTok: 1_500_000, outputMicroUsdPerMTok: 7_500_000, cacheReadFortieths: 4 },
 };
 
 /** The highest listed tier, so a model missing from PRICES (a refusal fallback, the stub) is never under-counted. */
