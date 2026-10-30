@@ -28,12 +28,7 @@
       "account": "404",
       "taxCode": "EXEMPTEXPENSES"
     },
-    "alsoAccepted": [
-      {
-        "account": "404",
-        "taxCode": "INPUTTAXED"
-      }
-    ],
+    "alsoAccepted": [],
     "explanation": "Bank fees are financial supplies with no GST charged, so there is nothing to claim: GST Free Expenses."
   },
   {
@@ -47,15 +42,10 @@
     "amountCents": 249900,
     "answer": {
       "account": "720",
-      "taxCode": "CAPEXINPUT"
+      "taxCode": "INPUT"
     },
-    "alsoAccepted": [
-      {
-        "account": "720",
-        "taxCode": "INPUT"
-      }
-    ],
-    "explanation": "Equipment is a capital purchase: GST on Capital puts it in G10 and claims the GST at 1B."
+    "alsoAccepted": [],
+    "explanation": "Equipment is a capital purchase with GST: GST on Expenses claims the GST at 1B. Xero has no built-in rate for capital purchases, which belong in G10 on a full BAS, so check how your BAS report places them."
   },
   {
     "id": "c-au-rent",
@@ -238,19 +228,15 @@
     "amountCents": 4350,
     "answer": {
       "account": "270",
-      "taxCode": "INPUTTAXED"
+      "taxCode": "EXEMPTOUTPUT"
     },
     "alsoAccepted": [
-      {
-        "account": "270",
-        "taxCode": "EXEMPTOUTPUT"
-      },
       {
         "account": "270",
         "taxCode": "BASEXCLUDED"
       }
     ],
-    "explanation": "Interest is an input-taxed financial supply: it reports at G1 and G4 with no GST."
+    "explanation": "Interest is an input-taxed financial supply, so no GST is charged. Xero has no built-in Input Taxed rate: GST Free Income records it with no GST. On a full BAS, input-taxed sales belong in G4, so a firm that lodges one adds its own rate."
   },
   {
     "id": "c-au-postage",

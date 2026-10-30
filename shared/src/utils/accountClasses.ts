@@ -55,49 +55,74 @@ export function typeOfClass(c: AccountClass): AccountType {
 }
 
 /**
- * Lower-case export labels → class. Not checked against a live Xero, QBO or MYOB export.
- * Hard rule 2: until that check is done, ACCOUNT_LABELS_VERIFIED_ON stays null.
+ * Lower-case Xero labels → class. Every label here was seen in a real Xero export on 2026-10-31: the
+ * Account Type column of the AU and UK demo companies' Trial Balance reports, or the Type column of
+ * their chart of accounts exports. Where a chart type (Accounts Receivable, GST, Historical) is a system
+ * account, its class is the one Xero's own trial balance shows for it. Rounding, Tracking and the three
+ * currency revaluation types were seen too but are left out: neither export shows their class, so the
+ * wizard asks.
  */
-export const ACCOUNT_LABEL_CLASSES: Readonly<Record<string, AccountClass>> = {
+export const XERO_LABEL_CLASSES: Readonly<Record<string, AccountClass>> = {
   bank: 'current_asset',
   'current asset': 'current_asset',
-  'current assets': 'current_asset',
+  'accounts receivable': 'current_asset',
   inventory: 'current_asset',
+  'fixed asset': 'non_current_asset',
+  'current liability': 'current_liability',
+  'accounts payable': 'current_liability',
+  'unpaid expense claims': 'current_liability',
+  'wages payable': 'current_liability',
+  gst: 'current_liability',
+  vat: 'current_liability',
+  historical: 'current_liability',
+  'non-current liability': 'non_current_liability',
+  equity: 'equity',
+  'retained earnings': 'equity',
+  revenue: 'revenue',
+  'other income': 'other_income',
+  'direct costs': 'cost_of_sales',
+  expense: 'operating_expense',
+  overhead: 'operating_expense',
+  depreciation: 'operating_expense',
+};
+
+/**
+ * Lower-case labels from other software (QuickBooks Online, MYOB) and Xero types not seen in the demo
+ * exports (Prepayment, Non-current Asset, Sales). Not checked against a real export (Hard rule 2).
+ */
+export const OTHER_LABEL_CLASSES: Readonly<Record<string, AccountClass>> = {
+  'current assets': 'current_asset',
   prepayment: 'current_asset',
   'accounts receivable (a/r)': 'current_asset',
   'other current assets': 'current_asset',
-  'fixed asset': 'non_current_asset',
   'fixed assets': 'non_current_asset',
   'non-current asset': 'non_current_asset',
   'other assets': 'non_current_asset',
-  'current liability': 'current_liability',
   'current liabilities': 'current_liability',
   'accounts payable (a/p)': 'current_liability',
   'credit card': 'current_liability',
   'other current liabilities': 'current_liability',
-  'non-current liability': 'non_current_liability',
   'long term liabilities': 'non_current_liability',
-  equity: 'equity',
-  revenue: 'revenue',
   sales: 'revenue',
   income: 'revenue',
-  'other income': 'other_income',
-  'direct costs': 'cost_of_sales',
   'cost of goods sold': 'cost_of_sales',
   'cost of sales': 'cost_of_sales',
-  expense: 'operating_expense',
   expenses: 'operating_expense',
-  overhead: 'operating_expense',
   overheads: 'operating_expense',
-  depreciation: 'operating_expense',
   'other expense': 'other_expense',
 };
 
-/** null while the labels above are unchecked. Set to a date (YYYY-MM-DD) only after a real export check. */
-export const ACCOUNT_LABELS_VERIFIED_ON: string | null = null;
+/** The day each source's labels were checked against a real export; null when not checked. */
+export const ACCOUNT_LABELS_CHECKED_ON: Readonly<Record<'xero' | 'qbo' | 'myob' | 'other', string | null>> = {
+  xero: '2026-10-31',
+  qbo: null,
+  myob: null,
+  other: null,
+};
 
 /** Trim and lower-case the label, then look it up. Unknown or ambiguous labels give null. */
 export function suggestClass(sourceType: string): AccountClass | null {
   const key = sourceType.trim().toLowerCase();
-  return Object.hasOwn(ACCOUNT_LABEL_CLASSES, key) ? (ACCOUNT_LABEL_CLASSES[key] ?? null) : null;
+  if (Object.hasOwn(XERO_LABEL_CLASSES, key)) return XERO_LABEL_CLASSES[key] ?? null;
+  return Object.hasOwn(OTHER_LABEL_CLASSES, key) ? (OTHER_LABEL_CLASSES[key] ?? null) : null;
 }

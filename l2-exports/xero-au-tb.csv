@@ -1,0 +1,12 @@
+Trial Balance,,,,,
+Demo Company (AU),,,,,
+As at 30 June 2026,,,,,
+,,,,,
+Account Code,Account,Account Type,Debit - Year to date,Credit - Year to date,30 June 2025
+200,Sales,Revenue,,"4,200.00",0.00
+412,Consulting & Accounting,Expense,"3,600.00",,0.00
+453,Office Expenses,Expense,"8,000.00",,0.00
+461,Printing & Stationery,Expense,512.00,,0.00
+090,Business Bank Account,Bank,,"8,703.20",0.00
+820,GST,Current Liability,791.20,,0.00
+Total,,,"12,903.20","12,903.20",0.00

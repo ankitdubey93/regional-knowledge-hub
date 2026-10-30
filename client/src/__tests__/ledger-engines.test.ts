@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { ACCOUNT_LABELS_VERIFIED_ON, suggestClass, typeOfClass } from '@chub/shared/utils/accountClasses';
+import { ACCOUNT_LABELS_CHECKED_ON, OTHER_LABEL_CLASSES, XERO_LABEL_CLASSES, suggestClass, typeOfClass } from '@chub/shared/utils/accountClasses';
 import { parseCsv } from '@chub/shared/utils/csv';
 import { mapTrialBalance, parseLedgerAmount, suggestMapping } from '@chub/shared/utils/ledgerImport';
 import { balanceSheet, movementBetween, profitAndLoss, variance, type Balance, type ReportAccount } from '@chub/shared/utils/reports';
-import { AU_TB_CSV, UK_TB_CSV, UK_TB_UNBALANCED_CSV } from '@chub/shared/fixtures/tb';
+import { AU_TB_CSV, UK_TB_CSV, UK_TB_UNBALANCED_CSV, XERO_AU_DEMO_TB_CSV, XERO_UK_DEMO_TB_CSV } from '@chub/shared/fixtures/tb';
 
 describe('parseCsv', () => {
   it('splits plain rows', () => {
@@ -39,8 +39,21 @@ describe('account classes', () => {
     expect(typeOfClass('other_income')).toBe('revenue');
     expect(typeOfClass('cost_of_sales')).toBe('expense');
   });
-  it('is marked unverified', () => {
-    expect(ACCOUNT_LABELS_VERIFIED_ON).toBeNull();
+  it('only Xero labels are marked checked', () => {
+    expect(ACCOUNT_LABELS_CHECKED_ON).toEqual({ xero: '2026-10-31', qbo: null, myob: null, other: null });
+    for (const k of Object.keys(XERO_LABEL_CLASSES)) expect(Object.hasOwn(OTHER_LABEL_CLASSES, k), k).toBe(false);
+  });
+  it('maps the Xero chart-of-accounts system types the way Xero\'s trial balance shows them', () => {
+    expect(suggestClass('Accounts Receivable')).toBe('current_asset');
+    expect(suggestClass('Accounts Payable')).toBe('current_liability');
+    expect(suggestClass('GST')).toBe('current_liability');
+    expect(suggestClass('VAT')).toBe('current_liability');
+    expect(suggestClass('Historical')).toBe('current_liability');
+    expect(suggestClass('Retained Earnings')).toBe('equity');
+    expect(suggestClass('Other Income')).toBe('other_income');
+  });
+  it('leaves Xero types whose class neither export shows unmapped', () => {
+    for (const t of ['Rounding', 'Tracking', 'Bank Revaluations', 'Unrealised Currency Gains', 'Realised Currency Gains']) expect(suggestClass(t), t).toBeNull();
   });
 });
 
@@ -77,6 +90,37 @@ describe('trial-balance import', () => {
     expect(r.issues[0]?.code).toBe('skipped-rows');
     expect(r.issues[0]?.message).toBe('1 rows were skipped (blank or total rows).');
     expect(r.rows.find((x) => x.code === '711')?.creditCents).toBe(120_000);
+  });
+  it('imports a real Xero AU export: code first, a prior-year column ignored, leading zeros kept', () => {
+    const rows = parseCsv(XERO_AU_DEMO_TB_CSV).rows;
+    const mapping = suggestMapping(rows);
+    expect(mapping).toEqual({ headerRow: 4, code: 0, name: 1, type: 2, debit: 3, credit: 4, balance: null });
+    const r = mapTrialBalance(rows, mapping!);
+    expect(r.issues.filter((i) => i.level === 'block')).toEqual([]);
+    expect([r.totalDebitCents, r.totalCreditCents]).toEqual([1290320, 1290320]);
+    expect(r.rows.map((row) => [row.code, suggestClass(row.sourceType ?? '')])).toEqual([
+      ['200', 'revenue'],
+      ['412', 'operating_expense'],
+      ['453', 'operating_expense'],
+      ['461', 'operating_expense'],
+      ['090', 'current_asset'],
+      ['820', 'current_liability'],
+    ]);
+    const accounts: ReportAccount[] = r.rows.map((row) => ({ code: row.code, name: row.name, accountClass: suggestClass(row.sourceType ?? '')! }));
+    const pnl = profitAndLoss(r.rows, accounts);
+    expect(pnl.netProfitCents).toBe(420000 - 360000 - 800000 - 51200);
+  });
+  it('imports a real Xero UK export: a quoted name with commas, Overhead as the cost label', () => {
+    const rows = parseCsv(XERO_UK_DEMO_TB_CSV).rows;
+    const mapping = suggestMapping(rows);
+    expect(mapping).toEqual({ headerRow: 4, code: 0, name: 1, type: 2, debit: 3, credit: 4, balance: null });
+    const r = mapTrialBalance(rows, mapping!);
+    expect(r.issues.filter((i) => i.level === 'block')).toEqual([]);
+    expect([r.totalDebitCents, r.totalCreditCents]).toEqual([1431184, 1431184]);
+    expect(r.rows.find((row) => row.code === '445')?.name).toBe('Light, Power, Heating');
+    expect(new Set(r.rows.map((row) => suggestClass(row.sourceType ?? '')))).toEqual(
+      new Set(['revenue', 'operating_expense', 'current_asset', 'current_liability']),
+    );
   });
   it('maps the UK fixture with no title rows', () => {
     const rows = parseCsv(UK_TB_CSV).rows;

@@ -59,6 +59,8 @@ export const taxCodeSchema = z.object({
   treatment: z.string().min(1),
   reportsIn: z.string().min(1),
   useFor: z.string().min(1),
+  /** The day the name and rate were seen in the software's own tax rates list; null when not checked. */
+  verifiedOn: isoDate.nullable(),
 });
 export const taxCodesSchema = z.object({
   note: z.string(),

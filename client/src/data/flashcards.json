@@ -571,7 +571,7 @@
     "doc": "australia/xero-qbo-au-setup",
     "jurisdiction": "AU",
     "front": "Xero tax rate for capital purchases",
-    "back": "GST on Capital (G10)."
+    "back": "GST on Expenses: Xero has no built-in capital rate. On a full BAS, capital purchases belong in G10."
   },
   {
     "id": "f-xero-qbo-au-setup-3",
@@ -592,7 +592,7 @@
     "doc": "australia/xero-qbo-au-setup",
     "jurisdiction": "AU",
     "front": "GST on Imports",
-    "back": "For GST paid to Customs on imported goods."
+    "back": "For the GST paid at the border on imported goods. Its rate in Xero is 0%: the line amount is the GST itself."
   },
   {
     "id": "f-xero-qbo-au-setup-6",

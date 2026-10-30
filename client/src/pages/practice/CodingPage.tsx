@@ -112,6 +112,7 @@ export function CodingPage() {
               {codes.map((t) => (
                 <option key={t.code} value={t.code}>
                   {t.name}
+                  {t.verifiedOn === null ? ' (not checked)' : ''}
                 </option>
               ))}
             </select>

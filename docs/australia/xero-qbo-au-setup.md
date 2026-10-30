@@ -39,17 +39,17 @@ Each account has a **default tax rate**. Set sensible defaults (Rent → GST on 
 
 ## 3. Tax rates
 
-Xero's default AU tax rates:
+Xero's built-in AU tax rates (as listed in Xero's AU demo company, checked 2026-10-31):
 
 | Xero name | Rate | Use for |
 |---|---|---|
 | GST on Income | {{fact:au.gst.rate}} | Taxable sales |
-| GST on Expenses | {{fact:au.gst.rate}} | Taxable purchases |
-| GST on Capital | {{fact:au.gst.rate}} | Capital purchases (goes to G10) |
-| GST Free Income / GST Free Expenses | 0% | GST-free sales and purchases |
-| Input Taxed | 0% | Input-taxed sales and related purchases |
+| GST on Expenses | {{fact:au.gst.rate}} | Taxable purchases, capital purchases included |
+| GST Free Income / GST Free Expenses | 0% | GST-free sales and purchases, and sales or purchases with no GST such as interest and bank fees |
 | BAS Excluded | 0% | Wages, super, loans, transfers, drawings |
-| GST on Imports | 100% of the GST amount | GST paid to Customs on imported goods |
+| GST on Imports | 0% | The GST paid at the border on imported goods: the line amount is the GST itself |
+
+Xero has no built-in rate for capital purchases or for input-taxed supplies. On a full BAS, capital purchases belong in G10 and input-taxed sales in G4, so a firm that lodges a full BAS adds its own rates for them; check how your BAS report places these lines.
 
 QBO uses shorter codes (for example *GST*, *GST free*, *Input taxed*, *Out of scope*) mapped to the same BAS labels.
 

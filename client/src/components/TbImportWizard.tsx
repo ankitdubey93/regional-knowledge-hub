@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ApiError } from '../lib/api';
 import { commitTrialBalance, type LedgerAccountRecord, type LedgerImportRecord } from '../lib/ledger';
-import { ACCOUNT_CLASSES, ACCOUNT_CLASS_LABELS, suggestClass, type AccountClass } from '@chub/shared/utils/accountClasses';
+import { ACCOUNT_CLASSES, ACCOUNT_CLASS_LABELS, ACCOUNT_LABELS_CHECKED_ON, suggestClass, type AccountClass } from '@chub/shared/utils/accountClasses';
 import { parseCsv } from '@chub/shared/utils/csv';
 import { mapTrialBalance, suggestMapping, type TbMapping, type TbResult, type TbRow } from '@chub/shared/utils/ledgerImport';
 import { formatMoney, type Currency } from '@chub/shared/utils/money';
@@ -279,9 +279,16 @@ export function TbImportWizard({ clientId, jurisdiction, fyEndMonth, existing, o
 
       {step === 2 && (
         <div className="space-y-4">
-          <Callout tone="warn">
-            Column suggestions are not checked against a live export from this software. Check each column before you continue.
-          </Callout>
+          {ACCOUNT_LABELS_CHECKED_ON[source] !== null ? (
+            <Callout>
+              Columns and account types were checked against Xero&apos;s AU and UK demo company exports on {ACCOUNT_LABELS_CHECKED_ON[source]}. Your file may differ: check
+              each column before you continue.
+            </Callout>
+          ) : (
+            <Callout tone="warn">
+              Column suggestions are not checked against a live export from this software. Check each column before you continue.
+            </Callout>
+          )}
           <Field label="Header row">
             <input
               type="number"

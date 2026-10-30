@@ -28,3 +28,38 @@ export const UK_TB_CSV = [
   '7100,Rent and Rates,Overhead,2300.00,',
 ].join('\n');
 export const UK_TB_UNBALANCED_CSV = UK_TB_CSV.replace('7100,Rent and Rates,Overhead,2300.00,', '7100,Rent and Rates,Overhead,2000.00,');
+// A real export: Xero's AU Demo Company, Trial Balance report exported to Excel and saved as CSV in LibreOffice ("Save cell content as shown"), 2026-10-31.
+export const XERO_AU_DEMO_TB_CSV = [
+  'Trial Balance,,,,,',
+  'Demo Company (AU),,,,,',
+  'As at 30 June 2026,,,,,',
+  ',,,,,',
+  'Account Code,Account,Account Type,Debit - Year to date,Credit - Year to date,30 June 2025',
+  '200,Sales,Revenue,,"4,200.00",0.00',
+  '412,Consulting & Accounting,Expense,"3,600.00",,0.00',
+  '453,Office Expenses,Expense,"8,000.00",,0.00',
+  '461,Printing & Stationery,Expense,512.00,,0.00',
+  '090,Business Bank Account,Bank,,"8,703.20",0.00',
+  '820,GST,Current Liability,791.20,,0.00',
+  'Total,,,"12,903.20","12,903.20",0.00',
+].join('\n');
+// A real export: Xero's UK Demo Company, exported and saved the same way, 2026-10-31.
+export const XERO_UK_DEMO_TB_CSV = [
+  'Trial Balance,,,,,',
+  'Demo Company (UK),,,,,',
+  'As at 31 March 2026,,,,,',
+  ',,,,,',
+  'Account Code,Account,Account Type,Debit - Year to date,Credit - Year to date,31 Mar 2025',
+  '200,Sales,Revenue,,"2,916.69",0.00',
+  '260,Other Revenue,Revenue,,"3,500.00",0.00',
+  '412,Consulting,Overhead,"3,600.00",,0.00',
+  '429,General Expenses,Overhead,"8,000.00",,0.00',
+  '445,"Light, Power, Heating",Overhead,534.05,,0.00',
+  '461,Printing & Stationery,Overhead,512.00,,0.00',
+  '090,Business Bank Account,Bank,,"3,667.92",0.00',
+  '610,Accounts Receivable,Current Asset,500.00,,0.00',
+  '800,Accounts Payable,Current Liability,,96.25,0.00',
+  '820,VAT,Current Liability,"1,165.79",,0.00',
+  '840,Historical Adjustment,Current Liability,,"4,130.98",0.00',
+  'Total,,,"14,311.84","14,311.84",0.00',
+].join('\n');

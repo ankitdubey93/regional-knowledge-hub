@@ -1661,22 +1661,22 @@
     "id": "q-xero-qbo-au-setup-1",
     "doc": "australia/xero-qbo-au-setup",
     "jurisdiction": "AU",
-    "question": "In Xero AU, which tax rate do you use for a capital purchase with GST?",
+    "question": "Xero AU has no built-in rate for capital purchases. Which of its rates do you use for a laptop bought with GST?",
     "options": [
       {
         "text": "GST on Expenses",
-        "why": "That reports in G11, not G10."
+        "why": "Right: it claims the GST at 1B. On a full BAS, check the laptop lands in G10, not G11."
       },
       {
-        "text": "GST on Capital",
-        "why": "Right: it reports in G10 and 1B."
+        "text": "GST Free Expenses",
+        "why": "GST was charged and is claimable."
       },
       {
         "text": "BAS Excluded",
-        "why": "The GST is claimable."
+        "why": "The GST is claimable, so it belongs on the BAS."
       }
     ],
-    "answer": 1,
+    "answer": 0,
     "facts": []
   },
   {
@@ -1716,8 +1716,8 @@
         "why": "Right."
       },
       {
-        "text": "Input Taxed",
-        "why": "Use GST Free Expenses for a purchase with no GST to claim."
+        "text": "BAS Excluded",
+        "why": "That is for wages, loans and transfers. A bank fee is a business purchase: GST Free Expenses."
       }
     ],
     "answer": 1,

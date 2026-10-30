@@ -65,4 +65,12 @@ describe('data files', () => {
     const today = new Date().toISOString().slice(0, 10);
     for (const [key, f] of Object.entries(facts)) if (f.verifiedOn) expect(f.verifiedOn <= today, key).toBe(true);
   });
+  it('tax codes: a checked code has a date no later than today; the file date stays null while any code is unchecked', () => {
+    // The local date: a check recorded in the owner's time zone can be a day ahead of UTC.
+    const today = new Date().toLocaleDateString('en-CA');
+    const all = [...taxCodes.AU, ...taxCodes.UK];
+    for (const t of all) if (t.verifiedOn) expect(t.verifiedOn <= today, t.code).toBe(true);
+    if (all.some((t) => t.verifiedOn === null)) expect(taxCodes.verifiedOn).toBeNull();
+    expect(all.filter((t) => t.verifiedOn === null).map((t) => t.code)).toEqual(['DRCHARGE', 'DRCHARGESUPPLY']);
+  });
 });

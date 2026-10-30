@@ -14,7 +14,7 @@ Status words: **done** means built, tested and checked in a browser; **built** m
 
 ### Owed from Phase 1
 
-- Check `client/src/data/tax-codes.json` names against a live Xero AU and Xero UK demo company, and add the QBO names. Then set `verifiedOn`.
+- **L2 (done 2026-10-31; Xero only, the owner's decision: QBO and MYOB are dropped and their labels stay not checked).** Tax codes: ~~check `tax-codes.json` against the Xero AU and UK demo companies~~ (done 2026-10-31 from the Tax rates screens, saved in `l2-exports/`). Each code now has its own `verifiedOn`; 15 names and rates match and are dated 2026-10-31. Owner's decisions: AU keeps only Xero's six built-in rates (GST on Capital and Input Taxed removed; the laptop scenario, the bank-interest scenario, a flashcard, two quiz questions and the setup guide's table reworked, the guide saying that Xero has no built-in rate for G10 capital purchases or G4 input-taxed sales), GST on Imports is 0% as Xero shows it, and the two UK domestic reverse charge codes stay with `verifiedOn: null` (not in Xero's default list; the coding page marks them "not checked"). The codes themselves (`OUTPUT`, `INPUT2`, …) are not shown on Xero's screen and are not checked. Trial balances: real Xero AU and UK exports (Excel, saved as CSV) import with no change and are fixtures (`XERO_AU_DEMO_TB_CSV`, `XERO_UK_DEMO_TB_CSV`). Account labels: ~~the Xero chart of accounts exports~~ (done 2026-10-31): every Type in both demo charts and every Account Type in both trial balances is in `XERO_LABEL_CLASSES` (`ACCOUNT_LABELS_CHECKED_ON.xero` 2026-10-31), except Rounding, Tracking, Bank Revaluations, Unrealised Currency Gains and Realised Currency Gains, which are left for the user to classify because neither export shows their class. The chart Type and the trial balance Account Type differ for system accounts (Accounts Receivable, GST or VAT, Historical show as Current Asset or Current Liability in the trial balance); a system account's class follows the trial balance. Both trial balances were also imported through the API: the reports balance and match the files. **L2 is done for Xero.**
 - ~~Verify `intl.ifrs16.shortTermMonths` and `uk.frs102.goodwillDefaultLife`~~ (done 2026-10-28, against AASB 16 Appendix A and FRS 102 19.23(a)).
 - Figures in doc prose that are not `{{fact:…}}` tokens (filing deadlines, penalty amounts, the auto-enrolment minimums, P11D dates) have not each been checked. They are listed in `plans/prose-figures-inventory.md`; either move them into `facts.json` and verify them, or check them in place.
 - ~~FRS 105 rows for leases and revenue~~ (done 2026-10-28, against FRS 105 September 2024).
@@ -131,7 +131,7 @@ P3b note: resolved in P3b (2026-10-28); Hard rule 12 was amended so an entity's 
 
 ### Owed to the data track
 
-- Check `ACCOUNT_LABEL_CLASSES` and the header names in `suggestMapping` against real exports from the Xero AU, Xero UK, QBO and MYOB demo companies (same session as the `tax-codes.json` check), then set `ACCOUNT_LABELS_VERIFIED_ON`.
+- ~~Check the account labels and the header names in `suggestMapping` against real exports~~ (Xero done 2026-10-31 in L2: the table is split into `XERO_LABEL_CLASSES`, checked, and `OTHER_LABEL_CLASSES`, not checked, with `ACCOUNT_LABELS_CHECKED_ON` per source; QBO and MYOB dropped by the owner and still not checked).
 - ~~Deleting an import does not reactivate the one it superseded~~ (fixed 2026-10-28; LG-R1, LG-R2).
 - ~~The D1 browser check is a scratch script~~ (committed 2026-10-28: `e2e/`).
 
