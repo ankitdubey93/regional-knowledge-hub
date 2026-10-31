@@ -45,7 +45,7 @@ export async function failure(res: Response): Promise<ApiError> {
   return new ApiError(res.status, message, issues);
 }
 
-export async function apiJson<T>(path: string, init?: { method?: 'GET' | 'POST' | 'PATCH'; body?: unknown }): Promise<T> {
+export async function apiJson<T>(path: string, init?: { method?: 'GET' | 'POST' | 'PATCH' | 'DELETE'; body?: unknown }): Promise<T> {
   const headers: Record<string, string> = {};
   let body: string | null = null;
   if (init?.body !== undefined) {

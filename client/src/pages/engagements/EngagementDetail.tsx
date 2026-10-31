@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { formatDay } from '@chub/shared/utils/deadlines';
 import { ENGAGEMENT_STATUSES, TASK_STATUSES, type EngagementStatus, type TaskStatus } from '@chub/shared/utils/engagements';
 import { Button, Callout, Card, Field, inputClass, PageHeader, TableScroll, TextLink } from '../../components/ui';
+import { EngagementTime } from '../../components/EngagementTime';
 import { ApiError } from '../../lib/api';
 import {
   addTask,
@@ -330,6 +331,8 @@ export function EngagementDetail() {
           </Button>
         </form>
       </Card>
+
+      <EngagementTime engagement={state.engagement} tasks={tasks} />
     </div>
   );
 }

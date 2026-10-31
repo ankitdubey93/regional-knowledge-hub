@@ -572,6 +572,7 @@ export const engagement = pgTable(
   (t) => [
     foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'engagement_client_org_fk' }).onDelete('cascade'),
     unique('engagement_id_org_unique').on(t.id, t.orgId),
+    unique('engagement_id_client_org_unique').on(t.id, t.clientId, t.orgId),
     unique('engagement_obligation_unique').on(t.clientId, t.obligationId),
     index('engagement_client_idx').on(t.clientId),
     index('engagement_org_due_idx').on(t.orgId, t.dueOn),
@@ -598,6 +599,7 @@ export const task = pgTable(
   },
   (t) => [
     foreignKey({ columns: [t.engagementId, t.orgId], foreignColumns: [engagement.id, engagement.orgId], name: 'task_engagement_org_fk' }).onDelete('cascade'),
+    unique('task_id_org_unique').on(t.id, t.orgId),
     index('task_engagement_idx').on(t.engagementId),
     index('task_assignee_idx').on(t.assigneeId),
   ],
@@ -617,4 +619,36 @@ export const memberCapacity = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.orgId, t.userId], name: 'member_capacity_pk' })],
+);
+
+// Tenant table (B1): RLS, checks and the engagement and task FKs (ON DELETE SET NULL of one column) are in migration 0038,
+// because drizzle cannot express them (Hard rule 11). A running timer is a row with minutes null: at most one per user per firm.
+// user_id has no FK, like created_by: an entry outlives its author's account. invoice_id gets its FK in B2.
+export const timeEntry = pgTable(
+  'time_entry',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    userId: text('user_id').notNull(),
+    clientId: uuid('client_id').notNull(),
+    engagementId: uuid('engagement_id'),
+    taskId: uuid('task_id'),
+    workDate: date('work_date', { mode: 'string' }).notNull(),
+    startedAt: timestamp('started_at', { withTimezone: true }),
+    minutes: integer('minutes'),
+    billable: boolean('billable').notNull().default(true),
+    note: text('note').notNull().default(''),
+    invoiceId: uuid('invoice_id'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'time_entry_client_org_fk' }).onDelete('cascade'),
+    uniqueIndex('time_entry_one_running_idx').on(t.orgId, t.userId).where(sql`"minutes" is null`),
+    index('time_entry_org_user_date_idx').on(t.orgId, t.userId, t.workDate),
+    index('time_entry_engagement_idx').on(t.engagementId),
+    index('time_entry_client_idx').on(t.clientId),
+  ],
 );

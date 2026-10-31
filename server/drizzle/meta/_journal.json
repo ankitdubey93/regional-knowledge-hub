@@ -260,6 +260,20 @@
       "when": 1793387823389,
       "tag": "0036_nasty_metal_master",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1793460797034,
+      "tag": "0037_time_entry",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1793460799388,
+      "tag": "0038_time_entry_rules",
+      "breakpoints": true
     }
   ]
 }

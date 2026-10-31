@@ -34,7 +34,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 | 9 | `c3-requests-chasing.md` | full | 4, 5, 8 | none | done (landed 2026-10-30) |
 | 10 | `p5d-deploy.md` | full | 8 | Choose the hosting target and region | done (landed 2026-10-30) |
 | — | **Stage 3 launch gate** | decision, then a plan | 9, 10 | Decided 2026-10-31: an upload and chat warning now, NER later; one deployment per country (AU, UK), each firm picks a home region at sign-up and all its clients are stored there; Claude drafts the privacy notice, terms, UK data processing agreement and sub-processor list, marked for legal review | built (code), 2026-10-31; legal review and hosting owed (`plans/s3-launch-gate.md` is deleted when the owner commits) |
-| 11 | `b1-time.md` | outline | 6, launch gate | none | todo |
+| 11 | `b1-time.md` | full | 6, launch gate | none | done (landed 2026-10-31) |
 | 12 | `b2-invoicing.md` | outline | 11 | Confirm the FX policy; `fact-check` the invoice content | todo |
 | 13 | `b3-profitability.md` | outline | 12 | none | todo |
 | 14 | `a1-practice-router.md` | outline | 7, 11 | Approve the Hard rule 12 amendment | todo |
@@ -44,7 +44,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 
 `prose-figures-inventory.md` is a working list for debt-sprint item 7. It is not a plan.
 
-**Next:** B1 once the owner's legal review of the Stage 3 drafts is done (the gate's code is built).
+**Next:** B2 (`b2-invoicing.md`, an outline: run `/code-planner` on it; owner checkpoint: the FX policy and the invoice content check).
 
 Later work in the roadmap but not planned here: D2 (GL transactions), D4 (Xero and QBO connections), the Phase 2 learning simulators and topics, and the four owed content skills. Each gets its own plan when its turn comes.
 

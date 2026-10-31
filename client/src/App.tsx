@@ -49,6 +49,7 @@ const EngagementsList = page(() => import('./pages/engagements/EngagementsList')
 const EngagementDetail = page(() => import('./pages/engagements/EngagementDetail'), 'EngagementDetail');
 const BoardPage = page(() => import('./pages/engagements/BoardPage'), 'BoardPage');
 const WorkloadPage = page(() => import('./pages/engagements/WorkloadPage'), 'WorkloadPage');
+const TimePage = page(() => import('./pages/time/TimePage'), 'TimePage');
 const WorkspaceTemplates = page(() => import('./pages/workspace/WorkspaceTemplates'), 'WorkspaceTemplates');
 const WorkspaceTemplateEdit = page(() => import('./pages/workspace/WorkspaceTemplateEdit'), 'WorkspaceTemplateEdit');
 const AdminHome = page(() => import('./pages/admin/AdminHome'), 'AdminHome');
@@ -113,6 +114,7 @@ export function App() {
             <Route path="engagements/:id" element={<EngagementDetail />} />
             <Route path="board" element={<BoardPage />} />
             <Route path="workload" element={<WorkloadPage />} />
+            <Route path="time" element={<TimePage />} />
             <Route path="entities/:id" element={<EntityDashboard />} />
             <Route path="entities/:id/settings" element={<EntitySettings />} />
             <Route path="entities/:id/books" element={<EntityBooks />} />

@@ -4,6 +4,7 @@ import { BookOpen, Menu, Moon, Sun, X } from 'lucide-react';
 import { cx, TextLink } from './ui';
 import { WorkspaceSwitcher } from './WorkspaceSwitcher';
 import { ActiveEntityChip } from './ActiveEntityChip';
+import { TimerChip } from './TimerChip';
 import { useProgress } from '../progress/ProgressContext';
 import { signOutUser, useSessionInfo } from '../lib/session';
 
@@ -49,6 +50,7 @@ export function Layout() {
     ? [
         { to: '/workspace', label: 'Workspace' },
         { to: '/engagements', label: 'Engagements' },
+        { to: '/time', label: 'Time' },
         { to: '/knowledge', label: 'Knowledge Hub' },
         ...(session.isAdmin ? [{ to: '/admin', label: 'Admin' }] : []),
       ]
@@ -88,6 +90,7 @@ export function Layout() {
             {session ? (
               <>
                 <div className="hidden items-center gap-2 sm:flex">
+                  {session.activeFirmId !== null && <TimerChip />}
                   <ActiveEntityChip />
                   <WorkspaceSwitcher />
                 </div>
@@ -115,6 +118,7 @@ export function Layout() {
           <nav id="mobile-nav" aria-label="Main" className="border-t border-line bg-panel px-4 py-2 md:hidden">
             {session && (
               <div className="space-y-2 border-b border-line pb-2">
+                {session.activeFirmId !== null && <TimerChip />}
                 <ActiveEntityChip />
                 <WorkspaceSwitcher inline />
               </div>
