@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, Field, PageHeader, TextLink, inputClass } from '../../components/ui';
+import { Button, Field, PageHeader, TextLink, inputClass } from '../../components/ui';
 import { signUpEmail } from '../../lib/session';
 import { useDeployment } from '../../lib/deployment';
 import { LEGAL_VERSION, REGION_LABEL } from '@chub/shared/lib/legal';
@@ -31,7 +31,7 @@ export function SignUp() {
   return (
     <div className="space-y-6">
       <PageHeader title="Create an account" />
-      <Card className="max-w-md">
+      <div className="max-w-md">
         <form onSubmit={onSubmit} className="space-y-4">
           {deployment !== null && (
             <div className="space-y-2">
@@ -89,7 +89,7 @@ export function SignUp() {
             Create account
           </Button>
         </form>
-      </Card>
+      </div>
       <TextLink to="/sign-in">Already have an account? Sign in</TextLink>
     </div>
   );

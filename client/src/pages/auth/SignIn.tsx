@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Button, Card, Field, PageHeader, TextLink, inputClass } from '../../components/ui';
+import { Button, Field, PageHeader, TextLink, inputClass } from '../../components/ui';
 import { signInEmail } from '../../lib/session';
 
 export function SignIn() {
@@ -29,7 +29,7 @@ export function SignIn() {
     <div className="space-y-6">
       <PageHeader title="Sign in" />
       {resetDone && <p role="status">Password changed. Sign in with the new one.</p>}
-      <Card className="max-w-md">
+      <div className="max-w-md">
         <form onSubmit={onSubmit} className="space-y-4">
           <Field label="Email">
             <input
@@ -61,7 +61,7 @@ export function SignIn() {
             Sign in
           </Button>
         </form>
-      </Card>
+      </div>
       <TextLink to="/sign-up">Create an account</TextLink>
     </div>
   );

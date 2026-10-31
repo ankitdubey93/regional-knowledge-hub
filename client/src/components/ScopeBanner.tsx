@@ -4,7 +4,7 @@ import { scopeName } from '../lib/scope';
 import { Button, Tabs } from './ui';
 
 const frame = (children: ReactNode) => (
-  <div className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-panel-2 px-3 py-2 text-sm">{children}</div>
+  <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">{children}</div>
 );
 
 export function ScopeBanner() {

@@ -16,8 +16,18 @@ export function KnowledgeHome() {
   const paths = SECTIONS.map((s) => ({ s, items: docsIn(s.id).filter((d) => inScope(d.jurisdiction, scope)) })).filter((p) => p.items.length > 0);
 
   return (
-    <div className="space-y-10">
-      <PageHeader title="Knowledge Hub" lead="Guides, framework comparisons, calculators and practice for bookkeeping in Australia and the UK." />
+    <div className="space-y-12">
+      <section className="relative overflow-hidden rounded-[32px] bg-sun-soft px-6 py-10 sm:px-14 sm:py-16">
+        <span aria-hidden className="pointer-events-none absolute -top-16 -right-10 size-64 rounded-full bg-peach-soft" />
+        <span aria-hidden className="pointer-events-none absolute right-48 bottom-10 hidden size-24 rounded-full bg-accent-soft sm:block" />
+        <div className="relative [&>header]:mb-0">
+          <PageHeader
+            eyebrow="Knowledge Hub"
+            title="Bookkeeping in Australia and the UK, explained"
+            lead="Guides, framework comparisons, calculators and practice for bookkeeping in Australia and the UK. Every figure links to its official source and the date it was checked."
+          />
+        </div>
+      </section>
 
       {pending ? (
         <Card>
@@ -90,7 +100,7 @@ export function KnowledgeHome() {
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {order.map((id) => (
             <li key={id}>
-              <Link to={TOOLS[id].to} className="block h-full rounded-xl border border-line bg-panel p-5 hover:border-accent">
+              <Link to={TOOLS[id].to} className="block h-full rounded-3xl bg-panel shadow-soft transition-[transform,box-shadow] duration-150 ease-snappy hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 motion-reduce:transform-none p-6">
                 <p className="font-semibold">{TOOLS[id].title}</p>
                 <p className="mt-1 text-sm text-muted">{TOOLS[id].blurb}</p>
               </Link>

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Button, Card, Field, PageHeader, TextLink, inputClass } from '../../components/ui';
+import { Button, Field, PageHeader, TextLink, inputClass } from '../../components/ui';
 import { requestPasswordReset } from '../../lib/members';
 
 export function ForgotPassword() {
@@ -23,7 +23,7 @@ export function ForgotPassword() {
   return (
     <div className="space-y-6">
       <PageHeader title="Reset your password" />
-      <Card className="max-w-md">
+      <div className="max-w-md">
         <form aria-label="Reset your password" onSubmit={onSubmit} className="space-y-4">
           <Field label="Email">
             <input
@@ -40,7 +40,7 @@ export function ForgotPassword() {
             Send reset link
           </Button>
         </form>
-      </Card>
+      </div>
       <TextLink to="/sign-in">Back to sign in</TextLink>
     </div>
   );

@@ -1,3 +1,4 @@
+import { EntityHeader } from '../../components/EntityHeader';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { formatDay } from '@chub/shared/utils/deadlines';
@@ -159,8 +160,8 @@ export function EntityEngagements() {
 
   const c = state.client;
   return (
-    <div className="space-y-6">
-      <TextLink to={`/entities/${c.id}`}>{`Back to ${c.name}`}</TextLink>
+    <div className="space-y-8">
+      <EntityHeader client={c} />
       <PageHeader title="Engagements" lead={`Recurring work for ${c.name}.`} />
 
       <Card>
@@ -222,21 +223,21 @@ export function EntityEngagements() {
             <table className="mt-3 w-full min-w-[40rem] text-left text-sm">
               <thead>
                 <tr>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Due</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Engagement</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Status</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Tasks</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Due</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Engagement</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Status</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Tasks</th>
                 </tr>
               </thead>
               <tbody>
                 {engagements.map((e) => (
                   <tr key={e.id}>
-                    <td className="whitespace-nowrap border-b border-line px-2 py-1">{formatDay(e.dueOn)}</td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="whitespace-nowrap border-b border-line px-3 py-3">{formatDay(e.dueOn)}</td>
+                    <td className="border-b border-line px-3 py-3">
                       <TextLink to={`/engagements/${e.id}`}>{e.title}</TextLink>
                     </td>
-                    <td className="border-b border-line px-2 py-1">{ENGAGEMENT_STATUS_LABELS[e.status]}</td>
-                    <td className="border-b border-line px-2 py-1">{`${e.doneCount} of ${e.taskCount} done`}</td>
+                    <td className="border-b border-line px-3 py-3">{ENGAGEMENT_STATUS_LABELS[e.status]}</td>
+                    <td className="border-b border-line px-3 py-3">{`${e.doneCount} of ${e.taskCount} done`}</td>
                   </tr>
                 ))}
               </tbody>

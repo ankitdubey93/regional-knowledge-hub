@@ -340,7 +340,7 @@ export function TbImportWizard({ clientId, jurisdiction, fyEndMonth, existing, o
               <thead>
                 <tr>
                   {headerCells.map((cell, i) => (
-                    <th key={i} scope="col" className="border-b border-line px-2 py-1 font-medium">
+                    <th key={i} scope="col" className="border-b border-line px-3 py-3 font-medium">
                       {cell}
                     </th>
                   ))}
@@ -350,7 +350,7 @@ export function TbImportWizard({ clientId, jurisdiction, fyEndMonth, existing, o
                 {previewRows.map((r, i) => (
                   <tr key={i}>
                     {r.map((cell, j) => (
-                      <td key={j} className="border-b border-line px-2 py-1">
+                      <td key={j} className="border-b border-line px-3 py-3">
                         {cell}
                       </td>
                     ))}
@@ -374,19 +374,19 @@ export function TbImportWizard({ clientId, jurisdiction, fyEndMonth, existing, o
             <table className="w-full text-left text-sm">
               <thead>
                 <tr>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Code</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Account</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Type in file</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Type</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Code</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Account</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Type in file</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Type</th>
                 </tr>
               </thead>
               <tbody>
                 {tb.rows.map((row) => (
                   <tr key={row.sourceRow}>
-                    <td className="border-b border-line px-2 py-1">{row.code}</td>
-                    <td className="border-b border-line px-2 py-1">{row.name}</td>
-                    <td className="border-b border-line px-2 py-1">{row.sourceType}</td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">{row.code}</td>
+                    <td className="border-b border-line px-3 py-3">{row.name}</td>
+                    <td className="border-b border-line px-3 py-3">{row.sourceType}</td>
+                    <td className="border-b border-line px-3 py-3">
                       <select
                         aria-label={`Type for ${row.code} ${row.name}`}
                         className={inputClass}

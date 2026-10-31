@@ -11,6 +11,26 @@ type WorkloadRow = WorkloadView['rows'][number];
 
 const COLUMNS = ['Member', 'Weekly capacity', 'Overdue', 'This week', 'Load this week', 'Next week', 'Load next week', 'No estimate'];
 
+/** Up to this load a week reads as comfortable (green); above it, busy (raspberry), until FULL_BP. */
+const BUSY_BP = 8000;
+
+function LoadCell({ loadBp }: { loadBp: number | null }) {
+  const over = loadBp !== null && loadBp > FULL_BP;
+  const width = loadBp === null ? 0 : Math.min(100, Math.round(loadBp / 100));
+  const fill = over ? 'bg-warn' : loadBp !== null && loadBp >= BUSY_BP ? 'bg-accent' : 'bg-good';
+  return (
+    <div className="grid min-w-36 gap-1.5">
+      <div className="h-2.5 overflow-hidden rounded-full bg-panel-2" aria-hidden>
+        <div className={`h-full rounded-full ${fill}`} style={{ width: `${width}%` }} />
+      </div>
+      <span>
+        {formatLoad(loadBp)}
+        {over && <span className="ml-2 rounded-full bg-warn-soft px-2.5 py-0.5 text-xs font-semibold text-warn">Over capacity</span>}
+      </span>
+    </div>
+  );
+}
+
 export function WorkloadPage() {
   const [view, setView] = useState<WorkloadView | null>(null);
   const [loading, setLoading] = useState(true);
@@ -118,7 +138,7 @@ export function WorkloadPage() {
                 <thead>
                   <tr>
                     {COLUMNS.map((c) => (
-                      <th key={c} scope="col" className="border-b border-line px-2 py-1 font-medium">
+                      <th key={c} scope="col" className="border-b border-line px-3 py-3 font-medium">
                         {c}
                       </th>
                     ))}
@@ -127,28 +147,22 @@ export function WorkloadPage() {
                 <tbody>
                   {v.rows.map((r) => (
                     <tr key={r.userId}>
-                      <th scope="row" className="border-b border-line px-2 py-1 text-left font-medium">
+                      <th scope="row" className="border-b border-line px-3 py-3 text-left font-medium">
                         {r.name}
                       </th>
-                      <td className="border-b border-line px-2 py-1">
+                      <td className="border-b border-line px-3 py-3">
                         {`${formatMinutes(r.capacityMinutes)}${r.capacityIsDefault ? ' (default)' : ''}`}
                       </td>
-                      <td className="border-b border-line px-2 py-1">{formatMinutes(r.overdueMinutes)}</td>
-                      <td className="border-b border-line px-2 py-1">{formatMinutes(r.thisWeek.openMinutes)}</td>
-                      <td className="border-b border-line px-2 py-1">
-                        {formatLoad(r.thisWeek.loadBp)}
-                        {r.thisWeek.loadBp !== null && r.thisWeek.loadBp > FULL_BP && (
-                          <span className="ml-2 font-medium text-bad">Over capacity</span>
-                        )}
+                      <td className="border-b border-line px-3 py-3">{formatMinutes(r.overdueMinutes)}</td>
+                      <td className="border-b border-line px-3 py-3">{formatMinutes(r.thisWeek.openMinutes)}</td>
+                      <td className="border-b border-line px-3 py-3">
+                        <LoadCell loadBp={r.thisWeek.loadBp} />
                       </td>
-                      <td className="border-b border-line px-2 py-1">{formatMinutes(r.nextWeek.openMinutes)}</td>
-                      <td className="border-b border-line px-2 py-1">
-                        {formatLoad(r.nextWeek.loadBp)}
-                        {r.nextWeek.loadBp !== null && r.nextWeek.loadBp > FULL_BP && (
-                          <span className="ml-2 font-medium text-bad">Over capacity</span>
-                        )}
+                      <td className="border-b border-line px-3 py-3">{formatMinutes(r.nextWeek.openMinutes)}</td>
+                      <td className="border-b border-line px-3 py-3">
+                        <LoadCell loadBp={r.nextWeek.loadBp} />
                       </td>
-                      <td className="border-b border-line px-2 py-1">{String(r.unestimatedCount)}</td>
+                      <td className="border-b border-line px-3 py-3">{String(r.unestimatedCount)}</td>
                     </tr>
                   ))}
                 </tbody>

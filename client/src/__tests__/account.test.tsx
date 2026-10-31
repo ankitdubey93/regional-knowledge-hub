@@ -263,13 +263,48 @@ describe('WorkspaceHome', () => {
     expect(screen.getByText('Company · Year ends June')).toBeInTheDocument();
   });
 
+  it('shows open requests and finds a client by name', async () => {
+    vi.mocked(session.useSessionInfo).mockReturnValue(signedIn);
+    const birch = { ...acmeClient, id: 'c2', name: 'Birch Ltd', jurisdiction: 'UK' };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: string) =>
+        input === '/api/requests/open-counts' ? jsonResponse(200, { counts: { c1: 2 } }) : jsonResponse(200, { clients: [acmeClient, birch] }),
+      ),
+    );
+    const user = userEvent.setup();
+    renderAt('/workspace', '/workspace', <WorkspaceHome />);
+    expect(await screen.findByText('2 requests open')).toBeInTheDocument();
+    expect(screen.getByText(/2 clients/)).toBeInTheDocument();
+    await user.type(screen.getByLabelText('Find a client'), 'bir');
+    expect(screen.getByRole('link', { name: /Birch Ltd/ })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Acme Pty Ltd/ })).not.toBeInTheDocument();
+    await user.clear(screen.getByLabelText('Find a client'));
+    await user.type(screen.getByLabelText('Find a client'), 'zzz');
+    expect(screen.getByText('No clients match “zzz”.')).toBeInTheDocument();
+  });
+
+  it('still shows the tiles when the request counts fail', async () => {
+    vi.mocked(session.useSessionInfo).mockReturnValue(signedIn);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: string) =>
+        input === '/api/requests/open-counts' ? jsonResponse(500, { error: 'boom' }) : jsonResponse(200, { clients: [acmeClient] }),
+      ),
+    );
+    renderAt('/workspace', '/workspace', <WorkspaceHome />);
+    expect(await screen.findByRole('link', { name: /Acme Pty Ltd/ })).toBeInTheDocument();
+    expect(screen.queryByText(/requests? open/)).not.toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('adds a client', async () => {
     vi.mocked(session.useSessionInfo).mockReturnValue(signedIn);
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(jsonResponse(200, { clients: [] }))
-      .mockResolvedValueOnce(
-        jsonResponse(201, {
+    // The page also loads the open request counts, so answer by URL rather than by call order.
+    const fetchMock = vi.fn(async (input: string, init?: RequestInit) => {
+      if (input === '/api/requests/open-counts') return jsonResponse(200, { counts: {} });
+      if (input === '/api/clients' && init?.method !== 'POST') return jsonResponse(200, { clients: [] });
+      return jsonResponse(201, {
           client: {
             id: 'c2',
             name: 'Beta Ltd',
@@ -286,18 +321,18 @@ describe('WorkspaceHome', () => {
             vatStaggerMonth: null,
             mtdItsa: false,
           },
-        }),
-      );
+        });
+    });
     vi.stubGlobal('fetch', fetchMock);
     const user = userEvent.setup();
     renderAt('/workspace', '/workspace', <WorkspaceHome />);
-    // The tiles load first, so wait for the "New client" tile before opening the form.
+    // The clients load first, so wait for the "New client" button before opening the form.
     await user.click(await screen.findByRole('button', { name: 'New client' }));
     await user.type(screen.getByLabelText('Client name'), 'Beta Ltd');
     await user.selectOptions(screen.getByLabelText('Jurisdiction'), 'UK');
     await user.click(screen.getByRole('button', { name: 'Add client' }));
     expect(await screen.findByText('Beta Ltd')).toBeInTheDocument();
-    const [url, init] = fetchMock.mock.calls[1] ?? [];
+    const [url, init] = fetchMock.mock.calls.find(([, i]) => i?.method === 'POST') ?? [];
     expect(url).toBe('/api/clients');
     expect(init).toMatchObject({ method: 'POST' });
     expect(JSON.parse(String(init?.body))).toEqual({

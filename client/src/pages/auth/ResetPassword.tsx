@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Button, Card, Field, PageHeader, TextLink, inputClass } from '../../components/ui';
+import { Button, Field, PageHeader, TextLink, inputClass } from '../../components/ui';
 import { ApiError } from '../../lib/api';
 import { resetPassword } from '../../lib/members';
 
@@ -41,7 +41,7 @@ export function ResetPassword() {
   return (
     <div className="space-y-6">
       <PageHeader title="Choose a new password" />
-      <Card className="max-w-md">
+      <div className="max-w-md">
         <form onSubmit={onSubmit} className="space-y-4">
           <Field label="New password" hint="At least 8 characters">
             <input
@@ -63,7 +63,7 @@ export function ResetPassword() {
             Set new password
           </Button>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }

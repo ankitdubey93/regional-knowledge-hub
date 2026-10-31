@@ -26,7 +26,7 @@ const gbp = (c: number) => formatMoney(c, 'GBP');
 
 function Result({ rows }: { rows: [ReactNode, string, boolean?][] }) {
   return (
-    <dl className="mt-4 divide-y divide-line rounded-lg border border-line" aria-live="polite">
+    <dl className="mt-5 divide-y divide-line rounded-2xl bg-panel-2" aria-live="polite">
       {rows.map(([label, value, strong], i) => (
         <div key={i} className={cx('flex items-center justify-between gap-4 px-3 py-2', strong && 'bg-panel-2 font-semibold')}>
           <dt className="text-sm">{label}</dt>
@@ -121,7 +121,7 @@ function BasTab() {
       </p>
       <div className="space-y-2">
         {rows.map((r, i) => (
-          <div key={r.key} className="grid grid-cols-2 gap-2 rounded-lg border border-line p-2 lg:grid-cols-[minmax(0,1fr)_7rem_8rem_minmax(0,14rem)_6rem_auto] lg:items-center">
+          <div key={r.key} className="grid grid-cols-2 gap-2 rounded-2xl border border-line p-3 lg:grid-cols-[minmax(0,1fr)_7rem_8rem_minmax(0,14rem)_6rem_auto] lg:items-center">
             <input aria-label={`Line ${i + 1} description`} className={cx(inputClass, 'col-span-2 lg:col-span-1')} value={r.label} onChange={(e) => set(r.key, { label: e.target.value })} />
             <select
               aria-label={`Line ${i + 1} type`}
@@ -230,7 +230,7 @@ function VatTab() {
       </p>
       <div className="space-y-2">
         {rows.map((r, i) => (
-          <div key={r.key} className="grid grid-cols-2 gap-2 rounded-lg border border-line p-2 lg:grid-cols-[minmax(0,1fr)_7rem_8rem_minmax(0,16rem)_auto] lg:items-center">
+          <div key={r.key} className="grid grid-cols-2 gap-2 rounded-2xl border border-line p-3 lg:grid-cols-[minmax(0,1fr)_7rem_8rem_minmax(0,16rem)_auto] lg:items-center">
             <input aria-label={`Line ${i + 1} description`} className={cx(inputClass, 'col-span-2 lg:col-span-1')} value={r.label} onChange={(e) => set(r.key, { label: e.target.value })} />
             <select aria-label={`Line ${i + 1} type`} className={inputClass} value={r.kind} onChange={(e) => set(r.key, { kind: e.target.value as VatRow['kind'], treatment: 'standard' })}>
               <option value="sale">Sale</option>

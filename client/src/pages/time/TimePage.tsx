@@ -198,8 +198,16 @@ export function TimePage() {
             <Callout tone="info">Add an entity on the workspace page first.</Callout>
           ) : (
             <>
-              <Card>
-                <h2 className="font-semibold">Timer</h2>
+              <Card className={timer !== null && runningSince !== null ? 'bg-sun-soft shadow-none' : ''}>
+                <h2 className="flex items-center gap-3 font-semibold">
+                  Timer
+                  {timer !== null && runningSince !== null && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-panel px-2.5 py-0.5 text-xs font-semibold text-good">
+                      <span className="size-1.5 rounded-full bg-good" aria-hidden />
+                      Running
+                    </span>
+                  )}
+                </h2>
                 {timer !== null && runningSince !== null ? (
                   <div className="mt-3">
                     <p className="text-sm">
@@ -207,8 +215,8 @@ export function TimePage() {
                         ? `Running on ${timer.clientName} · ${timer.engagementTitle}`
                         : `Running on ${timer.clientName}`}
                     </p>
-                    <p className="mt-1 text-2xl tabular-nums">{formatElapsed(runningSince, now)}</p>
-                    <Button className="mt-3" onClick={() => void stop()}>
+                    <p className="mt-2 font-mono text-4xl font-semibold tracking-tight tabular-nums sm:text-5xl">{formatElapsed(runningSince, now)}</p>
+                    <Button className="mt-5 min-h-12 px-6" onClick={() => void stop()}>
                       Stop timer
                     </Button>
                   </div>
@@ -323,7 +331,7 @@ export function TimePage() {
                 <thead>
                   <tr>
                     {['Day', 'Time', 'Billable'].map((h) => (
-                      <th key={h} scope="col" className="border-b border-line px-2 py-1 font-medium">
+                      <th key={h} scope="col" className="border-b border-line px-3 py-3 font-medium">
                         {h}
                       </th>
                     ))}
@@ -332,19 +340,19 @@ export function TimePage() {
                 <tbody>
                   {dayTotals(entries, weekStart).map((d, i) => (
                     <tr key={d.day}>
-                      <th scope="row" className="border-b border-line px-2 py-1 text-left font-medium">
+                      <th scope="row" className="border-b border-line px-3 py-3 text-left font-medium">
                         {`${WEEKDAYS[i] ?? ''} ${formatDay(d.day)}`}
                       </th>
-                      <td className="border-b border-line px-2 py-1">{formatMinutes(d.minutes)}</td>
-                      <td className="border-b border-line px-2 py-1">{formatMinutes(d.billableMinutes)}</td>
+                      <td className="border-b border-line px-3 py-3">{formatMinutes(d.minutes)}</td>
+                      <td className="border-b border-line px-3 py-3">{formatMinutes(d.billableMinutes)}</td>
                     </tr>
                   ))}
                   <tr>
-                    <th scope="row" className="border-b border-line px-2 py-1 text-left font-medium">
+                    <th scope="row" className="border-b border-line px-3 py-3 text-left font-medium">
                       Total
                     </th>
-                    <td className="border-b border-line px-2 py-1">{formatMinutes(totals.minutes)}</td>
-                    <td className="border-b border-line px-2 py-1">{formatMinutes(totals.billableMinutes)}</td>
+                    <td className="border-b border-line px-3 py-3">{formatMinutes(totals.minutes)}</td>
+                    <td className="border-b border-line px-3 py-3">{formatMinutes(totals.billableMinutes)}</td>
                   </tr>
                 </tbody>
               </table>

@@ -21,7 +21,7 @@ function ThemeToggle() {
     <button
       type="button"
       aria-label={`Switch to ${next} theme`}
-      className="inline-flex size-10 items-center justify-center rounded-lg text-muted hover:bg-panel-2 hover:text-ink"
+      className="inline-flex size-10 items-center justify-center rounded-full text-muted transition-colors duration-150 ease-snappy hover:bg-panel-2 hover:text-ink"
       onClick={() => {
         document.documentElement.setAttribute('data-theme', next);
         try {
@@ -38,7 +38,10 @@ function ThemeToggle() {
 }
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  cx('rounded-lg px-3 py-2 text-sm font-medium', isActive ? 'bg-accent-soft text-ink' : 'text-muted hover:bg-panel-2 hover:text-ink');
+  cx(
+    'rounded-full px-3.5 py-2 text-sm font-semibold transition-colors duration-150 ease-snappy',
+    isActive ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-panel-2 hover:text-ink',
+  );
 
 export function Layout() {
   const [open, setOpen] = useState(false);
@@ -73,10 +76,12 @@ export function Layout() {
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-panel focus:p-2">
         Skip to content
       </a>
-      <header className="sticky top-0 z-30 border-b border-line bg-panel/90 backdrop-blur">
+      <header className="sticky top-0 z-30 bg-panel/90 shadow-soft backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4">
-          <Link to={session ? '/workspace' : '/'} className="mr-2 flex items-center gap-2 font-semibold">
-            <BookOpen size={20} className="text-accent" aria-hidden />
+          <Link to={session ? '/workspace' : '/'} className="mr-2 flex items-center gap-2 font-display text-[17px] font-bold">
+            <span className="inline-flex size-7 items-center justify-center rounded-[9px] bg-accent text-accent-fg" aria-hidden>
+              <BookOpen size={16} />
+            </span>
             <span>Compliance Hub</span>
           </Link>
           <nav aria-label="Main" className="hidden flex-1 items-center gap-1 md:flex">
@@ -94,17 +99,17 @@ export function Layout() {
                   <ActiveEntityChip />
                   <WorkspaceSwitcher />
                 </div>
-                <button type="button" className="rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-panel-2 hover:text-ink" onClick={async () => { await signOutUser(); navigate('/'); }}>
+                <button type="button" className="rounded-full px-3 py-2 text-sm font-semibold text-muted transition-colors duration-150 ease-snappy hover:bg-panel-2 hover:text-ink" onClick={async () => { await signOutUser(); navigate('/'); }}>
                   Sign out
                 </button>
               </>
             ) : (
-              <Link to="/sign-in" className="rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-panel-2 hover:text-ink">Sign in</Link>
+              <Link to="/sign-in" className="rounded-full px-3 py-2 text-sm font-semibold text-muted transition-colors duration-150 ease-snappy hover:bg-panel-2 hover:text-ink">Sign in</Link>
             )}
             <ThemeToggle />
             <button
               type="button"
-              className="inline-flex size-10 items-center justify-center rounded-lg text-muted hover:bg-panel-2 md:hidden"
+              className="inline-flex size-10 items-center justify-center rounded-full text-muted transition-colors duration-150 ease-snappy hover:bg-panel-2 md:hidden"
               aria-label={open ? 'Close menu' : 'Open menu'}
               aria-expanded={open}
               aria-controls="mobile-nav"
@@ -115,7 +120,7 @@ export function Layout() {
           </div>
         </div>
         {open && (
-          <nav id="mobile-nav" aria-label="Main" className="border-t border-line bg-panel px-4 py-2 md:hidden">
+          <nav id="mobile-nav" aria-label="Main" className="animate-[menu-in_180ms_cubic-bezier(0.2,0.8,0.2,1)] space-y-1 border-t border-line bg-panel px-4 py-3 md:hidden">
             {session && (
               <div className="space-y-2 border-b border-line pb-2">
                 {session.activeFirmId !== null && <TimerChip />}
@@ -132,15 +137,15 @@ export function Layout() {
         )}
       </header>
 
-      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:py-10">
+      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8 sm:py-12">
         {!persisted && (
-          <p className="mb-4 rounded-lg bg-warn-soft p-3 text-sm">This browser is blocking storage, so your practice data will be lost when you close the page.</p>
+          <p className="mb-4 rounded-xl bg-warn-soft px-4 py-3 text-sm">This browser is blocking storage, so your practice data will be lost when you close the page.</p>
         )}
         <Outlet />
       </main>
 
-      <footer className="border-t border-line bg-panel">
-        <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-muted">
+      <footer className="shadow-[inset_0_1px_0_var(--border)]">
+        <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-muted sm:px-8">
           <p>
             Educational material, not tax, legal or accounting advice. Figures link to their official source with the date they were last checked; check the source
             before relying on a figure.

@@ -12,6 +12,7 @@ import { todayIso } from '../../utils/srs';
 const JURISDICTION_NAMES: Record<Jurisdiction, string> = { AU: 'Australia', UK: 'United Kingdom', INTL: 'International' };
 const JURISDICTIONS: Jurisdiction[] = ['AU', 'UK', 'INTL'];
 const STATUS_LABELS: Record<FactStatus, string> = { verified: 'Verified', stale: 'Over a year old', unverified: 'Unverified' };
+const STATUS_PILLS: Record<FactStatus, string> = { verified: 'bg-good-soft text-good', stale: 'bg-warn-soft text-warn', unverified: 'bg-warn-soft text-warn' };
 
 function asJurisdiction(v: string): Jurisdiction | undefined {
   return JURISDICTIONS.find((j) => j === v);
@@ -104,7 +105,11 @@ function FactsPanel() {
                   </td>
                   <td className="px-3 py-2">{row.fact.label}</td>
                   <td className="px-3 py-2">{formatFact(row.fact)}</td>
-                  <td className="px-3 py-2">{STATUS_LABELS[factStatus(row.fact, today)]}</td>
+                  <td className="px-3 py-2">
+                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_PILLS[factStatus(row.fact, today)]}`}>
+                      {STATUS_LABELS[factStatus(row.fact, today)]}
+                    </span>
+                  </td>
                   <td className="px-3 py-2">{`${row.docCount} guide(s)`}</td>
                   <td className="px-3 py-2">{row.updatedAt.slice(0, 10)}</td>
                 </tr>

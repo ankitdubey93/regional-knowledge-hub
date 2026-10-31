@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { renderAt } from './render';
 import { EntityCalendar } from '../pages/entity/EntityCalendar';
 import { DueSoon } from '../components/DueSoon';
+import { NEXT_DUE_WINDOW_DAYS, dueWithin, nextDue } from '../lib/calendar';
 import type { ClientRecord } from '../lib/entity';
 
 const birch: ClientRecord = {
@@ -131,6 +132,19 @@ describe('Entity calendar (C1)', () => {
       URL.createObjectURL = originalCreateObjectURL;
       URL.revokeObjectURL = originalRevokeObjectURL;
     }
+  });
+
+  it('next due is the first due date in the window, and due-within sorts by date then name', () => {
+    const now = new Date('2026-10-31T12:00:00Z');
+    const all = dueWithin([birch], now, NEXT_DUE_WINDOW_DAYS);
+    expect(all.length).toBeGreaterThan(0);
+    expect(nextDue(birch, now)).toEqual(all[0]?.obligation);
+    const twin = { ...birch, id: 'c0', name: 'Alder Ltd' };
+    const both = dueWithin([birch, twin], now, 30);
+    const dates = both.map((i) => i.obligation.dueDate);
+    expect(dates).toEqual(dates.slice().sort());
+    if (both.length >= 2 && both[0]?.obligation.dueDate === both[1]?.obligation.dueDate) expect(both[0]?.client.name).toBe('Alder Ltd');
+    expect(nextDue({ ...birch, entityType: null }, now)).toBeNull();
   });
 
   it('due soon lists the next 30 days', () => {

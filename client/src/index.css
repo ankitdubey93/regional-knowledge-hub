@@ -3,79 +3,98 @@
 /*
  * Tokens. Light is the default; dark applies from the system preference unless
  * the user forced light, or when the user forces dark. Every component uses the
- * Tailwind names mapped in @theme below, never raw colours.
+ * Tailwind names mapped in @theme below, never raw colours. The values follow the
+ * Compliance Hub design system (near-white grounds, raspberry accent, butter and peach highlights, soft shadows).
  */
 :root {
-  --bg: #f7f7f4;
+  --bg: #fdfcfb;
   --panel: #ffffff;
-  --panel-2: #f0f0eb;
-  --border: #dedcd4;
-  --text: #1c1d1f;
-  --muted: #5f6368;
-  --accent: #0f766e;
-  --accent-hover: #115e59;
-  --accent-soft: #ccfbf1;
+  --panel-2: #f6f3f6;
+  --border: #ece6ec;
+  --text: #221a26;
+  --muted: #665b69;
+  --accent: #b8236c;
+  --accent-hover: #951a57;
+  --accent-soft: #fde8f1;
   --accent-fg: #ffffff;
-  --good: #15803d;
-  --good-soft: #dcfce7;
-  --bad: #b91c1c;
-  --bad-soft: #fee2e2;
-  --warn: #a16207;
-  --warn-soft: #fef3c7;
-  --au: #b45309;
-  --au-soft: #ffedd5;
-  --uk: #1d4ed8;
-  --uk-soft: #dbeafe;
+  --sun: #7a5300;
+  --sun-soft: #fff3d1;
+  --peach-soft: #ffe8da;
+  --good: #1f7a52;
+  --good-soft: #e3f5ec;
+  --bad: #b3261e;
+  --bad-soft: #fde6e2;
+  --warn: #8f5600;
+  --warn-soft: #fff1d6;
+  --au: #875c00;
+  --au-soft: #fff0c9;
+  --uk: #3248b8;
+  --uk-soft: #e6ebff;
+  --elev-1: 0 1px 2px rgba(34, 26, 38, 0.04), 0 8px 28px rgba(34, 26, 38, 0.05);
+  --elev-2: 0 2px 6px rgba(34, 26, 38, 0.05), 0 18px 44px rgba(34, 26, 38, 0.09);
+  --elev-btn: 0 6px 18px rgba(184, 35, 108, 0.25);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #111315;
-    --panel: #181b1e;
-    --panel-2: #202428;
-    --border: #2e3338;
-    --text: #e8eaed;
-    --muted: #9aa0a6;
-    --accent: #2dd4bf;
-    --accent-hover: #5eead4;
-    --accent-soft: #123b37;
-    --accent-fg: #0b1b19;
-    --good: #4ade80;
-    --good-soft: #14321f;
-    --bad: #f87171;
-    --bad-soft: #3b1717;
-    --warn: #fbbf24;
-    --warn-soft: #3a2c0b;
-    --au: #fb923c;
-    --au-soft: #3a2310;
-    --uk: #60a5fa;
-    --uk-soft: #132743;
+    --bg: #17121a;
+    --panel: #201a24;
+    --panel-2: #2a2330;
+    --border: #3a3140;
+    --text: #f6eff6;
+    --muted: #bcaebf;
+    --accent: #ff7eb6;
+    --accent-hover: #ff9cc8;
+    --accent-soft: #4a1d33;
+    --accent-fg: #2a0a19;
+    --sun: #ffd27a;
+    --sun-soft: #3a2d12;
+    --peach-soft: #3d2620;
+    --good: #6fd6a2;
+    --good-soft: #163326;
+    --bad: #ff8a80;
+    --bad-soft: #45201d;
+    --warn: #f6c15c;
+    --warn-soft: #3b2c10;
+    --au: #f0c25e;
+    --au-soft: #3a2d10;
+    --uk: #a2b0ff;
+    --uk-soft: #232b55;
+    --elev-1: 0 0 0 1px rgba(255, 236, 220, 0.06), 0 2px 8px rgba(0, 0, 0, 0.35);
+    --elev-2: 0 0 0 1px rgba(255, 236, 220, 0.09), 0 10px 28px rgba(0, 0, 0, 0.5);
+    --elev-btn: 0 6px 18px rgba(255, 126, 182, 0.2);
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
-  --bg: #111315;
-  --panel: #181b1e;
-  --panel-2: #202428;
-  --border: #2e3338;
-  --text: #e8eaed;
-  --muted: #9aa0a6;
-  --accent: #2dd4bf;
-  --accent-hover: #5eead4;
-  --accent-soft: #123b37;
-  --accent-fg: #0b1b19;
-  --good: #4ade80;
-  --good-soft: #14321f;
-  --bad: #f87171;
-  --bad-soft: #3b1717;
-  --warn: #fbbf24;
-  --warn-soft: #3a2c0b;
-  --au: #fb923c;
-  --au-soft: #3a2310;
-  --uk: #60a5fa;
-  --uk-soft: #132743;
+  --bg: #17121a;
+  --panel: #201a24;
+  --panel-2: #2a2330;
+  --border: #3a3140;
+  --text: #f6eff6;
+  --muted: #bcaebf;
+  --accent: #ff7eb6;
+  --accent-hover: #ff9cc8;
+  --accent-soft: #4a1d33;
+  --accent-fg: #2a0a19;
+  --sun: #ffd27a;
+  --sun-soft: #3a2d12;
+  --peach-soft: #3d2620;
+  --good: #6fd6a2;
+  --good-soft: #163326;
+  --bad: #ff8a80;
+  --bad-soft: #45201d;
+  --warn: #f6c15c;
+  --warn-soft: #3b2c10;
+  --au: #f0c25e;
+  --au-soft: #3a2d10;
+  --uk: #a2b0ff;
+  --uk-soft: #232b55;
+  --elev-1: 0 0 0 1px rgba(255, 236, 220, 0.06), 0 2px 8px rgba(0, 0, 0, 0.35);
+  --elev-2: 0 0 0 1px rgba(255, 236, 220, 0.09), 0 10px 28px rgba(0, 0, 0, 0.5);
+  --elev-btn: 0 6px 18px rgba(255, 126, 182, 0.2);
   color-scheme: dark;
 }
 
@@ -90,6 +109,9 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-soft: var(--accent-soft);
   --color-accent-fg: var(--accent-fg);
+  --color-sun: var(--sun);
+  --color-sun-soft: var(--sun-soft);
+  --color-peach-soft: var(--peach-soft);
   --color-good: var(--good);
   --color-good-soft: var(--good-soft);
   --color-bad: var(--bad);
@@ -100,7 +122,12 @@
   --color-au-soft: var(--au-soft);
   --color-uk: var(--uk);
   --color-uk-soft: var(--uk-soft);
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --shadow-soft: var(--elev-1);
+  --shadow-lift: var(--elev-2);
+  --shadow-btn: var(--elev-btn);
+  --ease-snappy: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --font-display: "Bricolage Grotesque", "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -113,6 +140,12 @@ body {
 body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2 {
+  font-family: var(--font-display);
+  text-wrap: balance;
 }
 
 /* Rendered curriculum. Kept here because react-markdown emits plain elements. */
@@ -150,15 +183,21 @@ body {
 }
 .prose-doc a {
   color: var(--accent);
+  font-weight: 600;
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color 120ms cubic-bezier(0.2, 0.8, 0.2, 1), text-decoration-thickness 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.prose-doc a:hover {
+  color: var(--accent-hover);
+  text-decoration-thickness: 2px;
 }
 .prose-doc blockquote {
-  border-left: 3px solid var(--accent);
-  background: var(--panel-2);
+  background: var(--accent-soft);
   padding: 0.75rem 1rem;
   margin: 1rem 0;
-  border-radius: 0 0.5rem 0.5rem 0;
+  border-radius: 0.75rem;
 }
 .prose-doc code {
   font-family: var(--font-mono);
@@ -171,6 +210,12 @@ body {
   border-collapse: collapse;
   font-size: 0.925rem;
   min-width: 100%;
+}
+.prose-doc tbody tr {
+  transition: background-color 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.prose-doc tbody tr:hover {
+  background: var(--panel-2);
 }
 .prose-doc th,
 .prose-doc td {
@@ -195,4 +240,37 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* Data tables inside the app: small uppercase headers and a row tint on hover. */
+main thead th {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+main tbody tr > * {
+  transition: background-color 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+main tbody tr:hover > * {
+  background: var(--panel-2);
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* Snappy, not showy: hover and press motion is 120 to 180 ms; none of it runs when the user asks for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { ArrowRight, CalendarDays, LineChart, Upload } from 'lucide-react';
 import { ChatPanel } from '../../components/ChatPanel';
-import { Card, JurisdictionBadge, PageHeader, TextLink } from '../../components/ui';
+import { EntityHeader } from '../../components/EntityHeader';
+import { Card, TextLink } from '../../components/ui';
 import { docs } from '../../content/docs';
 import { setActiveEntity } from '../../lib/activeEntity';
 import { ApiError, apiJson } from '../../lib/api';
+import { nextDue } from '../../lib/calendar';
 import { entitySuggestions } from '../../lib/chat';
 import { MONTHS, TAX_PERIODS, entityTypeLabel, profileSummary, taxLabel, type ClientRecord } from '../../lib/entity';
 import { useSessionInfo } from '../../lib/session';
+import { formatDay } from '@chub/shared/utils/deadlines';
 
 type LoadState =
   | { status: 'loading' }
@@ -26,15 +30,22 @@ function EntityView({ c }: { c: ClientRecord }) {
   const summary = profileSummary(c);
   const sections: string[] = c.jurisdiction === 'AU' ? ['australia'] : c.jurisdiction === 'UK' ? ['uk'] : ['australia', 'uk'];
   const topics = docs.filter((d) => sections.includes(d.section)).slice(0, 4);
+  const next = nextDue(c, new Date());
+  const glance = [
+    {
+      to: `/entities/${c.id}/calendar`,
+      icon: CalendarDays,
+      title: next === null ? 'No due dates yet' : next.label,
+      sub: next === null ? 'Set the calendar details to see them' : `Due ${formatDay(next.dueDate)}`,
+      named: false,
+    },
+    { to: `/entities/${c.id}/books`, icon: Upload, title: 'Import a trial balance', sub: 'CSV or Excel, from Xero and others', named: true },
+    { to: `/entities/${c.id}/reports`, icon: LineChart, title: 'View reports', sub: 'Profit and loss and balance sheet', named: true },
+  ];
   return (
     <>
-      <PageHeader title={c.name} lead={summary}>
-        <div className="mt-3 flex flex-wrap items-center gap-3">
-          <JurisdictionBadge j={c.jurisdiction} />
-          <TextLink to={`/entities/${c.id}/settings`}>Edit details</TextLink>
-        </div>
-      </PageHeader>
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <EntityHeader client={c} overview />
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="min-w-0">
           <ChatPanel
             title={`Ask anything about ${c.name}`}
@@ -46,53 +57,52 @@ function EntityView({ c }: { c: ClientRecord }) {
             scope={null}
           />
         </div>
-        <aside className="space-y-4">
+        <aside className="space-y-6">
           <Card>
-            <h2 className="font-semibold">Books and reports</h2>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li>
-                <TextLink to={`/entities/${c.id}/books`}>Import a trial balance</TextLink>
-              </li>
-              <li>
-                <TextLink to={`/entities/${c.id}/reports`}>View reports</TextLink>
-              </li>
-              <li>
-                <TextLink to={`/entities/${c.id}/documents`}>Documents</TextLink>
-              </li>
-              <li>
-                <TextLink to={`/entities/${c.id}/calendar`}>Calendar</TextLink>
-              </li>
-              <li>
-                <TextLink to={`/entities/${c.id}/requests`}>Requests</TextLink>
-              </li>
-              <li>
-                <TextLink to={`/entities/${c.id}/engagements`}>Engagements</TextLink>
-              </li>
+            <h2 className="text-lg font-semibold tracking-tight">At a glance</h2>
+            <ul className="mt-3 grid gap-0.5">
+              {glance.map(({ to, icon: Icon, title, sub, named }) => (
+                <li key={title}>
+                  <Link
+                    to={to}
+                    aria-label={named ? title : `${title}, ${sub}`}
+                    className="group -mx-2.5 grid grid-cols-[34px_minmax(0,1fr)_auto] items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors duration-150 ease-snappy hover:bg-panel-2"
+                  >
+                    <span className="inline-flex size-[34px] items-center justify-center rounded-[10px] bg-sun-soft text-sun" aria-hidden>
+                      <Icon size={16} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold">{title}</span>
+                      <span className="block text-[13px] text-muted">{sub}</span>
+                    </span>
+                    <ArrowRight
+                      size={16}
+                      aria-hidden
+                      className="text-muted transition-transform duration-150 ease-snappy group-hover:translate-x-0.5 motion-reduce:transform-none"
+                    />
+                  </Link>
+                </li>
+              ))}
             </ul>
           </Card>
           <Card>
-            <h2 className="font-semibold">Profile</h2>
-            <dl className="mt-3 space-y-2 text-sm">
-              <div>
-                <dt className="text-muted">Jurisdiction</dt>
-                <dd>{{ AU: 'Australia', UK: 'UK', 'AU+UK': 'Australia and the UK' }[c.jurisdiction]}</dd>
-              </div>
-              <div>
-                <dt className="text-muted">Entity type</dt>
-                <dd>{c.entityType === null ? 'Not set' : entityTypeLabel(c.entityType, c.jurisdiction)}</dd>
-              </div>
-              <div>
-                <dt className="text-muted">{`${taxLabel(c.jurisdiction)} registration`}</dt>
-                <dd>{registrationText(c)}</dd>
-              </div>
-              <div>
-                <dt className="text-muted">Year end</dt>
-                <dd>{c.fyEndMonth === null ? 'Not set' : MONTHS[c.fyEndMonth - 1]}</dd>
-              </div>
+            <h2 className="text-lg font-semibold tracking-tight">Profile</h2>
+            <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+              <dt className="text-muted">Jurisdiction</dt>
+              <dd className="text-right font-semibold">{{ AU: 'Australia', UK: 'UK', 'AU+UK': 'Australia and the UK' }[c.jurisdiction]}</dd>
+              <dt className="text-muted">Entity type</dt>
+              <dd className="text-right font-semibold">{c.entityType === null ? 'Not set' : entityTypeLabel(c.entityType, c.jurisdiction)}</dd>
+              <dt className="text-muted">{`${taxLabel(c.jurisdiction)} registration`}</dt>
+              <dd className="text-right font-semibold">{registrationText(c)}</dd>
+              <dt className="text-muted">Year end</dt>
+              <dd className="text-right font-semibold">{c.fyEndMonth === null ? 'Not set' : MONTHS[c.fyEndMonth - 1]}</dd>
             </dl>
+            <div className="mt-4">
+              <TextLink to={`/entities/${c.id}/settings`}>Edit details</TextLink>
+            </div>
           </Card>
-          <Card>
-            <h2 className="font-semibold">In the Knowledge Hub</h2>
+          <Card className="bg-sun-soft shadow-none">
+            <h2 className="text-lg font-semibold tracking-tight">In the Knowledge Hub</h2>
             <ul className="mt-3 space-y-2 text-sm">
               {topics.map((d) => (
                 <li key={d.id}>
@@ -152,7 +162,7 @@ export function EntityDashboard() {
 
   return (
     <div className="space-y-6">
-      <TextLink to="/workspace">Back to workspace</TextLink>
+      {state.status !== 'ready' && <TextLink to="/workspace">Back to workspace</TextLink>}
       {state.status === 'loading' && <p className="text-muted">Loading…</p>}
       {state.status === 'missing' && <p>Client not found.</p>}
       {state.status === 'error' && (

@@ -19,13 +19,13 @@ export function PracticeIndex() {
     <div className="space-y-8">
       <PageHeader title="Practice" lead="Test yourself on each topic, review flashcards, and code real-looking bills." />
       <div className="grid gap-4 sm:grid-cols-2">
-        <Link to="/knowledge/practice/flashcards" className="rounded-xl border border-line bg-panel p-5 hover:border-accent">
+        <Link to="/knowledge/practice/flashcards" className="rounded-3xl bg-panel shadow-soft transition-[transform,box-shadow] duration-150 ease-snappy hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 motion-reduce:transform-none p-6">
           <p className="font-semibold">Flashcards</p>
           <p className="mt-1 text-sm text-muted">
             {cards.length} cards · <span className="font-medium text-ink">{due} due today</span>
           </p>
         </Link>
-        <Link to="/knowledge/practice/coding" className="rounded-xl border border-line bg-panel p-5 hover:border-accent">
+        <Link to="/knowledge/practice/coding" className="rounded-3xl bg-panel shadow-soft transition-[transform,box-shadow] duration-150 ease-snappy hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 motion-reduce:transform-none p-6">
           <p className="font-semibold">Coding scenarios</p>
           <p className="mt-1 text-sm text-muted">
             {codingScenarios.filter((s) => inScope(s.jurisdiction, scope)).length} bills and bank lines to code with an account and a GST or VAT rate.

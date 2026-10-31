@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { z } from 'zod';
 import { requireFirm } from '../middleware/session';
-import { addRequest, deleteRequest, generateRequests, listRequests, updateRequest } from '../services/requestService';
+import { addRequest, deleteRequest, generateRequests, listRequests, openRequestCounts, updateRequest } from '../services/requestService';
 import { requestCreateSchema, requestPatchSchema } from '../types/requests';
 import { firmOf } from '../types';
 
@@ -104,4 +104,13 @@ requestRoutes.delete<'/requests/:requestId', RequestParams>('/requests/:requestI
     return;
   }
   res.status(204).end();
+});
+
+// Mounted at /api/requests: one count per client across the firm, so the workspace does not fetch every list.
+export const requestCountRoutes = Router();
+requestCountRoutes.use(requireFirm);
+
+requestCountRoutes.get('/open-counts', async (_req, res) => {
+  const { orgId } = firmOf(res);
+  res.status(200).json({ counts: await openRequestCounts(orgId) });
 });

@@ -1,3 +1,4 @@
+import { EntityHeader } from '../../components/EntityHeader';
 import { useEffect, useState, type ChangeEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { RedactionNotice } from '../../components/RedactionNotice';
@@ -120,8 +121,8 @@ export function EntityDocuments() {
 
   const c = state.client;
   return (
-    <div className="space-y-6">
-      <TextLink to={`/entities/${c.id}`}>{`Back to ${c.name}`}</TextLink>
+    <div className="space-y-8">
+      <EntityHeader client={c} />
       <PageHeader title="Documents" lead={`Files for ${c.name}. Attach them to a chat on the entity's dashboard.`} />
 
       <RedactionNotice variant="documents" />
@@ -154,11 +155,11 @@ export function EntityDocuments() {
             <table className="mt-3 w-full text-left text-sm">
               <thead>
                 <tr>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Name</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Type</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Size</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Uploaded</th>
-                  <th scope="col" className="relative border-b border-line px-2 py-1 font-medium">
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Name</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Type</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Size</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Uploaded</th>
+                  <th scope="col" className="relative border-b border-line px-3 py-3 font-medium">
                     <span className="sr-only">Actions</span>
                   </th>
                 </tr>
@@ -166,16 +167,16 @@ export function EntityDocuments() {
               <tbody>
                 {docs.map((d) => (
                   <tr key={d.id}>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">
                       {d.originalName}
                       {d.fromClientLink && <span className="block text-xs text-muted">From the client's upload link</span>}
                       {d.supersedesId !== null && <span className="block text-xs text-muted">Replaces an earlier upload</span>}
                       {d.truncated && ' (only the first part is used)'}
                     </td>
-                    <td className="border-b border-line px-2 py-1">{KIND_LABELS[d.kind]}</td>
-                    <td className="border-b border-line px-2 py-1">{formatBytes(d.byteSize)}</td>
-                    <td className="border-b border-line px-2 py-1">{new Date(d.createdAt).toLocaleDateString()}</td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">{KIND_LABELS[d.kind]}</td>
+                    <td className="border-b border-line px-3 py-3">{formatBytes(d.byteSize)}</td>
+                    <td className="border-b border-line px-3 py-3">{new Date(d.createdAt).toLocaleDateString()}</td>
+                    <td className="border-b border-line px-3 py-3">
                       <div className="flex flex-wrap items-center gap-3">
                         <a href={documentFileUrl(c.id, d.id)} download aria-label={`Download ${d.originalName}`} className={linkClass}>
                           Download

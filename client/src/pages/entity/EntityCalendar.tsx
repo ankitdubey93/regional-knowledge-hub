@@ -1,3 +1,4 @@
+import { EntityHeader } from '../../components/EntityHeader';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Callout, Card, Field, PageHeader, TableScroll, TextLink, inputClass } from '../../components/ui';
@@ -227,9 +228,14 @@ export function EntityCalendar() {
 
   return (
     <div className="space-y-6">
-      <TextLink to={`/entities/${id}`}>Back to dashboard</TextLink>
+      {state.status === 'ready' && <EntityHeader client={state.client} />}
       {state.status === 'loading' && <p className="text-muted">Loading…</p>}
-      {state.status === 'missing' && <p>Client not found.</p>}
+      {state.status === 'missing' && (
+        <>
+          <p>Client not found.</p>
+          <TextLink to="/workspace">Back to workspace</TextLink>
+        </>
+      )}
       {state.status === 'error' && (
         <p role="alert" className="text-sm text-bad">
           {state.message}

@@ -223,11 +223,11 @@ export function RequestLinks({ clientId, requests }: { clientId: string; request
             <table className="mt-3 w-full min-w-[36rem] text-left text-sm">
               <thead>
                 <tr>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Sent to</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Expires</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Status</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Reminders sent</th>
-                  <th scope="col" className="relative border-b border-line px-2 py-1 font-medium">
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Sent to</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Expires</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Status</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Reminders sent</th>
+                  <th scope="col" className="relative border-b border-line px-3 py-3 font-medium">
                     <span className="sr-only">Actions</span>
                   </th>
                 </tr>
@@ -235,11 +235,11 @@ export function RequestLinks({ clientId, requests }: { clientId: string; request
               <tbody>
                 {links.map((l) => (
                   <tr key={l.id}>
-                    <td className="border-b border-line px-2 py-1">{l.recipientEmail}</td>
-                    <td className="whitespace-nowrap border-b border-line px-2 py-1">{formatDay(l.expiresAt.slice(0, 10))}</td>
-                    <td className="border-b border-line px-2 py-1">{LINK_STATUS_LABELS[l.status]}</td>
-                    <td className="border-b border-line px-2 py-1">{`${l.nudgeCount} of ${l.cadenceDays.length}`}</td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">{l.recipientEmail}</td>
+                    <td className="whitespace-nowrap border-b border-line px-3 py-3">{formatDay(l.expiresAt.slice(0, 10))}</td>
+                    <td className="border-b border-line px-3 py-3">{LINK_STATUS_LABELS[l.status]}</td>
+                    <td className="border-b border-line px-3 py-3">{`${l.nudgeCount} of ${l.cadenceDays.length}`}</td>
+                    <td className="border-b border-line px-3 py-3">
                       {l.status !== 'revoked' && l.status !== 'expired' && (
                         <div className="flex flex-wrap items-center gap-2">
                           {l.paused ? (

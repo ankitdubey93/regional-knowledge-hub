@@ -27,7 +27,7 @@ export function Learn() {
             <ul className="grid gap-3 md:grid-cols-2">
               {items.map((d) => (
                 <li key={d.id}>
-                  <Link to={`/knowledge/learn/${d.id}`} className="block h-full rounded-xl border border-line bg-panel p-4 hover:border-accent">
+                  <Link to={`/knowledge/learn/${d.id}`} className="block h-full rounded-3xl bg-panel shadow-soft transition-[transform,box-shadow] duration-150 ease-snappy hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 motion-reduce:transform-none p-5">
                     <div className="flex flex-wrap items-center gap-2">
                       <JurisdictionBadge j={d.jurisdiction} />
                       <span className="text-xs text-muted">

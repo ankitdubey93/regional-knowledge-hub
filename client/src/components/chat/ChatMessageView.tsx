@@ -12,7 +12,7 @@ const EMPTY_BODY: Partial<Record<Msg['status'], string>> = {
 export function ChatMessageView({ message, streaming }: { message: Msg; streaming?: boolean }) {
   if (message.role === 'user') {
     return (
-      <div className="ml-auto w-fit max-w-[85%] whitespace-pre-wrap break-words rounded-lg bg-accent-soft px-3 py-2 text-sm">
+      <div className="ml-auto w-fit max-w-[85%] whitespace-pre-wrap break-words rounded-3xl rounded-br-lg bg-accent px-4 py-2.5 text-sm text-accent-fg">
         {message.body}
       </div>
     );
@@ -22,7 +22,7 @@ export function ChatMessageView({ message, streaming }: { message: Msg; streamin
   const emptyText = message.body.trim() === '' ? EMPTY_BODY[message.status] : undefined;
 
   return (
-    <div className="mr-auto w-fit max-w-[85%] min-w-0 break-words rounded-lg border border-line bg-panel-2 px-3 py-2 text-sm">
+    <div className="mr-auto w-fit max-w-[88%] min-w-0 break-words rounded-3xl rounded-bl-lg bg-panel-2 px-4 py-3 text-sm">
       {badge !== null && (
         <span className="mb-1 inline-flex rounded-full bg-warn-soft px-2 py-0.5 text-xs font-medium">{badge}</span>
       )}

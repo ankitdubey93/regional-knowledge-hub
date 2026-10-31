@@ -56,7 +56,7 @@ function LinesEditor({ rows, setRows, jurisdiction }: { rows: Row[]; setRows: (r
     <div>
       <div className="space-y-3">
         {rows.map((r, i) => (
-          <div key={r.key} className="grid grid-cols-2 gap-2 rounded-lg border border-line p-2 sm:grid-cols-[minmax(0,1fr)_8rem_8rem_auto] sm:border-0 sm:p-0">
+          <div key={r.key} className="grid grid-cols-2 gap-2 rounded-2xl border border-line p-3 sm:grid-cols-[minmax(0,1fr)_8rem_8rem_auto] sm:border-0 sm:p-0">
             <label className="col-span-2 sm:col-span-1">
               <span className="sr-only">Line {i + 1} account</span>
               <select className={inputClass} value={r.account} onChange={(e) => set(r.key, { account: e.target.value })}>

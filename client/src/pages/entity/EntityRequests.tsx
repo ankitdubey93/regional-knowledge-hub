@@ -1,3 +1,4 @@
+import { EntityHeader } from '../../components/EntityHeader';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { formatDay } from '@chub/shared/utils/deadlines';
@@ -158,8 +159,8 @@ export function EntityRequests() {
 
   const c = state.client;
   return (
-    <div className="space-y-6">
-      <TextLink to={`/entities/${c.id}`}>{`Back to ${c.name}`}</TextLink>
+    <div className="space-y-8">
+      <EntityHeader client={c} />
       <PageHeader title="Requests" lead={`Documents to ask ${c.name} for, worked out from its profile and due dates.`} />
       <Callout tone="warn">Send open requests to the client with an upload link below. Items marked Not checked have not been confirmed against their official source.</Callout>
 
@@ -212,11 +213,11 @@ export function EntityRequests() {
             <table className="mt-3 w-full min-w-[40rem] text-left text-sm">
               <thead>
                 <tr>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Due</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">What</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Status</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Source</th>
-                  <th scope="col" className="relative border-b border-line px-2 py-1 font-medium">
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Due</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">What</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Status</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Source</th>
+                  <th scope="col" className="relative border-b border-line px-3 py-3 font-medium">
                     <span className="sr-only">Actions</span>
                   </th>
                 </tr>
@@ -224,16 +225,16 @@ export function EntityRequests() {
               <tbody>
                 {requests.map((r) => (
                   <tr key={r.id}>
-                    <td className="whitespace-nowrap border-b border-line px-2 py-1">{r.dueOn === null ? 'No date' : formatDay(r.dueOn)}</td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="whitespace-nowrap border-b border-line px-3 py-3">{r.dueOn === null ? 'No date' : formatDay(r.dueOn)}</td>
+                    <td className="border-b border-line px-3 py-3">
                       {r.label}
                       {r.why !== '' && <span className="block text-xs text-muted">{r.why}</span>}
                     </td>
-                    <td className="border-b border-line px-2 py-1">{STATUS_LABELS[r.status]}</td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">{STATUS_LABELS[r.status]}</td>
+                    <td className="border-b border-line px-3 py-3">
                       <SourceCell r={r} />
                     </td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">
                       <div className="flex flex-wrap items-center gap-2">
                         {r.status === 'open' ? (
                           <>

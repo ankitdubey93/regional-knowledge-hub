@@ -11,14 +11,17 @@ const links = [
 
 export function AdminNav() {
   return (
-    <nav aria-label="Admin" className="mb-6 flex flex-wrap gap-2">
+    <nav aria-label="Admin" className="mb-8 inline-flex flex-wrap gap-0.5 rounded-3xl bg-panel-2 p-1">
       {links.map((l) => (
         <NavLink
           key={l.to}
           to={l.to}
           end={l.end}
           className={({ isActive }) =>
-            cx('rounded-lg px-3 py-2 text-sm font-medium', isActive ? 'bg-accent-soft text-ink' : 'text-muted hover:bg-panel-2 hover:text-ink')
+            cx(
+              'inline-flex min-h-9 items-center rounded-full px-4 text-sm font-semibold transition-[background-color,color,box-shadow] duration-150 ease-snappy',
+              isActive ? 'bg-panel text-ink shadow-soft' : 'text-muted hover:text-ink',
+            )
           }
         >
           {l.label}

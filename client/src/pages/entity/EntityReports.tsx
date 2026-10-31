@@ -1,3 +1,4 @@
+import { EntityHeader } from '../../components/EntityHeader';
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Callout, Card, Field, PageHeader, Tabs, TableScroll, TextLink, inputClass } from '../../components/ui';
@@ -114,13 +115,13 @@ function ReportTable({
       <table className="w-full text-left text-sm">
         <thead>
           <tr>
-            <th scope="col" className="border-b border-line px-2 py-1 font-medium">Account</th>
-            <th scope="col" className="border-b border-line px-2 py-1 text-right font-medium">{currentLabel}</th>
+            <th scope="col" className="border-b border-line px-3 py-3 font-medium">Account</th>
+            <th scope="col" className="border-b border-line px-3 py-3 text-right font-medium">{currentLabel}</th>
             {compare && (
               <>
-                <th scope="col" className="border-b border-line px-2 py-1 text-right font-medium">{compareLabel}</th>
-                <th scope="col" className="border-b border-line px-2 py-1 text-right font-medium">Change</th>
-                <th scope="col" className="border-b border-line px-2 py-1 text-right font-medium">Change %</th>
+                <th scope="col" className="border-b border-line px-3 py-3 text-right font-medium">{compareLabel}</th>
+                <th scope="col" className="border-b border-line px-3 py-3 text-right font-medium">Change</th>
+                <th scope="col" className="border-b border-line px-3 py-3 text-right font-medium">Change %</th>
               </>
             )}
           </tr>
@@ -237,7 +238,8 @@ export function EntityReports() {
   if (imports.length === 0) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Reports" lead={client.name} />
+        <EntityHeader client={client} />
+        <PageHeader title="Reports" lead="Profit and loss and balance sheet from this client's imported trial balances." />
         <Card>
           <p className="text-sm">No trial balance has been imported yet.</p>
           <div className="mt-3">
@@ -252,7 +254,8 @@ export function EntityReports() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Reports" lead={client.name} />
+      <EntityHeader client={client} />
+      <PageHeader title="Reports" lead="Profit and loss and balance sheet from this client's imported trial balances." />
       <Card>
         <div className="mb-4 grid gap-4 sm:grid-cols-2">
           <Field label="Trial balance">

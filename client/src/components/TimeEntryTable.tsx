@@ -80,7 +80,7 @@ export function TimeEntryTable({
             <thead>
               <tr>
                 {headers.map((h) => (
-                  <th key={h} scope="col" className="border-b border-line px-2 py-1 font-medium">
+                  <th key={h} scope="col" className="border-b border-line px-3 py-3 font-medium">
                     {h}
                   </th>
                 ))}
@@ -132,15 +132,15 @@ export function TimeEntryTable({
                 }
                 return (
                   <tr key={e.id}>
-                    <td className="border-b border-line px-2 py-1">{formatDay(e.workDate)}</td>
-                    {showMember && <td className="border-b border-line px-2 py-1">{e.userName}</td>}
-                    <td className="border-b border-line px-2 py-1">{e.clientName}</td>
-                    <td className="border-b border-line px-2 py-1">{e.engagementTitle ?? '—'}</td>
-                    <td className="border-b border-line px-2 py-1">{e.taskTitle ?? '—'}</td>
-                    <td className="border-b border-line px-2 py-1">{formatMinutes(e.minutes ?? 0)}</td>
-                    <td className="border-b border-line px-2 py-1">{e.billable ? 'Yes' : 'No'}</td>
-                    <td className="border-b border-line px-2 py-1">{e.note}</td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">{formatDay(e.workDate)}</td>
+                    {showMember && <td className="border-b border-line px-3 py-3">{e.userName}</td>}
+                    <td className="border-b border-line px-3 py-3">{e.clientName}</td>
+                    <td className="border-b border-line px-3 py-3">{e.engagementTitle ?? '—'}</td>
+                    <td className="border-b border-line px-3 py-3">{e.taskTitle ?? '—'}</td>
+                    <td className="border-b border-line px-3 py-3">{formatMinutes(e.minutes ?? 0)}</td>
+                    <td className="border-b border-line px-3 py-3">{e.billable ? 'Yes' : 'No'}</td>
+                    <td className="border-b border-line px-3 py-3">{e.note}</td>
+                    <td className="border-b border-line px-3 py-3">
                       {e.invoiceId !== null ? (
                         <span className="text-muted">Invoiced</span>
                       ) : e.canEdit ? (

@@ -64,8 +64,8 @@ export function WorkspaceSwitcher({ inline = false }: { inline?: boolean }) {
   };
 
   const panelClass = inline
-    ? 'mt-2 rounded-lg border border-line bg-panel p-2'
-    : 'absolute right-0 z-40 mt-2 w-64 rounded-lg border border-line bg-panel p-2 shadow-lg';
+    ? 'mt-2 rounded-xl bg-panel-2 p-2'
+    : 'absolute right-0 z-40 mt-2 w-64 animate-[menu-in_180ms_cubic-bezier(0.2,0.8,0.2,1)] rounded-2xl bg-panel p-2 shadow-lift';
 
   return (
     <div ref={wrapRef} className="relative">
@@ -76,7 +76,7 @@ export function WorkspaceSwitcher({ inline = false }: { inline?: boolean }) {
         aria-controls={panelId}
         aria-label={`Workspace: ${session.activeFirmName ?? 'none'}`}
         onClick={() => void toggle()}
-        className="inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-panel-2 hover:text-ink"
+        className="inline-flex items-center gap-1 rounded-full bg-panel-2 px-3.5 py-2 text-sm font-semibold text-ink transition-colors duration-150 ease-snappy hover:bg-accent-soft"
       >
         <span className="max-w-40 truncate">{session.activeFirmName ?? 'No workspace'}</span>
         <ChevronDown size={16} aria-hidden />
@@ -101,7 +101,7 @@ export function WorkspaceSwitcher({ inline = false }: { inline?: boolean }) {
                         type="button"
                         aria-current={isActive ? 'true' : undefined}
                         onClick={() => void choose(w)}
-                        className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm hover:bg-panel-2"
+                        className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm transition-colors duration-150 ease-snappy hover:bg-panel-2"
                       >
                         {w.kind === 'business' ? <Building2 size={16} aria-hidden /> : <Users size={16} aria-hidden />}
                         <span className="min-w-0 flex-1 truncate">{w.name}</span>

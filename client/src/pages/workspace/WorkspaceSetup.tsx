@@ -49,7 +49,7 @@ export function WorkspaceSetup() {
           <fieldset>
             <legend className="mb-2 text-sm font-medium">What is this workspace for?</legend>
             <div className="space-y-2">
-              <label className="flex items-start gap-2 rounded-lg border border-line p-3">
+              <label className="flex items-start gap-2 rounded-2xl border border-line p-4">
                 <input
                   type="radio"
                   name="kind"
@@ -60,7 +60,7 @@ export function WorkspaceSetup() {
                 />
                 <span>My own business</span>
               </label>
-              <label className="flex items-start gap-2 rounded-lg border border-line p-3">
+              <label className="flex items-start gap-2 rounded-2xl border border-line p-4">
                 <input
                   type="radio"
                   name="kind"

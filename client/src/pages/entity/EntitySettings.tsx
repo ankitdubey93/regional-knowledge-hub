@@ -1,10 +1,11 @@
+import { EntityHeader } from '../../components/EntityHeader';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ClientForm } from '../../components/ClientForm';
 import { Button, Card, PageHeader, TextLink } from '../../components/ui';
 import { clearActiveEntity, ENTITY_KEY, parseActiveEntity } from '../../lib/activeEntity';
 import { ApiError, apiDelete, apiJson } from '../../lib/api';
-import { profileOf, profileSummary, type ClientBody, type ClientRecord } from '../../lib/entity';
+import { profileOf, type ClientBody, type ClientRecord } from '../../lib/entity';
 import { readStored } from '../../lib/stored';
 
 type LoadState =
@@ -63,7 +64,7 @@ export function EntitySettings() {
 
   return (
     <div className="space-y-6">
-      <TextLink to={`/entities/${id}`}>Back to dashboard</TextLink>
+      {state.status === 'ready' && <EntityHeader client={state.client} />}
       {state.status === 'loading' && <p className="text-muted">Loading…</p>}
       {state.status === 'missing' && (
         <>
@@ -78,7 +79,7 @@ export function EntitySettings() {
       )}
       {state.status === 'ready' && (
         <>
-          <PageHeader title={`${state.client.name}: details`} lead={profileSummary(state.client)} />
+          <PageHeader title={`${state.client.name}: details`} lead="The client's name, profile and calendar details. Changes apply to every page for this client." />
           <Card>
             <ClientForm
               initial={{ name: state.client.name, notes: state.client.notes, profile: profileOf(state.client) }}

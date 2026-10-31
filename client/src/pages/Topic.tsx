@@ -71,9 +71,9 @@ export function Topic() {
           </div>
         )}
 
-        <nav aria-label="Next and previous topics" className="mt-8 grid gap-3 border-t border-line pt-6 sm:grid-cols-2">
+        <nav aria-label="Next and previous topics" className="mt-12 grid gap-4 sm:grid-cols-2">
           {prev ? (
-            <Link to={`/knowledge/learn/${prev.id}`} className="rounded-lg border border-line p-3 hover:border-accent">
+            <Link to={`/knowledge/learn/${prev.id}`} className="rounded-2xl bg-panel p-4 shadow-soft transition-[transform,box-shadow] duration-150 ease-snappy hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transform-none">
               <span className="flex items-center gap-1 text-xs text-muted">
                 <ArrowLeft size={14} aria-hidden /> Previous
               </span>
@@ -83,7 +83,7 @@ export function Topic() {
             <span />
           )}
           {next && (
-            <Link to={`/knowledge/learn/${next.id}`} className="rounded-lg border border-line p-3 text-right hover:border-accent">
+            <Link to={`/knowledge/learn/${next.id}`} className="rounded-2xl bg-panel p-4 text-right shadow-soft transition-[transform,box-shadow] duration-150 ease-snappy hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transform-none">
               <span className="flex items-center justify-end gap-1 text-xs text-muted">
                 Next <ArrowRight size={14} aria-hidden />
               </span>

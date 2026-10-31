@@ -58,7 +58,7 @@ function OverviewStats() {
     <div className="space-y-4">
       <dl className="grid grid-cols-2 gap-4 sm:grid-cols-5">
         {stats.map((s) => (
-          <div key={s.label} className="min-w-0 rounded-xl border border-line bg-panel p-4">
+          <div key={s.label} className="min-w-0 rounded-3xl bg-panel shadow-soft p-6">
             <dt className="text-sm text-muted">{s.label}</dt>
             <dd className="mt-1 text-2xl font-semibold">{s.value}</dd>
           </div>

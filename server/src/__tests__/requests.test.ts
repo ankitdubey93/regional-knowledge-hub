@@ -182,6 +182,21 @@ describe('requests', () => {
   });
 });
 
+describe('open request counts', () => {
+  it('RQ12 counts open requests per client, leaving out clients with none', async () => {
+    const expected: Record<string, number> = {};
+    for (const id of [quarterly, fixed, mixed]) {
+      const list = (await (await call('GET', url(id), { cookie: cookieA })).json()) as { requests: RequestView[] };
+      const open = list.requests.filter((r) => r.status === 'open').length;
+      if (open > 0) expected[id] = open;
+    }
+    expect(Object.keys(expected).length).toBeGreaterThan(0);
+    const res = await call('GET', '/api/requests/open-counts', { cookie: memberCookie });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ counts: expected });
+  });
+});
+
 describe('document_request isolation', () => {
   it('DR1 the bare pool sees no requests', async () => {
     const r = await pool.query('select count(*)::int as n from document_request');
@@ -230,5 +245,11 @@ describe('document_request isolation', () => {
       await call('DELETE', url(quarterly, `/${manualId}`), { cookie: cookieB }),
     ];
     expect(results.map((r) => r.status)).toEqual([404, 404, 404, 404, 404]);
+  });
+
+  it("DR7 firm B's open counts hold none of firm A's clients", async () => {
+    const res = await call('GET', '/api/requests/open-counts', { cookie: cookieB });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ counts: {} });
   });
 });

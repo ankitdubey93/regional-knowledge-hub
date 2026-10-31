@@ -19,24 +19,29 @@ export function Home() {
   const due = flashcards.filter((c) => isDue(progress.cards[c.id], today)).length;
 
   return (
-    <div className="space-y-10">
-      <section className="max-w-3xl">
-        <p className="text-sm font-medium uppercase tracking-wide text-accent">Australian & UK bookkeeping</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Learn how the books work in Australia and the UK, then practise it.</h1>
-        <p className="mt-4 text-lg text-muted">
+    <div className="space-y-12">
+      <section className="relative overflow-hidden rounded-[40px] bg-sun-soft px-6 py-12 sm:px-16 sm:py-20">
+        <span aria-hidden className="pointer-events-none absolute -top-16 -right-10 size-64 rounded-full bg-peach-soft" />
+        <span aria-hidden className="pointer-events-none absolute right-52 bottom-14 hidden size-28 rounded-full bg-accent-soft sm:block" />
+        <span aria-hidden className="pointer-events-none absolute top-36 right-28 hidden size-16 rounded-full bg-uk-soft sm:block" />
+        <div className="relative max-w-3xl">
+        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-accent">Australian & UK bookkeeping</p>
+        <h1 className="mt-4 text-[34px] leading-[40px] font-semibold tracking-tight text-balance sm:text-[56px] sm:leading-[64px]">Learn how the books work in Australia and the UK, then practise it.</h1>
+        <p className="mt-5 text-lg leading-8">
           GST and the BAS, VAT and Making Tax Digital, payroll, company law and the accounting standards, with a journal simulator, calculators, quizzes and
           real-looking bills to code.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             to={`/knowledge/learn/${docs[0]?.id ?? ''}`}
-            className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-accent px-5 font-medium text-accent-fg hover:bg-accent-hover"
+            className="group inline-flex min-h-12 items-center gap-2 rounded-xl bg-accent px-6 font-semibold text-accent-fg transition-[background-color,transform,box-shadow] duration-150 ease-snappy hover:-translate-y-px hover:bg-accent-hover hover:shadow-btn active:scale-[0.97] motion-reduce:transform-none"
           >
-            Start with double entry <ArrowRight size={16} aria-hidden />
+            Start with double entry <ArrowRight size={16} aria-hidden className="transition-transform duration-150 ease-snappy group-hover:translate-x-0.5" />
           </Link>
-          <Link to="/knowledge/practice/flashcards" className="inline-flex min-h-11 items-center rounded-lg border border-line bg-panel px-5 font-medium hover:bg-panel-2">
+          <Link to="/knowledge/practice/flashcards" className="inline-flex min-h-12 items-center rounded-xl bg-panel px-6 font-semibold transition-colors duration-150 ease-snappy hover:bg-accent-soft hover:text-accent">
             {due} flashcards due
           </Link>
+        </div>
         </div>
       </section>
 
@@ -78,7 +83,7 @@ export function Home() {
         </h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {quick.map((q) => (
-            <Link key={q.to} to={q.to} className="group rounded-xl border border-line bg-panel p-4 hover:border-accent">
+            <Link key={q.to} to={q.to} className="group rounded-3xl bg-panel shadow-soft transition-[transform,box-shadow] duration-150 ease-snappy hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 motion-reduce:transform-none p-5">
               <q.icon size={20} className="text-accent" aria-hidden />
               <p className="mt-2 font-medium group-hover:text-accent">{q.title}</p>
               <p className="text-sm text-muted">{q.text}</p>

@@ -24,7 +24,7 @@ export function Markdown({ body }: { body: string }) {
             );
           },
           table: ({ children }) => (
-            <div className="my-4 overflow-x-auto rounded-lg border border-line">
+            <div className="my-5 overflow-x-auto rounded-2xl border border-line">
               <table>{children}</table>
             </div>
           ),

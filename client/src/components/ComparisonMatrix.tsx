@@ -26,7 +26,7 @@ export function ComparisonMatrix({ data, frameworks: initialFrameworks }: { data
 
   return (
     <div>
-      <div className="mb-6 grid gap-4 rounded-xl border border-line bg-panel p-4 md:grid-cols-[1fr_auto]">
+      <div className="mb-8 grid gap-4 rounded-3xl bg-panel shadow-soft p-5 sm:p-6 md:grid-cols-[1fr_auto]">
         <div className="flex flex-wrap gap-2" role="group" aria-label="Topic group">
           {groups.map((g) => (
             <button
@@ -72,7 +72,7 @@ export function ComparisonMatrix({ data, frameworks: initialFrameworks }: { data
 
       <div className="space-y-6">
         {topics.map((t) => (
-          <section key={t.id} aria-labelledby={`t-${t.id}`} className="rounded-xl border border-line bg-panel">
+          <section key={t.id} aria-labelledby={`t-${t.id}`} className="rounded-3xl bg-panel shadow-soft">
             <header className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3">
               <h2 id={`t-${t.id}`} className="font-semibold">
                 {t.topic}

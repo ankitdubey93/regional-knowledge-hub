@@ -1,3 +1,4 @@
+import { EntityHeader } from '../../components/EntityHeader';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TbImportWizard } from '../../components/TbImportWizard';
@@ -122,8 +123,8 @@ export function EntityBooks() {
 
   const c = state.client;
   return (
-    <div className="space-y-6">
-      <TextLink to={`/entities/${c.id}`}>{`Back to ${c.name}`}</TextLink>
+    <div className="space-y-8">
+      <EntityHeader client={c} />
       <PageHeader title="Books" lead={`Trial balances imported for ${c.name}.`} />
 
       <Card>
@@ -151,13 +152,13 @@ export function EntityBooks() {
             <table className="mt-3 w-full text-left text-sm">
               <thead>
                 <tr>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">As at</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Year start</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">From</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">File</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Accounts</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Status</th>
-                  <th scope="col" className="relative border-b border-line px-2 py-1 font-medium">
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">As at</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Year start</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">From</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">File</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Accounts</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Status</th>
+                  <th scope="col" className="relative border-b border-line px-3 py-3 font-medium">
                     <span className="sr-only">Actions</span>
                   </th>
                 </tr>
@@ -165,13 +166,13 @@ export function EntityBooks() {
               <tbody>
                 {imports.map((imp) => (
                   <tr key={imp.id}>
-                    <td className="border-b border-line px-2 py-1">{imp.asAt}</td>
-                    <td className="border-b border-line px-2 py-1">{imp.periodStart}</td>
-                    <td className="border-b border-line px-2 py-1">{SOURCE_LABELS[imp.source]}</td>
-                    <td className="border-b border-line px-2 py-1">{imp.originalName}</td>
-                    <td className="border-b border-line px-2 py-1">{imp.rowCount}</td>
-                    <td className="border-b border-line px-2 py-1">{imp.status === 'active' ? 'Active' : 'Replaced'}</td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">{imp.asAt}</td>
+                    <td className="border-b border-line px-3 py-3">{imp.periodStart}</td>
+                    <td className="border-b border-line px-3 py-3">{SOURCE_LABELS[imp.source]}</td>
+                    <td className="border-b border-line px-3 py-3">{imp.originalName}</td>
+                    <td className="border-b border-line px-3 py-3">{imp.rowCount}</td>
+                    <td className="border-b border-line px-3 py-3">{imp.status === 'active' ? 'Active' : 'Replaced'}</td>
+                    <td className="border-b border-line px-3 py-3">
                       <div className="flex flex-wrap items-center gap-3">
                         <TextLink to={`/entities/${c.id}/reports?importId=${imp.id}`}>View reports</TextLink>
                         <Button variant="secondary" aria-label={`Delete import as at ${imp.asAt}`} onClick={() => void onDelete(imp)}>
@@ -197,17 +198,17 @@ export function EntityBooks() {
             <table className="mt-3 w-full text-left text-sm">
               <thead>
                 <tr>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Code</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Account</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Type</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Code</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Account</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Type</th>
                 </tr>
               </thead>
               <tbody>
                 {accounts.map((acc) => (
                   <tr key={acc.id}>
-                    <td className="border-b border-line px-2 py-1">{acc.code}</td>
-                    <td className="border-b border-line px-2 py-1">{acc.name}</td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">{acc.code}</td>
+                    <td className="border-b border-line px-3 py-3">{acc.name}</td>
+                    <td className="border-b border-line px-3 py-3">
                       <select
                         aria-label={`Type for ${acc.code} ${acc.name}`}
                         className="min-h-10 rounded-lg border border-line bg-panel px-3 py-2 text-base text-ink sm:text-sm"

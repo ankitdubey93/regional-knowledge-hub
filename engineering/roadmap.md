@@ -38,6 +38,11 @@ Status words: **done** means built, tested and checked in a browser; **built** m
 
 Three npm workspaces: `client/` (React + Vite), `server/` (Express) and `shared/` (`@chub/shared`, the code both use), and `./dev.sh` starts Postgres, migrates, seeds and runs both. See `engineering/architecture.md`, "Folders". Owed: containerising the API and the web app for a deploy (only the database runs in Docker today).
 
+## Design track: the redesign (started 2026-10-31)
+
+- **R1 and R2 (done, 2026-10-31):** design system (second palette: raspberry, butter and peach on near-white, airier spacing) and every page family, built from Claude Design canvases the owner approved: [design system](https://claude.ai/artifact/NyHE7okhBkR17FoRxPfpJA), [workspace](https://claude.ai/artifact/97KR9ukSMsvQdN8JGFPbJX), [client pages](https://claude.ai/artifact/MUe2EehyxsMPHXjwd3FFZ7), [Knowledge Hub](https://claude.ai/artifact/2YtC1uf8Pea18qHX4v8hFZ), [practice management](https://claude.ai/artifact/Ry4ZWAmo3uwoRrQvhiUCXb), [sign-in and public](https://claude.ai/artifact/Um1XpJEp1zM5XtXctWmymb), [admin](https://claude.ai/artifact/AeChip6gtcnrHpiwjrtFZK) (all private to the owner). `GET /api/requests/open-counts` for the client tiles.
+- **Owed:** the tax calculator's dark result card and the quiz's large answer rows from the Knowledge Hub canvas; a count of open requests on the client Requests tab; `TimerChip` (B1) keeps its own chip shape; the "Discard draft" button on the admin version canvas is not a feature yet.
+
 ## Platform track: multi-tenant AI assistant (planned, decided 2026-10-26)
 
 Compliance Hub becomes an assistant for bookkeepers and accounting firms:

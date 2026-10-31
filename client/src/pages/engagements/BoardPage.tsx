@@ -81,15 +81,19 @@ export function BoardPage() {
       {loading ? (
         <p className="text-sm text-muted">Loading…</p>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
           {BOARD_STATUSES.map((status) => {
             const label = ENGAGEMENT_STATUS_LABELS[status];
             const cards = engagements.filter((e) => e.status === status);
             return (
-              <section key={status} aria-label={label} className="min-w-0 space-y-3">
-                <h2 className="font-semibold">{`${label} (${cards.length})`}</h2>
+              <section key={status} aria-label={label} className="min-w-0 space-y-3 rounded-[28px] bg-panel-2 p-3 sm:p-4">
+                <h2 className="flex items-center justify-between px-2 pt-1 font-display text-[15px] font-semibold">
+                  <span>{label}</span>
+                  <span className="font-sans text-[13px] text-muted">{cards.length}</span>
+                  <span className="sr-only">{` (${cards.length})`}</span>
+                </h2>
                 {cards.length === 0 ? (
-                  <p className="text-sm text-muted">No engagements.</p>
+                  <p className="rounded-2xl px-4 py-6 text-center text-sm text-muted outline-2 -outline-offset-2 outline-line outline-dashed">No engagements.</p>
                 ) : (
                   <ul className="space-y-3">
                     {cards.map((e) => {
@@ -98,10 +102,16 @@ export function BoardPage() {
                       const right = index < ENGAGEMENT_STATUSES.length - 1 ? (ENGAGEMENT_STATUSES[index + 1] ?? null) : null;
                       return (
                         <li key={e.id}>
-                          <Card>
+                          <Card className="p-5 transition-[transform,box-shadow] duration-150 ease-snappy hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transform-none sm:p-5!">
                             <TextLink to={`/engagements/${e.id}`}>{e.title}</TextLink>
                             <p className="mt-1 text-sm text-muted">{`${e.clientName} · due ${formatDay(e.dueOn)}`}</p>
                             <p className="text-sm text-muted">{`${e.doneCount} of ${e.taskCount} tasks done`}</p>
+                            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-panel-2" aria-hidden>
+                              <div
+                                className={e.taskCount > 0 && e.doneCount === e.taskCount ? 'h-full rounded-full bg-good' : 'h-full rounded-full bg-accent'}
+                                style={{ width: `${e.taskCount === 0 ? 0 : Math.round((e.doneCount / e.taskCount) * 100)}%` }}
+                              />
+                            </div>
                             <select
                               aria-label={`Status of ${e.title}`}
                               className={`${inputClass} mt-2`}

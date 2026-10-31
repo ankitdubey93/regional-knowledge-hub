@@ -93,10 +93,16 @@ export function UploadRequest() {
     const { request } = state;
     content = (
       <>
-        <PageHeader
-          title="Documents requested"
-          lead={`${request.firmName} has asked you for the documents below. This link works until ${formatDay(request.expiresOn)}.`}
-        />
+        <section className="relative overflow-hidden rounded-[32px] bg-sun-soft px-6 py-10 sm:px-10 [&>div>header]:mb-0">
+          <span aria-hidden className="pointer-events-none absolute -top-12 -right-12 size-44 rounded-full bg-peach-soft" />
+          <div className="relative">
+            <PageHeader
+              eyebrow={request.firmName}
+              title="Documents requested"
+              lead={`${request.firmName} has asked you for the documents below. This link works until ${formatDay(request.expiresOn)}.`}
+            />
+          </div>
+        </section>
         <RedactionNotice variant="client-upload" firmName={request.firmName} />
         <Callout>
           Files go only to {request.firmName}. Upload a PDF, Word (.docx), Excel (.xlsx), CSV, text or Markdown file, up to 20 MB.
@@ -110,8 +116,15 @@ export function UploadRequest() {
               const result = results[item.id];
               const isBusy = busyId === item.id;
               return (
-                <Card key={item.id}>
-                  <h2 className="font-semibold">{item.label}</h2>
+                <Card key={item.id} className={item.received ? 'bg-good-soft shadow-none' : ''}>
+                  <h2 className="flex flex-wrap items-start justify-between gap-2 font-semibold">
+                    <span>{item.label}</span>
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${item.received ? 'bg-panel text-good' : 'bg-accent-soft text-accent'}`}
+                    >
+                      {item.received ? 'Received' : 'Needed'}
+                    </span>
+                  </h2>
                   <p className="mt-1 text-sm text-muted">
                     {item.received ? 'Uploaded. You can upload a newer version if needed.' : 'Waiting for a file.'}
                   </p>
@@ -127,7 +140,7 @@ export function UploadRequest() {
                       type="file"
                       accept={DOCUMENT_ACCEPT}
                       aria-label={`File for ${item.label}`}
-                      className="block w-full min-w-0 text-sm"
+                      className="block w-full min-w-0 text-sm file:mr-3 file:min-h-10 file:cursor-pointer file:rounded-xl file:border-0 file:bg-panel-2 file:px-4 file:font-semibold file:text-ink file:transition-colors hover:file:bg-accent-soft"
                       onChange={(e) => setFiles((prev) => ({ ...prev, [item.id]: e.target.files?.[0] }))}
                     />
                     <Button type="submit" aria-label={`Upload ${item.label}`} disabled={isBusy || file === undefined}>
@@ -158,11 +171,9 @@ export function UploadRequest() {
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-panel focus:p-2">
         Skip to content
       </a>
-      <header className="border-b border-line">
-        <div className="mx-auto max-w-2xl px-4 py-3 font-semibold">Compliance Hub</div>
-      </header>
-      <main id="main" className="mx-auto w-full max-w-2xl px-4 py-6 sm:py-10">
+      <main id="main" className="mx-auto w-full max-w-2xl space-y-6 px-4 py-6 sm:py-10">
         {content}
+        <p className="pt-4 text-center text-xs text-muted">Sent through Compliance Hub</p>
       </main>
     </div>
   );

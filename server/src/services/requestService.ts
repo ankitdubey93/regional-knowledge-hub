@@ -161,3 +161,15 @@ export async function deleteRequest(orgId: string, clientId: string, requestId: 
     return rows.length > 0;
   });
 }
+
+/** Open requests per client in this firm, for the workspace tiles. A client with none is left out. */
+export async function openRequestCounts(orgId: string): Promise<Record<string, number>> {
+  return withOrg(orgId, async (tx) => {
+    const rows = await tx
+      .select({ clientId: documentRequest.clientId, n: sql<number>`count(*)::int` })
+      .from(documentRequest)
+      .where(and(eq(documentRequest.orgId, orgId), eq(documentRequest.status, 'open')))
+      .groupBy(documentRequest.clientId);
+    return Object.fromEntries(rows.map((r) => [r.clientId, r.n]));
+  });
+}

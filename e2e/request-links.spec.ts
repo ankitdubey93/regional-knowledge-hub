@@ -49,7 +49,7 @@ test('signed in: send to client', async ({ page, request }) => {
   await expect(page.getByRole('button', { name: 'Send link' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Links sent' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Back to Requests Co Pty Ltd' }).focus();
+  await page.getByRole('link', { name: 'Settings', exact: true }).focus();
   await tabTo(page, 'Send link');
 });
 

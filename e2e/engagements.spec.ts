@@ -60,7 +60,7 @@ test('signed in: engagements', async ({ page, request }) => {
   await tabTo(page, 'Add task');
 
   expect(await checkPage(page, `/entities/${clientId}/engagements`)).toBe('Engagements');
-  await page.getByRole('link', { name: 'Back to Engagements Co Pty Ltd' }).focus();
+  await page.getByRole('link', { name: 'Settings', exact: true }).focus();
   await tabTo(page, 'Create engagement');
 
   expect(await checkPage(page, '/workspace/templates')).toBe('Templates');

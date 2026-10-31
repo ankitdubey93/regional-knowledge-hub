@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Card, PageHeader, TextLink } from '../../components/ui';
+import { Button, PageHeader, TextLink } from '../../components/ui';
 import { ApiError } from '../../lib/api';
 import { acceptInvitation } from '../../lib/members';
 import { switchWorkspace, useSessionInfo } from '../../lib/session';
@@ -61,7 +61,7 @@ export function AcceptInvitation() {
   return (
     <div className="space-y-6">
       <PageHeader title="Join a workspace" />
-      <Card className="max-w-md">{body}</Card>
+      <div className="max-w-md">{body}</div>
     </div>
   );
 }

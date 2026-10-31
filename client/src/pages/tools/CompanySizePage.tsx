@@ -46,7 +46,7 @@ function UkTab() {
         <FactValue factKey="uk.ca.smallBalanceSheet" />, <FactValue factKey="uk.ca.smallEmployees" /> employees. Enter years oldest first, starting with the first financial year.
       </p>
       {years.map((y, i) => (
-        <fieldset key={y.key} className="grid gap-3 rounded-lg border border-line p-3 sm:grid-cols-[4rem_1fr_1fr_8rem_auto] sm:items-end">
+        <fieldset key={y.key} className="grid gap-3 rounded-2xl border border-line p-4 sm:grid-cols-[4rem_1fr_1fr_8rem_auto] sm:items-end">
           <legend className="sr-only">Year {i + 1}</legend>
           <p className="text-sm font-medium sm:pb-2">Year {i + 1}</p>
           <MoneyInput label="Turnover" prefix="£" value={y.turnover} onChange={(v) => set(y.key, { turnover: v })} />

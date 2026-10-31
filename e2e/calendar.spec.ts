@@ -44,7 +44,7 @@ test('signed in: calendar', async ({ page, request }) => {
   await expect(page.getByText('Due dates are not moved for weekends or public holidays.')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save calendar details' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Back to dashboard' }).focus();
+  await page.getByRole('link', { name: 'Settings', exact: true }).focus();
   await tabTo(page, 'Download calendar (.ics)');
   await tabTo(page, 'Save calendar details');
 });

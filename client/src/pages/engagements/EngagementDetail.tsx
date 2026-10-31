@@ -221,12 +221,12 @@ export function EngagementDetail() {
             <table className="mt-3 w-full min-w-[56rem] text-left text-sm">
               <thead>
                 <tr>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Task</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Assignee</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Due</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Estimate (minutes)</th>
-                  <th scope="col" className="border-b border-line px-2 py-1 font-medium">Status</th>
-                  <th scope="col" className="relative border-b border-line px-2 py-1 font-medium">
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Task</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Assignee</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Due</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Estimate (minutes)</th>
+                  <th scope="col" className="border-b border-line px-3 py-3 font-medium">Status</th>
+                  <th scope="col" className="relative border-b border-line px-3 py-3 font-medium">
                     <span className="sr-only">Actions</span>
                   </th>
                 </tr>
@@ -234,8 +234,8 @@ export function EngagementDetail() {
               <tbody>
                 {tasks.map((t, i) => (
                   <tr key={t.id}>
-                    <td className="border-b border-line px-2 py-1">{t.title}</td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">{t.title}</td>
+                    <td className="border-b border-line px-3 py-3">
                       <select
                         aria-label={`Assignee for ${t.title}`}
                         className={inputClass}
@@ -250,7 +250,7 @@ export function EngagementDetail() {
                         ))}
                       </select>
                     </td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">
                       <input
                         type="date"
                         aria-label={`Due date for ${t.title}`}
@@ -262,7 +262,7 @@ export function EngagementDetail() {
                         }}
                       />
                     </td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">
                       <input
                         type="number"
                         min={0}
@@ -274,7 +274,7 @@ export function EngagementDetail() {
                         onBlur={(e) => onEstimateBlur(t, e.currentTarget.value)}
                       />
                     </td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">
                       <select
                         aria-label={`Status of ${t.title}`}
                         className={inputClass}
@@ -288,7 +288,7 @@ export function EngagementDetail() {
                         ))}
                       </select>
                     </td>
-                    <td className="border-b border-line px-2 py-1">
+                    <td className="border-b border-line px-3 py-3">
                       <div className="flex flex-wrap items-center gap-2">
                         <Button variant="secondary" aria-label={`Move ${t.title} up`} disabled={i === 0} onClick={() => void onMove(t, 'up')}>
                           Up

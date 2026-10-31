@@ -1,5 +1,6 @@
 import { lazy, Suspense, type ComponentType } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { AuthShell } from './components/AuthShell';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Learn } from './pages/Learn';
@@ -96,13 +97,15 @@ export function App() {
             <Route path="tools/*" element={<HubRedirect />} />
             <Route path="practice/*" element={<HubRedirect />} />
             <Route path="laws/*" element={<HubRedirect />} />
-            <Route path="sign-in" element={<SignIn />} />
-            <Route path="sign-up" element={<SignUp />} />
+            <Route element={<AuthShell />}>
+              <Route path="sign-in" element={<SignIn />} />
+              <Route path="sign-up" element={<SignUp />} />
+              <Route path="forgot-password" element={<ForgotPassword />} />
+              <Route path="reset-password" element={<ResetPassword />} />
+              <Route path="check-email" element={<CheckEmail />} />
+              <Route path="accept-invitation/:id" element={<AcceptInvitation />} />
+            </Route>
             <Route path="legal/:doc" element={<LegalPage />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="reset-password" element={<ResetPassword />} />
-            <Route path="check-email" element={<CheckEmail />} />
-            <Route path="accept-invitation/:id" element={<AcceptInvitation />} />
             <Route path="firm/new" element={<Navigate to="/workspace/new" replace />} />
             <Route path="workspace" element={<WorkspaceHome />} />
             <Route path="workspace/new" element={<WorkspaceSetup />} />

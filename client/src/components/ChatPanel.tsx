@@ -323,7 +323,7 @@ export function ChatPanel({ title, lead, contextLine, placeholder, suggestions, 
                     <li key={s}>
                       <button
                         type="button"
-                        className="rounded-full border border-line bg-panel-2 px-3 py-1.5 text-left text-sm hover:border-accent"
+                        className="rounded-full bg-panel-2 px-3.5 py-1.5 text-left text-sm transition-[background-color,color,transform] duration-150 ease-snappy hover:-translate-y-px hover:bg-accent-soft hover:text-accent motion-reduce:transform-none"
                         onClick={() => setDraft(s)}
                       >
                         {s}
@@ -393,7 +393,7 @@ export function ChatPanel({ title, lead, contextLine, placeholder, suggestions, 
             </Button>
           </div>
           {libraryOpen && (
-            <div role="group" aria-label="Choose a document" className="flex flex-col gap-2 rounded-lg border border-line p-3">
+            <div role="group" aria-label="Choose a document" className="flex flex-col gap-2 rounded-2xl bg-panel-2 p-4">
               {library !== null && library.length === 0 && (
                 <>
                   <p className="text-sm text-muted">No documents yet.</p>
@@ -418,7 +418,7 @@ export function ChatPanel({ title, lead, contextLine, placeholder, suggestions, 
                       <li key={d.id} className="min-w-0 max-w-full">
                         <button
                           type="button"
-                          className="max-w-full break-all rounded-full border border-line bg-panel-2 px-3 py-1.5 text-left text-sm hover:border-accent"
+                          className="max-w-full break-all rounded-full bg-panel-2 px-3.5 py-1.5 text-left text-sm transition-[background-color,color,transform] duration-150 ease-snappy hover:-translate-y-px hover:bg-accent-soft hover:text-accent motion-reduce:transform-none"
                           onClick={() => void chooseDocument(d)}
                         >
                           {d.originalName}

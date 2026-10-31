@@ -12,15 +12,17 @@ const HUB_NAV = [
 ];
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  cx('rounded-lg px-3 py-2 text-sm font-medium', isActive ? 'bg-accent-soft text-ink' : 'text-muted hover:bg-panel-2 hover:text-ink');
+  cx(
+    'inline-flex min-h-9 items-center rounded-full px-4 text-sm font-semibold transition-[background-color,color,box-shadow] duration-150 ease-snappy',
+    isActive ? 'bg-panel text-ink shadow-soft' : 'text-muted hover:text-ink',
+  );
 
 export function KnowledgeLayout() {
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="text-sm font-medium uppercase tracking-wide text-accent">Knowledge Hub</p>
-        <nav aria-label="Knowledge Hub" className="-mx-4 mt-2 overflow-x-auto px-4">
-          <ul className="flex gap-1 whitespace-nowrap">
+    <div className="space-y-8 sm:space-y-10">
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+        <nav aria-label="Knowledge Hub" className="-mx-4 overflow-x-auto px-4 py-1 sm:mx-0 sm:px-0">
+          <ul className="inline-flex gap-0.5 whitespace-nowrap rounded-full bg-panel-2 p-1">
             {HUB_NAV.map((n) => (
               <li key={n.to}>
                 <NavLink end={n.end} to={n.to} className={linkClass}>
@@ -30,8 +32,8 @@ export function KnowledgeLayout() {
             ))}
           </ul>
         </nav>
+        <ScopeBanner />
       </div>
-      <ScopeBanner />
       <Outlet />
     </div>
   );

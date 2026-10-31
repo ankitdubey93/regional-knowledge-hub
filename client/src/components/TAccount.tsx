@@ -4,7 +4,7 @@ import { formatPlain } from '@chub/shared/utils/money';
 export function TAccount({ t, name }: { t: TAccountView; name: string }) {
   const rows = Math.max(t.debits.length, t.credits.length, 1);
   return (
-    <figure className="rounded-lg border border-line bg-panel text-sm" aria-label={`T-account ${name}`}>
+    <figure className="rounded-2xl border border-line bg-panel text-sm" aria-label={`T-account ${name}`}>
       <figcaption className="border-b-2 border-ink px-3 py-2 text-center font-medium">{name}</figcaption>
       <div className="grid grid-cols-2">
         <div className="border-r-2 border-ink">
