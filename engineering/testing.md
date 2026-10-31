@@ -2,7 +2,7 @@
 
 ```bash
 npm run test:web    # all web Vitest files (338 tests, 32 files); `npm test` runs web then server
-npm test -w server  # server tests (495 tests, 38 files); needs the database
+npm test -w server  # server tests (534 tests, 41 files); needs the database
 npm test -w client -- src/__tests__/tax.test.ts   # one web file
 npm run typecheck  # three workspaces, then the e2e folder
 npm run test:e2e    # Playwright: 201 tests, about 7 minutes; needs Docker Postgres up and system Chrome
@@ -109,3 +109,5 @@ The P2a browser check (scratch script, 2026-10-26): `browser check: 38 page load
 
 The P1.2 browser check (scratch script, 2026-10-26) covered 15 routes at 375 and 1440 px, light and dark: `/workspace`, `/entities/<id>`, `/entities/<id>/settings`, `/knowledge`, `/knowledge/learn`, `/knowledge/learn/australia/bas-gst-guide`, `/knowledge/compare`, `/knowledge/tools`, `/knowledge/tools/tax`, `/knowledge/practice`, `/knowledge/practice/flashcards`, `/knowledge/practice/coding`, `/learn` (redirect), `/sign-in` and `/`. It also typed into the entity chat and signed out to see the jurisdiction switch.
 - A3 file: `kb-mtd.test.ts` (MTD1 to MTD4: the real MTD guide seeded into the test database, retrieval by jurisdiction, rendered facts, a UK hub chat with the stub provider).
+
+D3 cases (2026-10-31): `ledger-xlsx.test.ts` XL1 to XL7 (no database: cell formatting, CSV quoting round trip, the real Xero AU and UK workbooks import to the same rows and totals as Xero's CSV, a non-zip is 415, a zip that is not a workbook is 422, the sheet name); `ledger.test.ts` XR1 to XR5 (the route converts the AU workbook, a CSV body is 415, an empty body is 400, another firm's client is 404, nothing is stored); web: LW1 to LW3 in `ledger.test.tsx` (an `.xlsx` is converted and lands on Columns, a multi-sheet note, the server's refusal shows). `e2e/books-xlsx.spec.ts` (1 test per project: the Books wizard reads the AU workbook to "Step 2 of 4: Columns" and says which sheet it read, no overflow, no console errors) was added: `npm run test:e2e -- books-xlsx` gave `5 passed (27.6s)` and the full run (2026-10-31) `233 passed (10.7m)`. Web tests: 356 passed (33 files); server tests: 534 passed (41 files).

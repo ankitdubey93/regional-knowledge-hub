@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ApiError } from '../lib/api';
-import { commitTrialBalance, type LedgerAccountRecord, type LedgerImportRecord } from '../lib/ledger';
+import { commitTrialBalance, convertXlsx, type LedgerAccountRecord, type LedgerImportRecord } from '../lib/ledger';
 import { ACCOUNT_CLASSES, ACCOUNT_CLASS_LABELS, ACCOUNT_LABELS_CHECKED_ON, suggestClass, type AccountClass } from '@chub/shared/utils/accountClasses';
 import { parseCsv } from '@chub/shared/utils/csv';
 import { mapTrialBalance, suggestMapping, type TbMapping, type TbResult, type TbRow } from '@chub/shared/utils/ledgerImport';
@@ -57,6 +57,8 @@ export function TbImportWizard({ clientId, jurisdiction, fyEndMonth, existing, o
   const [periodStart, setPeriodStart] = useState('');
   const [chosenCurrency, setChosenCurrency] = useState<Currency>('AUD');
   const [readError, setReadError] = useState<string | null>(null);
+  const [sheetNote, setSheetNote] = useState<string | null>(null);
+  const [reading, setReading] = useState(false);
   const [csvText, setCsvText] = useState('');
   const [rows, setRows] = useState<string[][]>([]);
   const [csvIssues, setCsvIssues] = useState<string[]>([]);
@@ -105,12 +107,13 @@ export function TbImportWizard({ clientId, jurisdiction, fyEndMonth, existing, o
     setTb(null);
     setChosen({});
     setReadError(null);
+    setSheetNote(null);
     setImportError(null);
   }
 
   async function readFile() {
     if (file === null) {
-      setReadError('Choose a CSV file.');
+      setReadError('Choose a CSV or Excel (.xlsx) file.');
       return;
     }
     if (asAt === '') {
@@ -126,7 +129,23 @@ export function TbImportWizard({ clientId, jurisdiction, fyEndMonth, existing, o
       return;
     }
     setReadError(null);
-    const text = await file.text();
+    let text: string;
+    if (file.name.toLowerCase().endsWith('.xlsx')) {
+      setReading(true);
+      try {
+        const out = await convertXlsx(clientId, file);
+        text = out.csvText;
+        setSheetNote(`Read the sheet "${out.sheet}".` + (out.sheetCount > 1 ? ` The workbook has ${out.sheetCount} sheets; only the first is read.` : ''));
+      } catch (e) {
+        setReadError(e instanceof Error ? e.message : 'The workbook could not be read.');
+        return;
+      } finally {
+        setReading(false);
+      }
+    } else {
+      text = await file.text();
+      setSheetNote(null);
+    }
     const parsed = parseCsv(text);
     const suggested = suggestMapping(parsed.rows) ?? { headerRow: 0, code: null, name: 0, type: null, debit: null, credit: null, balance: null };
     setCsvText(text);
@@ -221,11 +240,11 @@ export function TbImportWizard({ clientId, jurisdiction, fyEndMonth, existing, o
 
       {step === 1 && (
         <div className="space-y-4">
-          <Field label="Trial balance CSV">
+          <Field label="Trial balance (CSV or Excel .xlsx)">
             <input
               key={fileKey}
               type="file"
-              accept=".csv,text/csv"
+              accept=".csv,text/csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               className="block w-full text-sm"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             />
@@ -272,13 +291,19 @@ export function TbImportWizard({ clientId, jurisdiction, fyEndMonth, existing, o
             </p>
           )}
           <div>
-            <Button onClick={() => void readFile()}>Read file</Button>
+            <Button onClick={() => void readFile()} disabled={reading}>Read file</Button>
           </div>
+          {reading && (
+            <p role="status" className="text-sm text-muted">
+              Reading the workbook…
+            </p>
+          )}
         </div>
       )}
 
       {step === 2 && (
         <div className="space-y-4">
+          {sheetNote !== null && <p className="text-sm text-muted">{sheetNote}</p>}
           {ACCOUNT_LABELS_CHECKED_ON[source] !== null ? (
             <Callout>
               Columns and account types were checked against Xero&apos;s AU and UK demo company exports on {ACCOUNT_LABELS_CHECKED_ON[source]}. Your file may differ: check

@@ -1,5 +1,7 @@
-import express, { Router, type Response } from 'express';
+import express, { Router, type ErrorRequestHandler, type Response } from 'express';
 import { z } from 'zod';
+import { DocumentRejected } from '../documents/extract';
+import { xlsxToCsv } from '../ledger/xlsx';
 import { limitByUser } from '../middleware/rateLimit';
 import { requireFirm } from '../middleware/session';
 import {
@@ -12,6 +14,7 @@ import {
   updateAccountClass,
   type ReportOutcome,
 } from '../services/ledgerService';
+import { getClient } from '../services/clientService';
 import { actorFrom } from '../services/auditEventService';
 import { firmOf } from '../types';
 import { accountPatchSchema, reportQuerySchema, tbCommitSchema } from '../types/ledger';
@@ -56,6 +59,39 @@ ledgerRoutes.get<'/ledger/imports', ClientParams>('/ledger/imports', async (req,
   }
   res.status(200).json({ imports });
 });
+
+ledgerRoutes.post<'/ledger/xlsx', ClientParams>(
+  '/ledger/xlsx',
+  limitByUser('ledgerConvert'),
+  express.raw({ type: () => true, limit: '10mb' }),
+  async (req, res) => {
+    const { orgId } = firmOf(res);
+    if (!idSchema.safeParse(req.params.clientId).success) {
+      res.status(404).json({ error: 'Client not found' });
+      return;
+    }
+    if (!(await getClient(orgId, req.params.clientId))) {
+      res.status(404).json({ error: 'Client not found' });
+      return;
+    }
+    const bytes: unknown = req.body;
+    if (!(bytes instanceof Uint8Array) || bytes.length === 0) {
+      res.status(400).json({ error: 'Empty file' });
+      return;
+    }
+    // Writes nothing and never logs the body.
+    try {
+      const out = await xlsxToCsv(bytes);
+      res.status(200).json(out);
+    } catch (e) {
+      if (e instanceof DocumentRejected) {
+        res.status(e.status).json({ error: e.message });
+        return;
+      }
+      throw e;
+    }
+  },
+);
 
 ledgerRoutes.post<'/ledger/imports', ClientParams>('/ledger/imports', limitByUser('ledgerImport'), async (req, res) => {
   const { orgId, userId } = firmOf(res);
@@ -172,3 +208,14 @@ ledgerRoutes.get<'/reports/balance-sheet', ClientParams>('/reports/balance-sheet
   const outcome = await getBalanceSheet(orgId, req.params.clientId, parsed.data.importId, parsed.data.compareImportId ?? null);
   sendReport(res, outcome);
 });
+
+const ledgerBodyErrors: ErrorRequestHandler = (err: unknown, _req, res, next) => {
+  const type = typeof err === 'object' && err !== null && 'type' in err ? (err as { type: unknown }).type : undefined;
+  if (type === 'entity.too.large') {
+    res.status(413).json({ error: 'Excel files can be up to 10 MB' });
+    return;
+  }
+  next(err);
+};
+// Must stay last so it catches parser errors from the routes above.
+ledgerRoutes.use(ledgerBodyErrors);

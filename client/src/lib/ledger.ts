@@ -2,7 +2,8 @@ import type { AccountClass } from '@chub/shared/utils/accountClasses';
 import type { ImportIssue, TbMapping } from '@chub/shared/utils/ledgerImport';
 import type { BalanceSheet, ProfitAndLoss } from '@chub/shared/utils/reports';
 import type { Currency } from '@chub/shared/utils/money';
-import { apiDelete, apiJson } from './api';
+import { z } from 'zod';
+import { apiDelete, apiJson, failure } from './api';
 
 export interface LedgerImportRecord {
   id: string;
@@ -54,6 +55,19 @@ function reportQuery(importId: string, compareImportId: string | null): string {
 export async function listImports(clientId: string): Promise<LedgerImportRecord[]> {
   const body = await apiJson<{ imports: LedgerImportRecord[] }>(`/clients/${encodeURIComponent(clientId)}/ledger/imports`);
   return body.imports;
+}
+
+// The server reads the first sheet of an .xlsx and returns it as CSV text (D3). Nothing is stored. Errors use the { error } body → ApiError.
+export async function convertXlsx(clientId: string, file: File): Promise<{ csvText: string; sheet: string; sheetCount: number }> {
+  const res = await fetch(`/api/clients/${encodeURIComponent(clientId)}/ledger/xlsx`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': file.type || 'application/octet-stream', 'X-Filename': encodeURIComponent(file.name) },
+    body: file,
+  });
+  if (!res.ok) throw await failure(res);
+  const body: unknown = await res.json();
+  return z.object({ csvText: z.string(), sheet: z.string(), sheetCount: z.number().int() }).parse(body);
 }
 
 export function commitTrialBalance(clientId: string, body: TbCommitBody): Promise<{ import: LedgerImportRecord; supersededId: string | null }> {

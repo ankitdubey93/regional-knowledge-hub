@@ -39,13 +39,14 @@ Outlines exist so the whole track is visible and its decisions are written down.
 | 13 | `b3-profitability.md` | outline | 12 | none | todo |
 | 14 | `a1-practice-router.md` | outline | 7, 11 | Approve the Hard rule 12 amendment | todo |
 | 15 | `a2-extraction.md` | outline | launch gate, 0b | none | todo |
+| any | `d3-xlsx-import.md` | full | D1 (built) | Supply `l2-exports/xero-au-tb.xlsx` and `xero-uk-tb.xlsx` (the real Excel exports) | done (landed 2026-10-31) |
 | any | `a3-kb-mtd-treaties.md` | full | — (P2a built) | Ingested 2026-10-30 (K1 to K8 all published) | done (landed 2026-10-30) |
 
 `prose-figures-inventory.md` is a working list for debt-sprint item 7. It is not a plan.
 
 **Next:** B1 once the owner's legal review of the Stage 3 drafts is done (the gate's code is built).
 
-Later work in the roadmap but not planned here: D2 (GL transactions), D3 (XLSX trial balance), D4 (Xero and QBO connections), the Phase 2 learning simulators and topics, and the four owed content skills. Each gets its own plan when its turn comes.
+Later work in the roadmap but not planned here: D2 (GL transactions), D4 (Xero and QBO connections), the Phase 2 learning simulators and topics, and the four owed content skills. Each gets its own plan when its turn comes.
 
 ## How to run a full plan
 

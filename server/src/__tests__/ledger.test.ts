@@ -1,11 +1,12 @@
+import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { auth } from '../auth';
 import { pool } from '../db/client';
 import { ledgerImport } from '../db/schema';
 import { withOrg } from '../db/withOrg';
 import { AU_TB_CSV, UK_TB_CSV, UK_TB_UNBALANCED_CSV } from '@chub/shared/fixtures/tb';
-import { call, createFirm, mergeCookies, signUp } from './helpers';
-import { stopApp } from './server';
+import { ORIGIN, call, createFirm, mergeCookies, signUp } from './helpers';
+import { startApp, stopApp } from './server';
 
 interface ImportBody {
   import: { id: string; rowCount: number; totalDebitCents: number; status: string; warnings: { code: string }[] };
@@ -340,5 +341,55 @@ describe('ledger', () => {
     const left = ((await after.json()) as { imports: { id: string; status: string }[] }).imports;
     expect(left.find((r) => r.id === newest)?.status).toBe('active');
     expect(left.filter((r) => r.status === 'active')).toHaveLength(1);
+  });
+
+  async function postXlsx(cookie: string, clientId: string, body: Uint8Array | string): Promise<Response> {
+    return fetch(`${await startApp()}/api/clients/${clientId}/ledger/xlsx`, {
+      method: 'POST',
+      headers: {
+        origin: ORIGIN,
+        cookie,
+        'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      },
+      body: typeof body === 'string' ? body : Buffer.from(body),
+    });
+  }
+
+  it('XR1 the AU workbook converts to CSV text', async () => {
+    const bytes = readFileSync(new URL('./fixtures/xero-au-tb.xlsx', import.meta.url));
+    const res = await postXlsx(cookieA, auId, new Uint8Array(bytes));
+    expect(res.status).toBe(200);
+    const out = (await res.json()) as { csvText: string; sheet: string; sheetCount: number };
+    expect(out.csvText).toContain('Account Code');
+    expect(out.csvText).toContain('Consulting & Accounting');
+    expect(out.sheetCount).toBeGreaterThanOrEqual(1);
+  });
+
+  it('XR5 the conversion stores nothing', async () => {
+    const count = async () =>
+      ((await (await call('GET', imports(auId), { cookie: cookieA })).json()) as { imports: unknown[] }).imports.length;
+    const before = await count();
+    const bytes = readFileSync(new URL('./fixtures/xero-au-tb.xlsx', import.meta.url));
+    expect((await postXlsx(cookieA, auId, new Uint8Array(bytes))).status).toBe(200);
+    expect(await count()).toBe(before);
+  });
+
+  it('XR2 a CSV body is refused with 415', async () => {
+    const res = await postXlsx(cookieA, auId, 'Account,Debit\n');
+    expect(res.status).toBe(415);
+    expect(await res.json()).toEqual({ error: 'Choose an Excel workbook (.xlsx).' });
+  });
+
+  it('XR3 an empty body is refused with 400', async () => {
+    const res = await postXlsx(cookieA, auId, new Uint8Array(0));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: 'Empty file' });
+  });
+
+  it("XR4 another firm's client is not found", async () => {
+    const bytes = readFileSync(new URL('./fixtures/xero-au-tb.xlsx', import.meta.url));
+    const res = await postXlsx(cookieB, auId, new Uint8Array(bytes));
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: 'Client not found' });
   });
 });

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderAt } from './render';
-import { AU_TB_CSV, UK_TB_CSV } from '@chub/shared/fixtures/tb';
+import { AU_TB_CSV, UK_TB_CSV, XERO_AU_DEMO_TB_CSV } from '@chub/shared/fixtures/tb';
 import { EntityDashboard } from '../pages/entity/EntityDashboard';
 import { EntityBooks } from '../pages/entity/EntityBooks';
 import { EntityReports } from '../pages/entity/EntityReports';
@@ -97,7 +97,18 @@ function auReport() {
 }
 
 async function loadFile(user: ReturnType<typeof userEvent.setup>, csv: string) {
-  await user.upload(screen.getByLabelText('Trial balance CSV'), new File([csv], 'tb.csv', { type: 'text/csv' }));
+  await user.upload(screen.getByLabelText('Trial balance (CSV or Excel .xlsx)'), new File([csv], 'tb.csv', { type: 'text/csv' }));
+  fireEvent.change(screen.getByLabelText('As at'), { target: { value: '2026-06-30' } });
+  fireEvent.change(screen.getByLabelText(/^Financial year start/), { target: { value: '2025-07-01' } });
+  await user.click(screen.getByRole('button', { name: 'Read file' }));
+}
+
+/** A workbook file: the server does the conversion, so the bytes only need the zip signature. */
+async function loadWorkbook(user: ReturnType<typeof userEvent.setup>) {
+  const xlsx = new File([new Uint8Array([0x50, 0x4b, 0x03, 0x04])], 'tb.xlsx', {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  await user.upload(screen.getByLabelText('Trial balance (CSV or Excel .xlsx)'), xlsx);
   fireEvent.change(screen.getByLabelText('As at'), { target: { value: '2026-06-30' } });
   fireEvent.change(screen.getByLabelText(/^Financial year start/), { target: { value: '2025-07-01' } });
   await user.click(screen.getByRole('button', { name: 'Read file' }));
@@ -139,7 +150,7 @@ describe('Books and reports (D1)', () => {
     renderAt('/entities/c1/books', '/entities/:id/books', <EntityBooks />);
     await screen.findByRole('heading', { name: 'Import a trial balance' });
     await user.click(screen.getByRole('button', { name: 'Read file' }));
-    expect(screen.getByRole('alert')).toHaveTextContent('Choose a CSV file.');
+    expect(screen.getByRole('alert')).toHaveTextContent('Choose a CSV or Excel (.xlsx) file.');
   });
 
   it('the wizard reads the AU fixture and suggests columns', async () => {
@@ -212,6 +223,54 @@ describe('Books and reports (D1)', () => {
     renderAt('/entities/c1/reports', '/entities/:id/reports', <EntityReports />);
     expect(await screen.findByText('Net profit')).toBeInTheDocument();
     expect(screen.getByText('Net profit').closest('tr')).toHaveTextContent('$11,600.00');
+  });
+
+  it('LW1 an .xlsx file is converted on the server and lands on Columns', async () => {
+    vi.mocked(session.useSessionInfo).mockReturnValue(signedIn);
+    stubApi({
+      'GET /api/clients/c1': ok({ client: acme }),
+      'GET /api/clients/c1/ledger/imports': ok({ imports: [] }),
+      'GET /api/clients/c1/ledger/accounts': ok({ accounts: [] }),
+      'POST /api/clients/c1/ledger/xlsx': ok({ csvText: XERO_AU_DEMO_TB_CSV, sheet: 'Trial Balance', sheetCount: 1 }),
+    });
+    const user = userEvent.setup();
+    renderAt('/entities/c1/books', '/entities/:id/books', <EntityBooks />);
+    await screen.findByRole('heading', { name: 'Import a trial balance' });
+    await loadWorkbook(user);
+    expect(await screen.findByText('Step 2 of 4: Columns')).toBeInTheDocument();
+    expect(screen.getByText('Read the sheet "Trial Balance".')).toBeInTheDocument();
+  });
+
+  it('LW2 a workbook with more than one sheet says only the first is read', async () => {
+    vi.mocked(session.useSessionInfo).mockReturnValue(signedIn);
+    stubApi({
+      'GET /api/clients/c1': ok({ client: acme }),
+      'GET /api/clients/c1/ledger/imports': ok({ imports: [] }),
+      'GET /api/clients/c1/ledger/accounts': ok({ accounts: [] }),
+      'POST /api/clients/c1/ledger/xlsx': ok({ csvText: XERO_AU_DEMO_TB_CSV, sheet: 'Trial Balance', sheetCount: 3 }),
+    });
+    const user = userEvent.setup();
+    renderAt('/entities/c1/books', '/entities/:id/books', <EntityBooks />);
+    await screen.findByRole('heading', { name: 'Import a trial balance' });
+    await loadWorkbook(user);
+    expect(await screen.findByText('Step 2 of 4: Columns')).toBeInTheDocument();
+    expect(screen.getByText(/The workbook has 3 sheets; only the first is read\./)).toBeInTheDocument();
+  });
+
+  it('LW3 a refused workbook shows the server\'s message', async () => {
+    vi.mocked(session.useSessionInfo).mockReturnValue(signedIn);
+    stubApi({
+      'GET /api/clients/c1': ok({ client: acme }),
+      'GET /api/clients/c1/ledger/imports': ok({ imports: [] }),
+      'GET /api/clients/c1/ledger/accounts': ok({ accounts: [] }),
+      'POST /api/clients/c1/ledger/xlsx': { status: 415, body: { error: 'Choose an Excel workbook (.xlsx).' } },
+    });
+    const user = userEvent.setup();
+    renderAt('/entities/c1/books', '/entities/:id/books', <EntityBooks />);
+    await screen.findByRole('heading', { name: 'Import a trial balance' });
+    await loadWorkbook(user);
+    expect(await screen.findByRole('alert')).toHaveTextContent('Choose an Excel workbook (.xlsx).');
+    expect(screen.getByText('Step 1 of 4: Choose the file')).toBeInTheDocument();
   });
 
   it('reports shows a comparison change', async () => {

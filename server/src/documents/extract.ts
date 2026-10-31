@@ -70,7 +70,7 @@ function checkKindMatchesContent(kind: DocumentKind, bytes: Uint8Array): string 
 }
 
 /** Sums the uncompressed sizes in the zip central directory without inflating anything. */
-function checkZipSize(bytes: Uint8Array): void {
+export function checkZipSize(bytes: Uint8Array): void {
   const unreadable = new DocumentRejected(422, 'The file could not be read');
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   let eocd = -1;

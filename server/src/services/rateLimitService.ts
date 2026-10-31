@@ -13,6 +13,7 @@ export const LIMITS = {
   chatMessage: { window: 60, max: 10 }, // per user, POST /api/conversations/:id/messages
   upload: { window: 3600, max: 60 }, // per user, POST /api/clients/:clientId/documents
   ledgerImport: { window: 3600, max: 30 }, // per user, POST /api/clients/:clientId/ledger/imports
+  ledgerConvert: { window: 3600, max: 60 }, // per user, POST /api/clients/:clientId/ledger/xlsx (untuned)
   kbIngest: { window: 3600, max: 60 }, // per user, POST /api/admin/kb/sources/:id/versions and .../upload
   publicView: { window: 3600, max: 120 }, // per IP, GET /api/public/requests/:token
   publicUpload: { window: 3600, max: 20 }, // per IP, POST /api/public/requests/:token/items/:requestId/upload

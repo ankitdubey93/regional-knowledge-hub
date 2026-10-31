@@ -121,7 +121,7 @@ The goal is to give each entity its own numbers, so that answers can come from t
 |---|---|---|
 | D1 | TB CSV import, P&L, balance sheet | done (2026-10-26) |
 | D2 | GL transactions, record search, account drill-down, tax-code summary against `basWorksheet`/`vat100` using `tax-codes.json`, `parseLedgerDate` | planned |
-| D3 | XLSX import (`read-excel-file` 9.3.12 is installed since P4; the trial-balance import still has to use it) | planned |
+| D3 | XLSX import: the server converts the first sheet of an `.xlsx` to CSV and the wizard follows its CSV path | done (2026-10-31). Not checked: QBO and MYOB `.xlsx` exports; a workbook whose first sheet is not the trial balance (no sheet picker); amounts stored as text with currency symbols other than `$`, `£`, `A$`, `AUD`, `GBP`; the 60-per-hour and 10 MB limits are untuned |
 | D4 | Live Xero, then QBO, connection (OAuth, token storage, sync; check Xero's current API access terms) | planned |
 | D5 | Document requests and chasing | merged into C3, built 2026-10-30 |
 
