@@ -36,7 +36,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 | — | **Stage 3 launch gate** | decision, then a plan | 9, 10 | Decided 2026-10-31: an upload and chat warning now, NER later; one deployment per country (AU, UK), each firm picks a home region at sign-up and all its clients are stored there; Claude drafts the privacy notice, terms, UK data processing agreement and sub-processor list, marked for legal review | built (code), 2026-10-31; legal review and hosting owed (`plans/s3-launch-gate.md` is deleted when the owner commits) |
 | 11 | `b1-time.md` | full | 6, launch gate | none | done (landed 2026-10-31) |
 | 12 | `b2-invoicing.md` | full | 11 | Confirm the FX policy; `fact-check` the invoice content; import one Xero CSV | built 2026-11-03 (plan deleted on commit) |
-| 13 | `b3-profitability.md` | outline | 12 | none | todo |
+| 13 | `b3-profitability.md` | full | 12 | none | built 2026-11-04 (plan deleted on commit) |
 | 14 | `a1-practice-router.md` | outline | 7, 11 | Approve the Hard rule 12 amendment | todo |
 | 15 | `a2-extraction.md` | outline | launch gate, 0b | none | todo |
 | any | `d3-xlsx-import.md` | full | D1 (built) | Supply `l2-exports/xero-au-tb.xlsx` and `xero-uk-tb.xlsx` (the real Excel exports) | done (landed 2026-10-31) |
@@ -44,7 +44,7 @@ Outlines exist so the whole track is visible and its decisions are written down.
 
 `prose-figures-inventory.md` is a working list for debt-sprint item 7. It is not a plan.
 
-**Next:** B3 (`b3-profitability.md`, an outline: run `/code-planner` on it). B2's owner release checks are still open: the FX policy, the ATO invoice content, a Xero CSV import.
+**Next:** A1 (`a1-practice-router.md`, outline; needs the owner's approval of the Hard rule 12 amendment before `/code-planner`). B2's owner release checks are still open: the FX policy, the ATO invoice content, a Xero CSV import.
 
 Later work in the roadmap but not planned here: D2 (GL transactions), D4 (Xero and QBO connections), the Phase 2 learning simulators and topics, and the four owed content skills. Each gets its own plan when its turn comes.
 

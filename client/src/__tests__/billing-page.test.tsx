@@ -93,10 +93,12 @@ describe('billing page', () => {
     const fetchMock = stubApi({
       'GET /api/billing/settings': ok({ settings: settings({ legalName: 'Ledger Lane Pty Ltd' }), canEdit: true }),
       'GET /api/billing/rates': ok({
-        rates: [{ userId: null, userName: 'Firm default', currency: 'AUD', centsPerHour: 15000 }],
+        rates: [{ userId: null, userName: 'Firm default', currency: 'AUD', centsPerHour: 15000, costCentsPerHour: null }],
         members: [],
       }),
-      'PATCH /api/billing/rates': ok({ rates: [{ userId: null, userName: 'Firm default', currency: 'AUD', centsPerHour: 15000 }] }),
+      'PATCH /api/billing/rates': ok({
+        rates: [{ userId: null, userName: 'Firm default', currency: 'AUD', centsPerHour: 15000, costCentsPerHour: null }],
+      }),
     });
     renderAt('/workspace/billing', '/workspace/billing', <BillingSettings />);
     const table = within(await screen.findByRole('table'));
@@ -106,7 +108,7 @@ describe('billing page', () => {
     await user.click(screen.getByRole('button', { name: 'Save rate' }));
     await waitFor(() => {
       const patch = fetchMock.mock.calls.find(([url, init]) => url === '/api/billing/rates' && init?.method === 'PATCH');
-      expect(JSON.parse(String(patch?.[1]?.body))).toEqual({ userId: null, currency: 'AUD', centsPerHour: 15000 });
+      expect(JSON.parse(String(patch?.[1]?.body))).toEqual({ userId: null, currency: 'AUD', centsPerHour: 15000, costCentsPerHour: null });
     });
   });
 
@@ -125,5 +127,25 @@ describe('billing page', () => {
     expect(await screen.findByText('Pricing saved.')).toBeInTheDocument();
     const patch = fetchMock.mock.calls.find(([url, init]) => url === '/api/clients/c1/pricing' && init?.method === 'PATCH');
     expect(JSON.parse(String(patch?.[1]?.body))).toEqual({ model: 'fixed', currency: 'AUD', fixedCents: 110000, retainerCents: null });
+  });
+
+  it('BP6 cost rate', async () => {
+    const user = userEvent.setup();
+    const row = { userId: null, userName: 'Firm default', currency: 'AUD', centsPerHour: 15000, costCentsPerHour: 6000 };
+    const fetchMock = stubApi({
+      'GET /api/billing/settings': ok({ settings: settings({ legalName: 'Ledger Lane Pty Ltd' }), canEdit: true }),
+      'GET /api/billing/rates': ok({ rates: [row], members: [] }),
+      'PATCH /api/billing/rates': ok({ rates: [row] }),
+    });
+    renderAt('/workspace/billing', '/workspace/billing', <BillingSettings />);
+    const table = within(await screen.findByRole('table'));
+    expect(table.getByText('$60.00')).toBeInTheDocument();
+    await user.type(screen.getByLabelText('Rate per hour'), '150');
+    await user.type(screen.getByLabelText('Cost per hour (optional)'), '80');
+    await user.click(screen.getByRole('button', { name: 'Save rate' }));
+    await waitFor(() => {
+      const patch = fetchMock.mock.calls.find(([url, init]) => url === '/api/billing/rates' && init?.method === 'PATCH');
+      expect(JSON.parse(String(patch?.[1]?.body))).toEqual({ userId: null, currency: 'AUD', centsPerHour: 15000, costCentsPerHour: 8000 });
+    });
   });
 });

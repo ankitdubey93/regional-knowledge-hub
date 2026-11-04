@@ -43,8 +43,8 @@ billingRoutes.patch('/settings', async (req, res) => {
 });
 
 billingRoutes.get('/rates', async (_req, res) => {
-  const { orgId } = firmOf(res);
-  const { rates, members } = await listRates(orgId);
+  const { orgId, role } = firmOf(res);
+  const { rates, members } = await listRates(orgId, canEdit(role));
   res.status(200).json({ rates, members });
 });
 

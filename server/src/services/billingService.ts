@@ -116,6 +116,7 @@ async function selectRates(tx: Tx, orgId: string): Promise<RateCardView[]> {
       userName: user.name,
       currency: rateCard.currency,
       centsPerHour: rateCard.centsPerHour,
+      costCentsPerHour: rateCard.costCentsPerHour,
     })
     .from(rateCard)
     .leftJoin(user, eq(user.id, rateCard.userId))
@@ -125,6 +126,7 @@ async function selectRates(tx: Tx, orgId: string): Promise<RateCardView[]> {
     userName: r.userId === null ? 'Firm default' : (r.userName ?? 'Former member'),
     currency: r.currency,
     centsPerHour: r.centsPerHour,
+    costCentsPerHour: r.costCentsPerHour,
   }));
   views.sort((a, b) => {
     if ((a.userId === null) !== (b.userId === null)) return a.userId === null ? -1 : 1;
@@ -136,8 +138,10 @@ async function selectRates(tx: Tx, orgId: string): Promise<RateCardView[]> {
 
 export async function listRates(
   orgId: string,
+  canSeeCost: boolean,
 ): Promise<{ rates: RateCardView[]; members: { userId: string; name: string }[] }> {
-  const rates = await withOrg(orgId, (tx) => selectRates(tx, orgId));
+  const all = await withOrg(orgId, (tx) => selectRates(tx, orgId));
+  const rates = canSeeCost ? all : all.map((v) => ({ ...v, costCentsPerHour: null }));
   const members = (await listMembers(orgId)).map((m) => ({ userId: m.userId, name: m.name }));
   return { rates, members };
 }
@@ -169,7 +173,11 @@ export async function setRate(orgId: string, input: RateSet): Promise<RateOutcom
     } else if (found) {
       await tx
         .update(rateCard)
-        .set({ centsPerHour: input.centsPerHour, updatedAt: new Date() })
+        .set({
+          centsPerHour: input.centsPerHour,
+          ...(input.costCentsPerHour !== undefined ? { costCentsPerHour: input.costCentsPerHour } : {}),
+          updatedAt: new Date(),
+        })
         .where(and(eq(rateCard.id, found.id), eq(rateCard.orgId, orgId)));
     } else {
       await tx.insert(rateCard).values({
@@ -177,6 +185,7 @@ export async function setRate(orgId: string, input: RateSet): Promise<RateOutcom
         userId: input.userId,
         currency: input.currency,
         centsPerHour: input.centsPerHour,
+        costCentsPerHour: input.costCentsPerHour ?? null,
       });
     }
     return { rates: await selectRates(tx, orgId) };

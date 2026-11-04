@@ -23,6 +23,7 @@ export const rateCardSchema = z.object({
   userName: z.string(),
   currency: z.enum(CURRENCIES),
   centsPerHour: z.number().int(),
+  costCentsPerHour: z.number().int().nullable(),
 });
 export type RateCard = z.infer<typeof rateCardSchema>;
 
@@ -60,8 +61,13 @@ export async function listRates(): Promise<{ rates: RateCard[]; members: { userI
     .parse(body);
 }
 
-/** PATCH /billing/rates { userId, currency, centsPerHour } → { rates }; returns rates. */
-export async function setRate(input: { userId: string | null; currency: Currency; centsPerHour: number | null }): Promise<RateCard[]> {
+/** PATCH /billing/rates { userId, currency, centsPerHour, costCentsPerHour? } → { rates }; returns rates. */
+export async function setRate(input: {
+  userId: string | null;
+  currency: Currency;
+  centsPerHour: number | null;
+  costCentsPerHour?: number | null;
+}): Promise<RateCard[]> {
   const body = await apiJson<unknown>('/billing/rates', { method: 'PATCH', body: input });
   return z.object({ rates: z.array(rateCardSchema) }).parse(body).rates;
 }

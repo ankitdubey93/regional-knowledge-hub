@@ -108,8 +108,9 @@ export function InvoicesList() {
   return (
     <div className="space-y-6">
       <PageHeader title="Invoices" lead="Draft invoices from unbilled time and fees, then issue them with a number.">
-        <div className="mt-4 text-sm">
+        <div className="mt-4 flex flex-wrap gap-4 text-sm">
           <TextLink to="/workspace/billing">Billing settings</TextLink>
+          <TextLink to="/profitability">Profitability</TextLink>
         </div>
       </PageHeader>
 

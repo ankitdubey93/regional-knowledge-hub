@@ -1,0 +1,1 @@
+ALTER TABLE "rate_card" ADD COLUMN "cost_cents_per_hour" integer;

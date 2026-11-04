@@ -152,7 +152,7 @@ describe('billing', () => {
     });
     expect(first.status).toBe(200);
     expect(await first.json()).toEqual({
-      rates: [{ userId: null, userName: 'Firm default', currency: 'AUD', centsPerHour: 15000 }],
+      rates: [{ userId: null, userName: 'Firm default', currency: 'AUD', centsPerHour: 15000, costCentsPerHour: null }],
     });
     const second = await call('PATCH', '/api/billing/rates', {
       cookie: cookieA,
@@ -204,6 +204,49 @@ describe('billing', () => {
     expect(bad.status).toBe(400);
     const body = (await bad.json()) as { issues: { message: string }[] };
     expect(body.issues[0]!.message).toBe('Enter the fixed fee');
+  });
+
+  it('BL11 a cost rate is saved and shown to owners', async () => {
+    type Row = { userId: string | null; currency: string; centsPerHour: number; costCentsPerHour: number | null };
+    const gbp = async (body: Record<string, unknown>): Promise<Row | undefined> => {
+      const res = await call('PATCH', '/api/billing/rates', { cookie: cookieA, body: { userId: null, currency: 'GBP', ...body } });
+      expect(res.status).toBe(200);
+      const { rates } = (await res.json()) as { rates: Row[] };
+      return rates.find((r) => r.userId === null && r.currency === 'GBP');
+    };
+    expect((await gbp({ centsPerHour: 12000, costCentsPerHour: 5000 }))?.costCentsPerHour).toBe(5000);
+    const kept = await gbp({ centsPerHour: 13000 });
+    expect(kept?.centsPerHour).toBe(13000);
+    expect(kept?.costCentsPerHour).toBe(5000);
+    expect((await gbp({ centsPerHour: 13000, costCentsPerHour: null }))?.costCentsPerHour).toBeNull();
+    expect((await gbp({ centsPerHour: 13000, costCentsPerHour: 5000 }))?.costCentsPerHour).toBe(5000);
+  });
+
+  it('BL12 members never see cost rates', async () => {
+    type Row = { userId: string | null; currency: string; costCentsPerHour: number | null };
+    const asMember = await call('GET', '/api/billing/rates', { cookie: memberCookie });
+    expect(asMember.status).toBe(200);
+    const memberRates = ((await asMember.json()) as { rates: Row[] }).rates;
+    expect(memberRates.length).toBeGreaterThan(0);
+    expect(memberRates.every((r) => r.costCentsPerHour === null)).toBe(true);
+    const asOwner = await call('GET', '/api/billing/rates', { cookie: cookieA });
+    const ownerRates = ((await asOwner.json()) as { rates: Row[] }).rates;
+    expect(ownerRates.find((r) => r.userId === null && r.currency === 'GBP')?.costCentsPerHour).toBe(5000);
+  });
+
+  it('BL13 cost rate bounds', async () => {
+    const res = await call('PATCH', '/api/billing/rates', {
+      cookie: cookieA,
+      body: { userId: null, currency: 'AUD', centsPerHour: 15000, costCentsPerHour: 1_000_001 },
+    });
+    expect(res.status).toBe(400);
+    expect(((await res.json()) as { error: string }).error).toBe('Invalid input');
+    const msg = await failure(
+      withOrg(orgA, (tx) =>
+        tx.insert(rateCard).values({ orgId: orgA, userId: 'bl12', currency: 'AUD', centsPerHour: 1, costCentsPerHour: -1 }),
+      ),
+    );
+    expect(msg).toMatch(/rate_card_cost_check/);
   });
 
   it("BL10 another firm's client", async () => {

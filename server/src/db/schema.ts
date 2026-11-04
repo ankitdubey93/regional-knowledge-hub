@@ -665,6 +665,7 @@ export const rateCard = pgTable(
     userId: text('user_id'), // null = the firm default; no FK, like created_by
     currency: text('currency', { enum: CURRENCIES }).notNull(),
     centsPerHour: integer('cents_per_hour').notNull(),
+    costCentsPerHour: integer('cost_cents_per_hour'), // null = no cost rate set (B3)
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index('rate_card_org_idx').on(t.orgId)],

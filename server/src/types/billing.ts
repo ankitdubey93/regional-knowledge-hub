@@ -32,11 +32,12 @@ export const billingSettingsPatchSchema = z
   .refine(nonEmpty, { message: 'Nothing to update' });
 export type BillingSettingsPatch = z.infer<typeof billingSettingsPatchSchema>;
 
-export interface RateCardView { userId: string | null; userName: string; currency: Currency; centsPerHour: number }
+export interface RateCardView { userId: string | null; userName: string; currency: Currency; centsPerHour: number; costCentsPerHour: number | null }
 export const rateSetSchema = z.object({
   userId: z.string().min(1).nullable(),
   currency: z.enum(CURRENCIES),
   centsPerHour: z.number().int().min(0).max(MAX_RATE_CENTS_PER_HOUR).nullable(),
+  costCentsPerHour: z.number().int().min(0).max(MAX_RATE_CENTS_PER_HOUR).nullable().optional(),
 });
 export type RateSet = z.infer<typeof rateSetSchema>;
 

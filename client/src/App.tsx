@@ -55,6 +55,7 @@ const TimePage = page(() => import('./pages/time/TimePage'), 'TimePage');
 const InvoicesList = page(() => import('./pages/invoices/InvoicesList'), 'InvoicesList');
 const InvoiceDetail = page(() => import('./pages/invoices/InvoiceDetail'), 'InvoiceDetail');
 const InvoicePrint = page(() => import('./pages/invoices/InvoicePrint'), 'InvoicePrint');
+const Profitability = page(() => import('./pages/invoices/Profitability'), 'Profitability');
 const WorkspaceTemplates = page(() => import('./pages/workspace/WorkspaceTemplates'), 'WorkspaceTemplates');
 const WorkspaceTemplateEdit = page(() => import('./pages/workspace/WorkspaceTemplateEdit'), 'WorkspaceTemplateEdit');
 const AdminHome = page(() => import('./pages/admin/AdminHome'), 'AdminHome');
@@ -126,6 +127,7 @@ export function App() {
             <Route path="invoices" element={<InvoicesList />} />
             <Route path="invoices/:id" element={<InvoiceDetail />} />
             <Route path="invoices/:id/print" element={<InvoicePrint />} />
+            <Route path="profitability" element={<Profitability />} />
             <Route path="entities/:id" element={<EntityDashboard />} />
             <Route path="entities/:id/settings" element={<EntitySettings />} />
             <Route path="entities/:id/books" element={<EntityBooks />} />

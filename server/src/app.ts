@@ -26,6 +26,7 @@ import {
   clientPricingRoutes,
 } from './routes/billing';
 import { invoiceRoutes } from './routes/invoices';
+import { profitabilityRoutes } from './routes/profitability';
 import { metaRoutes } from './routes/meta';
 import { pinForwardedFor } from './middleware/rateLimit';
 
@@ -55,6 +56,7 @@ app.use('/api/workload', workloadRoutes);
 app.use('/api/time', timeRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/profitability', profitabilityRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/workspace', workspaceRoutes);
 app.use('/api/chat', chatStatusRoutes);

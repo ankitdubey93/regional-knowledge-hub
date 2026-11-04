@@ -55,6 +55,7 @@ export function BillingSettings() {
   const [rateUser, setRateUser] = useState('');
   const [rateCurrency, setRateCurrency] = useState<Currency>('AUD');
   const [rateText, setRateText] = useState('');
+  const [costText, setCostText] = useState('');
   const [rateError, setRateError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -132,11 +133,22 @@ export function BillingSettings() {
       setRateError('Enter an amount such as 150 or 150.50.');
       return;
     }
+    const cost = costText.trim() === '' ? null : parseMoney(costText);
+    if (costText.trim() !== '' && (cost === null || cost < 0)) {
+      setRateError('Enter a cost such as 80 or 80.50, or leave it blank.');
+      return;
+    }
     setRateError(null);
     try {
-      const next = await setRate({ userId: rateUser === '' ? null : rateUser, currency: rateCurrency, centsPerHour: cents });
+      const next = await setRate({
+        userId: rateUser === '' ? null : rateUser,
+        currency: rateCurrency,
+        centsPerHour: cents,
+        costCentsPerHour: cost,
+      });
       setRates(next);
       setRateText('');
+      setCostText('');
     } catch (err) {
       setRateError(err instanceof ApiError ? err.message : 'Could not save the rate');
     }
@@ -265,6 +277,7 @@ export function BillingSettings() {
 
       <Card>
         <h2 className="font-semibold">Hourly rates</h2>
+        <p className="mt-1 text-sm text-muted">The cost per hour is only used for profitability, and only owners and admins see it.</p>
         {ratesLoading ? (
           <p className="mt-3 text-sm text-muted">Loading…</p>
         ) : ratesLoadError !== null ? (
@@ -287,6 +300,11 @@ export function BillingSettings() {
                   <th scope="col" className="py-2 pr-4 font-semibold">
                     Rate per hour
                   </th>
+                  {canEdit && (
+                    <th scope="col" className="py-2 pr-4 font-semibold">
+                      Cost per hour
+                    </th>
+                  )}
                   <th scope="col" />
                 </tr>
               </thead>
@@ -296,6 +314,9 @@ export function BillingSettings() {
                     <td className="py-2 pr-4">{r.userName}</td>
                     <td className="py-2 pr-4">{r.currency}</td>
                     <td className="num py-2 pr-4">{formatMoney(r.centsPerHour, r.currency)}</td>
+                    {canEdit && (
+                      <td className="num py-2 pr-4">{r.costCentsPerHour === null ? '—' : formatMoney(r.costCentsPerHour, r.currency)}</td>
+                    )}
                     <td className="py-2 pr-4">
                       {canEdit && (
                         <Button variant="secondary" aria-label={`Remove rate for ${r.userName} in ${r.currency}`} onClick={() => void onRemove(r)}>
@@ -311,7 +332,7 @@ export function BillingSettings() {
         )}
 
         {canEdit && (
-          <form aria-label="Set an hourly rate" onSubmit={onSaveRate} className="mt-6 grid gap-4 sm:grid-cols-3">
+          <form aria-label="Set an hourly rate" onSubmit={onSaveRate} className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Who">
               <select className={inputClass} value={rateUser} onChange={(e) => setRateUser(e.target.value)}>
                 <option value="">Firm default</option>
@@ -337,12 +358,21 @@ export function BillingSettings() {
                 onChange={(e) => setRateText(e.target.value)}
               />
             </Field>
+            <Field label="Cost per hour (optional)">
+              <input
+                type="text"
+                inputMode="decimal"
+                className={inputClass}
+                value={costText}
+                onChange={(e) => setCostText(e.target.value)}
+              />
+            </Field>
             {rateError !== null && (
-              <p role="alert" className="text-sm text-bad sm:col-span-3">
+              <p role="alert" className="text-sm text-bad sm:col-span-2 lg:col-span-4">
                 {rateError}
               </p>
             )}
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-2 lg:col-span-4">
               <Button type="submit">Save rate</Button>
             </div>
           </form>
