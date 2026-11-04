@@ -396,6 +396,15 @@ describe('EntityDashboard', () => {
   });
 });
 
+// PricingCard fetches the pricing on mount; answer it by URL so the queued replies stay in order.
+function withPricing(queued: (input: string, init?: RequestInit) => Promise<Response>) {
+  return vi.fn((input: string, init?: RequestInit) =>
+    String(input).endsWith('/pricing')
+      ? Promise.resolve(jsonResponse(200, { pricing: null, canEdit: true }))
+      : queued(input, init),
+  );
+}
+
 describe('EntitySettings', () => {
   it('shows not found', async () => {
     vi.mocked(session.useSessionInfo).mockReturnValue(signedIn);
@@ -420,7 +429,7 @@ describe('EntitySettings', () => {
       .fn()
       .mockResolvedValueOnce(jsonResponse(200, { client: acmeClient }))
       .mockResolvedValueOnce(new Response(null, { status: 204 }));
-    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('fetch', withPricing(fetchMock));
     const user = userEvent.setup();
     renderAt('/entities/c1/settings', '/entities/:id/settings', <EntitySettings />);
     await user.click(await screen.findByRole('button', { name: 'Delete client' }));
@@ -437,7 +446,7 @@ describe('EntitySettings', () => {
       .fn()
       .mockResolvedValueOnce(jsonResponse(200, { client: selfClient }))
       .mockResolvedValueOnce(jsonResponse(200, { client: selfClient }));
-    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('fetch', withPricing(fetchMock));
     const user = userEvent.setup();
     renderAt('/entities/b1/settings', '/entities/:id/settings', <EntitySettings />);
     expect(await screen.findByRole('heading', { name: "Ann's Cafe: details" })).toBeInTheDocument();

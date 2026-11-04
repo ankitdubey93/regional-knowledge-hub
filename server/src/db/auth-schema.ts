@@ -100,6 +100,15 @@ export const organization = pgTable("organization", {
   // Not Better Auth fields, so only PATCH /api/workspace/retention writes them.
   retentionDaysDocuments: integer("retention_days_documents"),
   retentionDaysConversations: integer("retention_days_conversations"),
+  // Hand-added (B2): the firm's invoice details. Not Better Auth fields, so only PATCH /api/billing/settings writes them. Checks in 0040.
+  billingJurisdiction: text("billing_jurisdiction"),
+  billingLegalName: text("billing_legal_name"),
+  billingAddress: text("billing_address"),
+  billingTaxRegistered: boolean("billing_tax_registered").default(false).notNull(),
+  billingTaxNumber: text("billing_tax_number"),
+  billingPaymentDays: integer("billing_payment_days").default(14).notNull(),
+  billingPaymentDetails: text("billing_payment_details").default("").notNull(),
+  billingAccountCode: text("billing_account_code").default("200").notNull(),
 });
 
 export const member = pgTable(

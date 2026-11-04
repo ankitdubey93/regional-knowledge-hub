@@ -274,3 +274,9 @@ main tbody tr:hover > * {
     scroll-behavior: auto !important;
   }
 }
+
+/* B2: an invoice prints black on white whatever the theme. */
+@media print {
+  body { background: #fff; }
+  .invoice-doc, .invoice-doc * { color: #000 !important; background: transparent !important; box-shadow: none !important; }
+}

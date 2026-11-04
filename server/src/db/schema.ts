@@ -23,6 +23,7 @@ import {
 import { ACCOUNT_CLASSES } from '@chub/shared/utils/accountClasses';
 import { REQUEST_SOURCES, REQUEST_STATUSES } from '@chub/shared/utils/intake';
 import type { CurriculumMeta, EngagementTemplateStep, Fact } from '@chub/shared/data/schemas';
+import { CURRENCIES, INVOICE_STATUSES, LINE_KINDS, PRICING_MODELS, TAX_SCHEMES, TAX_TREATMENTS } from '@chub/shared/utils/invoice';
 import { ENGAGEMENT_KINDS, ENGAGEMENT_STATUSES, TASK_STATUSES } from '@chub/shared/utils/engagements';
 import type { ImportIssue } from '@chub/shared/utils/ledgerImport';
 import { CHAT_SCOPES, MESSAGE_ROLES, MESSAGE_STATUSES, type GroundingFlag } from '@chub/shared/lib/chatWire';
@@ -275,8 +276,9 @@ export const AUDIT_EVENT_ACTIONS = [
   'member.invite', 'member.remove', 'member.role',
   'retention.update', 'retention.purge',
   'request_link.create', 'request_link.pause', 'request_link.resume', 'request_link.revoke', 'request_link.nudge',
+  'invoice.issue', 'invoice.void',
 ] as const;
-export const AUDIT_TARGET_TYPES = ['user', 'document', 'ledger_import', 'invitation', 'member', 'organization', 'request_link'] as const;
+export const AUDIT_TARGET_TYPES = ['user', 'document', 'ledger_import', 'invitation', 'member', 'organization', 'request_link', 'invoice'] as const;
 
 export const auditEvent = pgTable(
   'audit_event',
@@ -623,7 +625,7 @@ export const memberCapacity = pgTable(
 
 // Tenant table (B1): RLS, checks and the engagement and task FKs (ON DELETE SET NULL of one column) are in migration 0038,
 // because drizzle cannot express them (Hard rule 11). A running timer is a row with minutes null: at most one per user per firm.
-// user_id has no FK, like created_by: an entry outlives its author's account. invoice_id gets its FK in B2.
+// user_id has no FK, like created_by: an entry outlives its author's account. invoice_id's FK (time_entry_invoice_fk) and lock trigger are in 0040.
 export const timeEntry = pgTable(
   'time_entry',
   {
@@ -646,9 +648,123 @@ export const timeEntry = pgTable(
   },
   (t) => [
     foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'time_entry_client_org_fk' }).onDelete('cascade'),
+    unique('time_entry_id_org_unique').on(t.id, t.orgId),
     uniqueIndex('time_entry_one_running_idx').on(t.orgId, t.userId).where(sql`"minutes" is null`),
     index('time_entry_org_user_date_idx').on(t.orgId, t.userId, t.workDate),
     index('time_entry_engagement_idx').on(t.engagementId),
     index('time_entry_client_idx').on(t.clientId),
   ],
 );
+
+// Tenant tables (B2): RLS, checks, the SET NULL foreign keys and the lock triggers are in migration 0040 (Hard rule 11).
+export const rateCard = pgTable(
+  'rate_card',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id').notNull().references(() => organization.id, { onDelete: 'cascade' }),
+    userId: text('user_id'), // null = the firm default; no FK, like created_by
+    currency: text('currency', { enum: CURRENCIES }).notNull(),
+    centsPerHour: integer('cents_per_hour').notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('rate_card_org_idx').on(t.orgId)],
+);
+
+export const clientPricing = pgTable(
+  'client_pricing',
+  {
+    clientId: uuid('client_id').primaryKey(),
+    orgId: text('org_id').notNull().references(() => organization.id, { onDelete: 'cascade' }),
+    model: text('model', { enum: PRICING_MODELS }).notNull(),
+    currency: text('currency', { enum: CURRENCIES }).notNull(),
+    fixedCents: integer('fixed_cents'),
+    retainerCents: integer('retainer_cents'),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'client_pricing_client_org_fk' }).onDelete('cascade'),
+  ],
+);
+
+// invoice_client_org_fk is NO ACTION (checked at statement end): a direct client delete fails, an organization cascade succeeds.
+export const invoice = pgTable(
+  'invoice',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id').notNull().references(() => organization.id, { onDelete: 'cascade' }),
+    clientId: uuid('client_id').notNull(),
+    engagementId: uuid('engagement_id'),
+    number: integer('number'),
+    status: text('status', { enum: INVOICE_STATUSES }).notNull().default('draft'),
+    currency: text('currency', { enum: CURRENCIES }).notNull(),
+    taxScheme: text('tax_scheme', { enum: TAX_SCHEMES }).notNull(),
+    taxFactKey: text('tax_fact_key'),
+    taxRateBp: integer('tax_rate_bp').notNull().default(0),
+    periodFrom: date('period_from', { mode: 'string' }).notNull(),
+    periodTo: date('period_to', { mode: 'string' }).notNull(),
+    buyerAddress: text('buyer_address').notNull().default(''),
+    buyerTaxNumber: text('buyer_tax_number').notNull().default(''),
+    reference: text('reference').notNull().default(''),
+    notes: text('notes').notNull().default(''),
+    issuedOn: date('issued_on', { mode: 'string' }),
+    dueOn: date('due_on', { mode: 'string' }),
+    sellerJurisdiction: text('seller_jurisdiction', { enum: ['AU', 'UK'] }),
+    sellerName: text('seller_name'),
+    sellerAddress: text('seller_address'),
+    sellerTaxNumber: text('seller_tax_number'),
+    buyerName: text('buyer_name'),
+    paymentDetails: text('payment_details'),
+    subtotalCents: bigint('subtotal_cents', { mode: 'number' }).notNull().default(0),
+    taxCents: bigint('tax_cents', { mode: 'number' }).notNull().default(0),
+    totalCents: bigint('total_cents', { mode: 'number' }).notNull().default(0),
+    noTaxSubtotalCents: bigint('no_tax_subtotal_cents', { mode: 'number' }).notNull().default(0),
+    fxRateMicros: bigint('fx_rate_micros', { mode: 'number' }),
+    fxRateDate: date('fx_rate_date', { mode: 'string' }),
+    fxRateSource: text('fx_rate_source'),
+    taxHomeCents: bigint('tax_home_cents', { mode: 'number' }),
+    totalHomeCents: bigint('total_home_cents', { mode: 'number' }),
+    issuedBy: text('issued_by'),
+    voidedAt: timestamp('voided_at', { withTimezone: true }),
+    voidReason: text('void_reason'),
+    createdBy: text('created_by').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.clientId, t.orgId], foreignColumns: [client.id, client.orgId], name: 'invoice_client_org_fk' }),
+    unique('invoice_id_org_unique').on(t.id, t.orgId),
+    unique('invoice_id_client_org_unique').on(t.id, t.clientId, t.orgId),
+    unique('invoice_org_number_unique').on(t.orgId, t.number),
+    index('invoice_client_idx').on(t.clientId),
+    index('invoice_org_created_idx').on(t.orgId, t.createdAt),
+  ],
+);
+
+export const invoiceLine = pgTable(
+  'invoice_line',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id').notNull().references(() => organization.id, { onDelete: 'cascade' }),
+    invoiceId: uuid('invoice_id').notNull(),
+    position: integer('position').notNull(),
+    kind: text('kind', { enum: LINE_KINDS }).notNull(),
+    description: text('description').notNull(),
+    timeEntryId: uuid('time_entry_id'),
+    minutes: integer('minutes'),
+    unitCents: integer('unit_cents').notNull(),
+    amountCents: integer('amount_cents').notNull(),
+    taxTreatment: text('tax_treatment', { enum: TAX_TREATMENTS }).notNull(),
+    taxCents: integer('tax_cents').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.invoiceId, t.orgId], foreignColumns: [invoice.id, invoice.orgId], name: 'invoice_line_invoice_org_fk' }).onDelete('cascade'),
+    index('invoice_line_invoice_idx').on(t.invoiceId),
+    index('invoice_line_time_entry_idx').on(t.timeEntryId),
+  ],
+);
+
+export const invoiceCounter = pgTable('invoice_counter', {
+  orgId: text('org_id').primaryKey().references(() => organization.id, { onDelete: 'cascade' }),
+  nextNumber: integer('next_number').notNull().default(1),
+});

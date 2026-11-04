@@ -2,8 +2,8 @@
 import { z } from 'zod';
 import { apiJson } from './api';
 
-export const AUDIT_ACTIONS = ['sign_in', 'document.upload', 'document.download', 'document.delete', 'ledger.import', 'ledger.delete', 'member.invite', 'member.remove', 'member.role', 'retention.update', 'retention.purge', 'request_link.create', 'request_link.pause', 'request_link.resume', 'request_link.revoke', 'request_link.nudge'] as const;
-export const AUDIT_TARGET_TYPES = ['user', 'document', 'ledger_import', 'invitation', 'member', 'organization', 'request_link'] as const;
+export const AUDIT_ACTIONS = ['sign_in', 'document.upload', 'document.download', 'document.delete', 'ledger.import', 'ledger.delete', 'member.invite', 'member.remove', 'member.role', 'retention.update', 'retention.purge', 'request_link.create', 'request_link.pause', 'request_link.resume', 'request_link.revoke', 'request_link.nudge', 'invoice.issue', 'invoice.void'] as const;
+export const AUDIT_TARGET_TYPES = ['user', 'document', 'ledger_import', 'invitation', 'member', 'organization', 'request_link', 'invoice'] as const;
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
 export type AuditTargetType = (typeof AUDIT_TARGET_TYPES)[number];
 
@@ -24,10 +24,12 @@ export const ACTION_LABELS: Record<AuditAction, string> = {
   'request_link.resume': 'Resumed reminders on a request link',
   'request_link.revoke': 'Revoked a request link',
   'request_link.nudge': 'Sent a reminder for a request link',
+  'invoice.issue': 'Issued an invoice',
+  'invoice.void': 'Voided an invoice',
 };
 export const TARGET_LABELS: Record<AuditTargetType, string> = {
   user: 'User', document: 'Document', ledger_import: 'Trial balance import',
-  invitation: 'Invitation', member: 'Member', organization: 'Workspace', request_link: 'Request link',
+  invitation: 'Invitation', member: 'Member', organization: 'Workspace', request_link: 'Request link', invoice: 'Invoice',
 };
 
 export const auditEventSchema = z.object({

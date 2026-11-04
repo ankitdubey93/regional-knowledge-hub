@@ -21,6 +21,11 @@ import { workloadRoutes } from './routes/workload';
 import { timeRoutes } from './routes/time';
 import { workspaceRoutes } from './routes/workspace';
 import { ledgerRoutes } from './routes/ledger';
+import {
+  billingRoutes,
+  clientPricingRoutes,
+} from './routes/billing';
+import { invoiceRoutes } from './routes/invoices';
 import { metaRoutes } from './routes/meta';
 import { pinForwardedFor } from './middleware/rateLimit';
 
@@ -41,12 +46,15 @@ app.use('/api/clients/:clientId', requestRoutes);
 app.use('/api/clients/:clientId', requestLinkRoutes);
 app.use('/api/clients/:clientId', clientEngagementRoutes);
 app.use('/api/clients/:clientId', ledgerRoutes);
+app.use('/api/clients/:clientId', clientPricingRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/requests', requestCountRoutes);
 app.use('/api/engagements', engagementRoutes);
 app.use('/api/engagement-templates', templateRoutes);
 app.use('/api/workload', workloadRoutes);
 app.use('/api/time', timeRoutes);
+app.use('/api/billing', billingRoutes);
+app.use('/api/invoices', invoiceRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/workspace', workspaceRoutes);
 app.use('/api/chat', chatStatusRoutes);

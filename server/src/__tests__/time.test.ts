@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import { eq, sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { auth } from '../auth';
@@ -257,8 +256,17 @@ describe('time', () => {
 
   it('TM10 an invoiced entry is locked', async () => {
     const entry = await addTime(cookieA, { clientId: clientA, workDate: '2026-11-05', minutes: 20 });
-    const invoiceId = randomUUID();
-    await withOrg(orgA, (tx) => tx.update(timeEntry).set({ invoiceId }).where(eq(timeEntry.id, entry.id)));
+    for (const [path, body] of [
+      ['/api/billing/settings', { jurisdiction: 'AU', legalName: 'Time Firm Pty Ltd', address: '1 George St\nSydney NSW 2000', taxRegistered: false }],
+      ['/api/billing/rates', { userId: null, currency: 'AUD', centsPerHour: 15000 }],
+      [`/api/clients/${clientA}/pricing`, { model: 'hourly', currency: 'AUD' }],
+    ] as const) {
+      const set = await call('PATCH', path, { cookie: cookieA, body });
+      expect(set.status).toBe(200);
+    }
+    const draft = await call('POST', '/api/invoices', { cookie: cookieA, body: { clientId: clientA, from: '2026-11-05', to: '2026-11-05' } });
+    expect(draft.status).toBe(201);
+    const invoiceId = ((await draft.json()) as { invoice: { id: string } }).invoice.id;
     const patch = await call('PATCH', `/api/time/${entry.id}`, { cookie: cookieA, body: { minutes: 5 } });
     expect(patch.status).toBe(409);
     expect(await patch.json()).toEqual({ error: 'This entry is on an invoice and cannot be changed' });

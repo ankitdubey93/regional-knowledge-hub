@@ -54,6 +54,7 @@ export function Layout() {
         { to: '/workspace', label: 'Workspace' },
         { to: '/engagements', label: 'Engagements' },
         { to: '/time', label: 'Time' },
+        { to: '/invoices', label: 'Invoices' },
         { to: '/knowledge', label: 'Knowledge Hub' },
         ...(session.isAdmin ? [{ to: '/admin', label: 'Admin' }] : []),
       ]
@@ -73,10 +74,10 @@ export function Layout() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-panel focus:p-2">
+      <a href="#main" className="print:hidden sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-panel focus:p-2">
         Skip to content
       </a>
-      <header className="sticky top-0 z-30 bg-panel/90 shadow-soft backdrop-blur">
+      <header className="print:hidden sticky top-0 z-30 bg-panel/90 shadow-soft backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4">
           <Link to={session ? '/workspace' : '/'} className="mr-2 flex items-center gap-2 font-display text-[17px] font-bold">
             <span className="inline-flex size-7 items-center justify-center rounded-[9px] bg-accent text-accent-fg" aria-hidden>
@@ -144,7 +145,7 @@ export function Layout() {
         <Outlet />
       </main>
 
-      <footer className="shadow-[inset_0_1px_0_var(--border)]">
+      <footer className="print:hidden shadow-[inset_0_1px_0_var(--border)]">
         <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-muted sm:px-8">
           <p>
             Educational material, not tax, legal or accounting advice. Figures link to their official source with the date they were last checked; check the source

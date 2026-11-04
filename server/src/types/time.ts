@@ -3,7 +3,7 @@ import { addDays } from '@chub/shared/utils/deadlines';
 import { MAX_ENTRY_MINUTES, MAX_NOTE_CHARS } from '@chub/shared/utils/timesheet';
 
 /** yyyy-mm-dd that is a real calendar date (2026-02-31 is refused). */
-const realDate = z
+export const realDate = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD')
   .refine((d) => {

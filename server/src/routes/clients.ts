@@ -93,5 +93,9 @@ clientRoutes.delete('/:id', async (req, res) => {
     res.status(403).json({ error: 'The business entity cannot be deleted' });
     return;
   }
+  if (outcome === 'has_invoices') {
+    res.status(409).json({ error: 'This entity has invoices, so it cannot be deleted' });
+    return;
+  }
   res.status(204).end();
 });

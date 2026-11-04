@@ -1,5 +1,5 @@
 import { and, asc, eq } from 'drizzle-orm';
-import { client } from '../db/schema';
+import { client, invoice } from '../db/schema';
 import { withOrg } from '../db/withOrg';
 import { profileProblems, type Client, type ClientInput, type ClientPatch } from '../types/clients';
 import type { WorkspaceKind } from '../types';
@@ -24,7 +24,7 @@ export async function getClient(orgId: string, id: string): Promise<Client | nul
 }
 
 export type UpdateOutcome = { client: Client } | { notFound: true } | { problems: string[] };
-export type DeleteOutcome = 'deleted' | 'not_found' | 'self';
+export type DeleteOutcome = 'deleted' | 'not_found' | 'self' | 'has_invoices';
 
 // Drizzle wraps the Postgres error; its code is on .cause (23505 = unique_violation on client_one_self_per_org).
 function isUniqueViolation(err: unknown): boolean {
@@ -96,6 +96,12 @@ export async function deleteClient(orgId: string, id: string): Promise<DeleteOut
     const row = found[0];
     if (!row) return 'not_found';
     if (row.isSelf) return 'self';
+    const billed = await tx
+      .select({ id: invoice.id })
+      .from(invoice)
+      .where(and(eq(invoice.orgId, orgId), eq(invoice.clientId, id)))
+      .limit(1);
+    if (billed.length > 0) return 'has_invoices';
     await tx.delete(client).where(and(eq(client.id, id), eq(client.orgId, orgId)));
     return 'deleted';
   });

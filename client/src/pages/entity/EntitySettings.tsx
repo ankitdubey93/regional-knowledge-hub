@@ -2,6 +2,7 @@ import { EntityHeader } from '../../components/EntityHeader';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ClientForm } from '../../components/ClientForm';
+import { PricingCard } from '../../components/PricingCard';
 import { Button, Card, PageHeader, TextLink } from '../../components/ui';
 import { clearActiveEntity, ENTITY_KEY, parseActiveEntity } from '../../lib/activeEntity';
 import { ApiError, apiDelete, apiJson } from '../../lib/api';
@@ -88,6 +89,7 @@ export function EntitySettings() {
               onSubmit={onSave}
             />
           </Card>
+          <PricingCard clientId={id} />
           {!state.client.isSelf && (
             <div className="space-y-2">
               <Button variant="secondary" type="button" onClick={() => void onDelete(state.client)}>

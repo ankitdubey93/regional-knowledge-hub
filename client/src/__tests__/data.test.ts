@@ -3,6 +3,7 @@ import { accountsFor, chart, checklists, codingScenarios, flashcards, journalSce
 import { docs, factTokens } from '../content/docs';
 import { seedFacts as facts } from './seedData';
 import { checkEntry } from '@chub/shared/utils/ledger';
+import { XERO_TAX_TYPES } from '@chub/shared/utils/invoiceCsv';
 
 // The docs come from seedData.ts, which globs docs/ the same way the server seed reads it.
 const docIds = new Set(docs.map((d) => d.id));
@@ -52,6 +53,14 @@ describe('data files', () => {
       for (const a of [s.answer, ...s.alsoAccepted]) {
         expect(codes.has(a.account), `${s.id} ${a.account}`).toBe(true);
         expect(tax.has(a.taxCode), `${s.id} ${a.taxCode}`).toBe(true);
+      }
+    }
+  });
+  it('Xero tax types in invoiceCsv are checked names in tax-codes.json', () => {
+    for (const j of ['AU', 'UK'] as const) {
+      for (const value of Object.values(XERO_TAX_TYPES[j])) {
+        if (value === null) continue;
+        expect(taxCodes[j].some((t) => t.name === value && t.verifiedOn !== null), `${j} ${value}`).toBe(true);
       }
     }
   });
