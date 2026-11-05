@@ -122,4 +122,35 @@ describe('parseSse', () => {
     expect(() => conversationViewSchema.parse({ ...base, documents: [] })).not.toThrow();
     expect(FLAG_CODES).toContain('from_document');
   });
+
+  const practiceCitation = {
+    marker: 1,
+    sourceId: null,
+    versionId: null,
+    chunkId: null,
+    title: 'Open engagements',
+    citation: 'Engagements, as of 2026-11-04 09:30 UTC',
+    kind: 'practice',
+    jurisdiction: 'AU',
+    billStatus: null,
+    headingPath: [],
+    provisionRef: null,
+    sitePath: '/engagements',
+    officialUrl: null,
+    excerpt: 'x',
+    practice: {
+      kind: 'open_engagements',
+      params: { clientId: null, days: null, weekStart: null },
+      asOf: '2026-11-04T09:30:00.000Z',
+    },
+  };
+
+  it('CW9 a practice citation parses with its ref and null KB ids', () => {
+    expect(citationViewSchema.safeParse(practiceCitation).success).toBe(true);
+  });
+
+  it('CW10 an unknown practice kind is rejected', () => {
+    const bad = { ...practiceCitation, practice: { ...practiceCitation.practice, kind: 'payroll_totals' } };
+    expect(citationViewSchema.safeParse(bad).success).toBe(false);
+  });
 });

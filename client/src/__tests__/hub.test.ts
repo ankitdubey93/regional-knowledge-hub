@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { flagText, linkMarkers, statusBadge } from '../lib/chat';
+import { flagText, linkMarkers, practiceBadge, statusBadge } from '../lib/chat';
+import type { CitationView } from '@chub/shared/lib/chatWire';
 import { parseActiveEntity } from '../lib/activeEntity';
 import { frameworksFor, inScope, scopeFor, scopeName, type HubScope } from '../lib/scope';
 
@@ -54,6 +55,34 @@ describe('chat helpers', () => {
   it('CH4 statusBadge', () => {
     expect(statusBadge('flagged')).toBe('Check this answer');
     expect(statusBadge('answered')).toBeNull();
+  });
+
+  it('CH5 practiceBadge', () => {
+    const base: CitationView = {
+      marker: 1,
+      sourceId: null,
+      versionId: null,
+      chunkId: null,
+      title: 'Open engagements',
+      citation: 'Engagements, as of 2026-11-04 09:30 UTC',
+      kind: 'practice',
+      jurisdiction: 'AU',
+      billStatus: null,
+      headingPath: [],
+      provisionRef: null,
+      sitePath: '/engagements',
+      officialUrl: null,
+      excerpt: 'x',
+      practice: {
+        kind: 'open_engagements',
+        params: { clientId: null, days: null, weekStart: null },
+        asOf: '2026-11-04T09:30:00.000Z',
+      },
+    };
+    expect(practiceBadge(base)).toBe('Your practice: as of 2026-11-04 09:30 UTC');
+    const { practice: _omitted, ...withoutRef } = base;
+    expect(practiceBadge(withoutRef)).toBe('Your practice');
+    expect(practiceBadge({ ...base, kind: 'ledger' })).toBeNull();
   });
 });
 

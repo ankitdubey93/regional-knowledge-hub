@@ -80,6 +80,30 @@ function ledgerCitation(orgId: string, messageId: string) {
   };
 }
 
+function practiceCitation(orgId: string, messageId: string) {
+  return {
+    orgId,
+    messageId,
+    marker: 1,
+    sourceId: null as string | null,
+    versionId: null as string | null,
+    chunkId: null as string | null,
+    practiceKind: 'open_engagements' as const,
+    practiceParams: { clientId: null, days: null, weekStart: null } as { clientId: string | null; days: number | null; weekStart: string | null } | null,
+    practiceAsOf: new Date('2026-11-04T09:30:00Z') as Date | null,
+    kind: 'practice',
+    jurisdiction: 'AU',
+    billStatus: null,
+    headingPath: [] as string[],
+    provisionRef: null,
+    sitePath: '/engagements',
+    officialUrl: null,
+    title: 'Open engagements',
+    citation: 'Engagements, as of 2026-11-04 09:30 UTC',
+    excerpt: 'x',
+  };
+}
+
 beforeAll(async () => {
   const a = await signUp();
   const firmA = await createFirm(a.cookie, 'Chat Firm A');
@@ -247,6 +271,35 @@ describe('chat tables', () => {
           excerpt: 'Excerpt text',
         }),
       ),
+    );
+    expect(msg).toContain('chat_citation_source_check');
+  });
+
+  it('T13 a practice citation needs no KB or ledger ids', async () => {
+    const messageId = await answerIn(orgA, auId, userA);
+    await expect(withOrg(orgA, (tx) => tx.insert(chatCitation).values(practiceCitation(orgA, messageId)))).resolves.toBeDefined();
+  });
+
+  it('T14 a practice citation with a ledger import id is rejected', async () => {
+    const messageId = await answerIn(orgA, auId, userA);
+    const msg = await failure(
+      withOrg(orgA, (tx) => tx.insert(chatCitation).values({ ...practiceCitation(orgA, messageId), ledgerImportId: randomUUID() })),
+    );
+    expect(msg).toContain('chat_citation_source_check');
+  });
+
+  it('T15 a practice citation without its as-of time is rejected', async () => {
+    const messageId = await answerIn(orgA, auId, userA);
+    const msg = await failure(
+      withOrg(orgA, (tx) => tx.insert(chatCitation).values({ ...practiceCitation(orgA, messageId), practiceAsOf: null })),
+    );
+    expect(msg).toContain('chat_citation_source_check');
+  });
+
+  it('T16 a ledger citation with a practice kind is rejected', async () => {
+    const messageId = await answerIn(orgA, auId, userA);
+    const msg = await failure(
+      withOrg(orgA, (tx) => tx.insert(chatCitation).values({ ...ledgerCitation(orgA, messageId), practiceKind: 'due_soon' as const })),
     );
     expect(msg).toContain('chat_citation_source_check');
   });

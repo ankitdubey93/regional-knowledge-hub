@@ -1,7 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { ChatMessageView as Msg } from '@chub/shared/lib/chatWire';
-import { flagText, linkMarkers, statusBadge } from '../../lib/chat';
+import { flagText, linkMarkers, practiceBadge, statusBadge } from '../../lib/chat';
 import { TextLink } from '../ui';
 
 const EMPTY_BODY: Partial<Record<Msg['status'], string>> = {
@@ -48,6 +48,7 @@ export function ChatMessageView({ message, streaming }: { message: Msg; streamin
           <ol className="mt-1 space-y-2 text-xs">
             {message.citations.map((c) => {
               const href = c.sitePath ?? (c.sourceId === null ? null : `/knowledge/laws/${c.sourceId}`);
+              const practice = practiceBadge(c);
               return (
                 <li key={c.marker} id={`cite-${message.id}-${c.marker}`} className="min-w-0 break-words">
                   <span className="font-semibold">[{c.marker}]</span>{' '}
@@ -58,6 +59,9 @@ export function ChatMessageView({ message, streaming }: { message: Msg; streamin
                   )}
                   {c.kind === 'ledger' && (
                     <span className="ml-2 inline-flex rounded-full bg-warn-soft px-2 py-0.5 text-xs font-medium">Your books: as imported, not reviewed</span>
+                  )}
+                  {practice !== null && (
+                    <span className="ml-2 inline-flex rounded-full bg-warn-soft px-2 py-0.5 text-xs font-medium">{practice}</span>
                   )}
                   <details className="mt-1">
                     <summary className="cursor-pointer text-muted">Excerpt</summary>

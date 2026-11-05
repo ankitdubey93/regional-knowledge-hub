@@ -15,6 +15,7 @@ import { AU_TB_CSV } from '@chub/shared/fixtures/tb';
 import { emptyRedactionMap } from '../privacy/redact';
 import { readRedactionMap } from '../services/conversationService';
 import { ledgerChatContext } from '../services/ledgerService';
+import { practiceChatData } from '../services/practiceService';
 import { startApp, stopApp } from './server';
 import { SYSTEM_PROMPT } from '../chat/prompt';
 import { stubProvider, type StubProvider } from './stubProvider';
@@ -771,5 +772,130 @@ describe('chat from the books', () => {
     const ctx = await ledgerChatContext(orgA, booksId);
     expect(ctx?.current.import.id).toBe(currentId);
     expect(ctx?.prior?.import.id).toBe(priorId);
+  });
+});
+
+const lastText = (s: StubProvider): string => {
+  const c = s.calls[s.calls.length - 1];
+  return c?.messages[c.messages.length - 1]?.text ?? '';
+};
+
+describe('chat from the practice records', () => {
+  let practiceId = '';
+
+  async function must(status: number, method: string, path: string, cookie: string, body: unknown): Promise<unknown> {
+    const res = await call(method, path, { cookie, body });
+    if (res.status !== status) throw new Error(`${method} ${path} answered ${res.status}: ${await res.text()}`);
+    return res.json();
+  }
+
+  beforeAll(async () => {
+    const created = (await must(201, 'POST', '/api/clients', cookieA, {
+      name: 'Practice Co Pty Ltd', jurisdiction: 'AU', entityType: 'company', fyEndMonth: 6,
+    })) as { client: { id: string } };
+    practiceId = created.client.id;
+    await must(201, 'POST', `/api/clients/${practiceId}/engagements`, cookieA, {
+      templateId: 'seed:bas', title: 'Practice BAS', dueOn: '2026-11-28', periodEnd: '2026-09-30',
+    });
+    await must(200, 'PATCH', '/api/workload/timezone', cookieA, { timezone: 'Australia/Sydney' });
+    await must(201, 'POST', '/api/time', cookieA, { clientId: practiceId, workDate: '2026-10-20', minutes: 90, billable: true });
+    await must(201, 'POST', '/api/time', cookieA, { clientId: practiceId, workDate: '2026-10-21', minutes: 30, billable: false });
+    await must(201, 'POST', `/api/clients/${practiceId}/requests`, cookieA, { label: 'Payroll report for October', dueOn: '2026-10-31' });
+
+    const other = (await must(201, 'POST', '/api/clients', cookieB, {
+      name: 'Other Firm Pty Ltd', jurisdiction: 'AU', entityType: 'company', fyEndMonth: 6,
+    })) as { client: { id: string } };
+    await must(201, 'POST', `/api/clients/${other.client.id}/engagements`, cookieB, {
+      templateId: 'seed:bas', title: 'Firm B Secret BAS', dueOn: '2026-11-28', periodEnd: '2026-09-30',
+    });
+  }, 60_000);
+
+  it('C53 an entity question about engagements is answered from the practice records and cited', async () => {
+    const s = use({ chunks: ['Practice BAS is due 2026-11-28 [1].'] });
+    const id = await newChat(cookieA, { clientId: practiceId, scope: null });
+    const a = await ask(cookieA, id, 'Which engagements are open?');
+    expect(s.calls.length).toBe(1);
+    const text = lastText(s);
+    expect(text).toContain('[1] Open engagements | Engagements, as of ');
+    expect(text).toContain("| Practice (this firm's own records, not reviewed)");
+    expect(text).toContain('Practice BAS (Planned), due 2026-11-28');
+    for (const m of s.calls[0]?.messages ?? []) expect(m.text).not.toContain('Practice Co');
+    const m = doneMessage(a);
+    expect(m.status).toBe('answered');
+    expect(m.citations[0]).toMatchObject({
+      kind: 'practice',
+      sourceId: null,
+      title: 'Open engagements',
+      sitePath: `/entities/${practiceId}/engagements`,
+      practice: { kind: 'open_engagements', params: { clientId: practiceId, days: null, weekStart: null } },
+    });
+    const got = await call('GET', `/api/conversations/${id}`, { cookie: cookieA });
+    const body = (await got.json()) as { messages: ChatMessageView[] };
+    expect(body.messages[1]?.citations[0]).toEqual(m.citations[0]);
+  });
+
+  it('C54 a figure calculated from practice records is flagged', async () => {
+    use({ chunks: ['Practice BAS has 99 tasks [1].'] });
+    const id = await newChat(cookieA, { clientId: practiceId, scope: null });
+    const m = doneMessage(await ask(cookieA, id, 'Which engagements are open?'));
+    expect(m.status).toBe('flagged');
+    expect(m.flags).toEqual(expect.arrayContaining([{ code: 'unsupported_number', detail: '99' }]));
+  });
+
+  it('C55 a hub chat gets firm-wide workload, and staff names are redacted', async () => {
+    const s = use({ chunks: ['See the workload [1].'] });
+    const id = await newChat(cookieA, { clientId: null, scope: 'AU' });
+    await ask(cookieA, id, 'What is Test User working on?');
+    const text = lastText(s);
+    expect(text).toContain('Workload this week and next');
+    expect(text).toContain('Open engagements');
+    for (const c of s.calls) {
+      expect(c.system).not.toContain('Test User');
+      for (const m of c.messages) expect(m.text).not.toContain('Test User');
+    }
+    expect(text).toMatch(/\[NAME_\d+\]: this week /);
+  });
+
+  it('C56 an entity chat never sees workload', async () => {
+    const s = use({ chunks: ['x [1].'] });
+    const id = await newChat(cookieA, { clientId: practiceId, scope: null });
+    await ask(cookieA, id, 'Who is over capacity?');
+    expect(s.calls.every((c) => !(c.messages[c.messages.length - 1]?.text ?? '').includes('Workload this week and next'))).toBe(true);
+  });
+
+  it('C57 unbilled time counts finished billable entries only', async () => {
+    const s = use({ chunks: ['There is 1 h 30 min unbilled [1].'] });
+    const id = await newChat(cookieA, { clientId: practiceId, scope: null });
+    await ask(cookieA, id, 'How much unbilled time is there?');
+    const text = lastText(s);
+    expect(text).toContain(': 1 h 30 min in 1 entry, oldest from 2026-10-20');
+    expect(text).not.toContain('2 h');
+  });
+
+  it('C58 outstanding requests are listed with their due date', async () => {
+    const s = use({ chunks: ['x [1].'] });
+    const id = await newChat(cookieA, { clientId: practiceId, scope: null });
+    await ask(cookieA, id, 'Which documents are we still waiting on?');
+    expect(lastText(s)).toContain('Payroll report for October, due 2026-10-31, overdue');
+  });
+
+  it("C59 firm A never sees firm B's records", async () => {
+    const s = use({ chunks: ['x [1].'] });
+    const id = await newChat(cookieA, { clientId: null, scope: 'AU' });
+    await ask(cookieA, id, 'Which engagements are open?');
+    for (const c of s.calls) for (const m of c.messages) expect(m.text).not.toContain('Firm B Secret BAS');
+    const crossed = await practiceChatData(orgB, ['open_engagements', 'unbilled_time'], practiceId, new Date());
+    expect(crossed.engagements).toBeNull();
+    expect(crossed.unbilled).toBeNull();
+    const own = await practiceChatData(orgA, ['open_engagements'], null, new Date());
+    expect(own.engagements?.some((e) => e.title === 'Firm B Secret BAS')).toBe(false);
+  });
+
+  it('C60 a question no source covers still gets no provider call', async () => {
+    const s = use({ chunks: ['x'] });
+    const id = await newChat(cookieA, { clientId: null, scope: 'AU' });
+    const m = doneMessage(await ask(cookieA, id, 'zqxv flurble wibbet?'));
+    expect(s.calls.length).toBe(0);
+    expect(m.status).toBe('not_covered');
   });
 });

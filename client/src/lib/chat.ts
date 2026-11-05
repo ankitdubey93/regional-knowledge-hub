@@ -73,6 +73,13 @@ export function statusBadge(s: MessageStatus): string | null {
   }
 }
 
+/** The pill for a practice citation; null for every other kind. asOf '2026-11-04T09:30:00.000Z' → 'Your practice: as of 2026-11-04 09:30 UTC'. */
+export function practiceBadge(c: CitationView): string | null {
+  if (c.kind !== 'practice') return null;
+  if (!c.practice) return 'Your practice';
+  return `Your practice: as of ${c.practice.asOf.slice(0, 10)} ${c.practice.asOf.slice(11, 16)} UTC`;
+}
+
 export function hubSuggestions(scope: HubScope): string[] {
   if (scope === 'AU') {
     return ['How do I code a bill that includes GST?', 'What is the difference between cash and accrual GST reporting?', 'Which BAS labels cover sales?'];

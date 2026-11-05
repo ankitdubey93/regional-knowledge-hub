@@ -262,6 +262,44 @@ describe('ChatPanel', () => {
     expect(screen.getByText('Your books: as imported, not reviewed')).toBeInTheDocument();
   });
 
+  it('CP13 a practice citation links to its page and carries the practice pill', () => {
+    const practiceMessage: ChatMessageView = {
+      id: 'm-practice',
+      role: 'assistant',
+      body: 'Practice BAS is due 2026-11-28 [1].',
+      status: 'answered',
+      flags: [],
+      createdAt: NOW,
+      citations: [
+        {
+          marker: 1,
+          sourceId: null,
+          versionId: null,
+          chunkId: null,
+          title: 'Open engagements',
+          citation: 'Engagements, as of 2026-11-04 09:30 UTC',
+          kind: 'practice',
+          jurisdiction: 'AU',
+          billStatus: null,
+          headingPath: [],
+          provisionRef: null,
+          sitePath: '/engagements',
+          officialUrl: null,
+          excerpt: 'x',
+          practice: { kind: 'open_engagements', params: { clientId: null, days: null, weekStart: null }, asOf: '2026-11-04T09:30:00.000Z' },
+        },
+      ],
+    };
+    render(
+      <MemoryRouter>
+        <MessageView message={practiceMessage} />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('link', { name: 'Open engagements' })).toHaveAttribute('href', '/engagements');
+    expect(screen.getByText('Your practice: as of 2026-11-04 09:30 UTC')).toBeInTheDocument();
+    expect(screen.queryByText('Your books: as imported, not reviewed')).toBeNull();
+  });
+
   describe('attached documents (entity chats)', () => {
     const ENTITY_ID = 'client-1';
     const entityConversation: ConversationView = { ...conversation, clientId: ENTITY_ID, scope: null, title: 'Entity question' };

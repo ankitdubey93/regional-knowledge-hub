@@ -127,6 +127,7 @@ describe('prompt', () => {
     provisionRef: null,
     isBill: false,
     isLedger: false,
+    isPractice: false,
     text: 'body',
     ...over,
   });
@@ -182,6 +183,22 @@ describe('prompt', () => {
       "[1] Profit and loss | Trial balance as at 2026-06-30, imported from Xero | Ledger (entity's imported trial balance, not reviewed)",
     );
     expect(SYSTEM_PROMPT).toContain('Never add, subtract, average or otherwise calculate');
+  });
+  it('PR-P1 a practice source is labelled', () => {
+    const built = buildPrompt({
+      today: '2026-11-04',
+      jurisdiction: 'AU',
+      sources: [src(1, { title: 'Open engagements', citation: 'Engagements, as of 2026-11-04 09:30 UTC', isPractice: true })],
+      history: [],
+      question: 'q',
+    });
+    const last = built.messages[built.messages.length - 1];
+    expect(last?.text).toContain(
+      "[1] Open engagements | Engagements, as of 2026-11-04 09:30 UTC | Practice (this firm's own records, not reviewed)",
+    );
+  });
+  it('PR-P2 the system prompt forbids calculating from practice records', () => {
+    expect(SYSTEM_PROMPT).toContain('Never add, subtract, count, total or otherwise calculate from them');
   });
   it('PR5 stripMarkers', () => {
     expect(stripMarkers('GST is 10% [1]. See [2, 3].')).toBe('GST is 10%. See.');

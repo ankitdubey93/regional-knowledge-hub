@@ -8,7 +8,8 @@ import { isCovered } from '../chat/coverage';
 import { buildPrompt, type PromptSource } from '../chat/prompt';
 import { buildLedgerSources, isLedgerQuestion, ledgerAccountNames, redactQuestionAndNames } from '../chat/ledgerSources';
 import { searchKbForChat } from '../kb/retrieve';
-import { createRestorer, redactWith } from '../privacy/redact';
+import { createRestorer, redact, redactWith } from '../privacy/redact';
+import { buildPracticeSources, practiceKindsFor, type PracticeSource } from '../chat/practiceSources';
 import { restoreCitation, restoreMessageView } from '../chat/restoreView';
 import { NOT_COVERED_REPLY } from '@chub/shared/lib/chatWire';
 import { formatFact } from '@chub/shared/data/factFormat';
@@ -23,11 +24,12 @@ import {
   withRedactionMap,
 } from './conversationService';
 import { openDocumentTexts } from './documentService';
+import { practiceChatData } from './practiceService';
 import { rowToFact } from './kbService';
 import { recordUsage } from './usageService';
 
 // Only redacted text reaches the embedder, retrieval and the provider (Hard rule 13). Nothing here logs a body.
-// No database transaction is open while the embedder or the provider runs.
+// No database transaction is open while the embedder or the provider runs. Practice sources (A1) are read before the map transaction and redacted inside it.
 
 export interface ExchangeIo {
   start(userMessage: ChatMessageView): void;
@@ -57,7 +59,11 @@ export async function runExchange(
   io.start(userMessage);
 
   // 2
-  const names = ctx.names;
+  const names = [...ctx.names, ...ctx.staffNames];
+  // A1: the kinds are picked from a redacted copy (throwaway map), so a client or staff name never picks a query.
+  const practiceKinds = practiceKindsFor(redact(text, { names }), ctx.client ? 'entity' : 'hub');
+  const practiceData = practiceKinds.length > 0 ? await practiceChatData(orgId, practiceKinds, ctx.client ? ctx.client.id : null, now) : null;
+  const rawPractice = practiceData ? buildPracticeSources(practiceData, now) : [];
   const ledger = ctx.client ? await ledgerChatContext(orgId, ctx.client.id) : null;
   const rawNames = ledger ? ledgerAccountNames(ledger.current, ledger.prior) : new Map<string, string>();
   const rawHistory = await historyFor(orgId, conversationId);
@@ -82,10 +88,16 @@ export async function runExchange(
       map = t.map;
       docs.push({ label: `D${i + 1}`, name: n.text, text: t.text });
     }
-    return { map, result: { red, history: hist, docs, map } };
+    const practice: PracticeSource[] = [];
+    for (const p of rawPractice) {
+      const r = redactWith(p.text, { names }, map);
+      map = r.map;
+      practice.push({ ...p, text: r.text });
+    }
+    return { map, result: { red, history: hist, docs, practice, map } };
   });
   if (!redacted) throw new Error('conversation not found');
-  const { red, history, docs, map } = redacted;
+  const { red, history, docs, practice, map } = redacted;
   const question = red.question;
   const displayNames = new Map<string, string>();
   for (const [i, code] of [...rawNames.keys()].entries()) {
@@ -124,7 +136,7 @@ export async function runExchange(
       : await searchKbForChat({ query, jurisdiction, includeBills: true, limit: 8 }, embedding);
   const kbCovered = retrieval !== null && isCovered(retrieval);
   const ledgerAsked = ledger !== null && isLedgerQuestion(question, red.accountNames);
-  if (!kbCovered && !ledgerAsked) {
+  if (!kbCovered && !ledgerAsked && practice.length === 0) {
     const message = await insertAssistantMessage(orgId, userId, conversationId, {
       body: NOT_COVERED_REPLY,
       status: 'not_covered',
@@ -143,7 +155,8 @@ export async function runExchange(
       ? buildLedgerSources({ clientId: ctx.client.id, current: ledger.current, prior: ledger.prior, displayNames })
       : [];
   const results = kbCovered && retrieval ? retrieval.results : [];
-  const offset = ledgerSources.length;
+  const practiceOffset = ledgerSources.length;
+  const offset = ledgerSources.length + practice.length;
   const ledgerCitations: CitationView[] = ledgerSources.map((l, i) => ({
     marker: i + 1,
     sourceId: null,
@@ -161,6 +174,23 @@ export async function runExchange(
     excerpt: l.excerpt,
     ledger: { importId: l.importId, compareImportId: l.compareImportId, report: l.report, asAt: l.asAt },
   }));
+  const practiceCitations: CitationView[] = practice.map((p, i) => ({
+    marker: practiceOffset + i + 1,
+    sourceId: null,
+    versionId: null,
+    chunkId: null,
+    title: p.title,
+    citation: p.citation,
+    kind: 'practice',
+    jurisdiction: jurisdiction ?? 'INTL',
+    billStatus: null,
+    headingPath: [],
+    provisionRef: null,
+    sitePath: p.sitePath,
+    officialUrl: null,
+    excerpt: p.text.slice(0, EXCERPT_CHARS),
+    practice: { kind: p.kind, params: p.params, asOf: p.asOf },
+  }));
   const kbCitations: CitationView[] = results.map((r, i) => ({
     marker: offset + i + 1,
     sourceId: r.sourceId,
@@ -177,7 +207,7 @@ export async function runExchange(
     officialUrl: r.officialUrl,
     excerpt: r.text.slice(0, EXCERPT_CHARS),
   }));
-  const sources: CitationView[] = [...ledgerCitations, ...kbCitations];
+  const sources: CitationView[] = [...ledgerCitations, ...practiceCitations, ...kbCitations];
   io.sources(sources.map((c) => restoreCitation(c, map)));
 
   // 8
@@ -190,7 +220,19 @@ export async function runExchange(
       provisionRef: null,
       isBill: false,
       isLedger: true,
+      isPractice: false,
       text: l.text,
+    })),
+    ...practice.map((p, i) => ({
+      marker: practiceOffset + i + 1,
+      title: p.title,
+      citation: p.citation,
+      headingPath: [],
+      provisionRef: null,
+      isBill: false,
+      isLedger: false,
+      isPractice: true,
+      text: p.text,
     })),
     ...results.map((r, i) => ({
       marker: offset + i + 1,
@@ -200,6 +242,7 @@ export async function runExchange(
       provisionRef: r.provisionRef,
       isBill: r.kind === 'bill',
       isLedger: false,
+      isPractice: false,
       text: r.text,
     })),
   ];
@@ -270,6 +313,7 @@ export async function runExchange(
       answer,
       [
         ...ledgerSources.map((l, i) => ({ marker: i + 1, text: l.text })),
+        ...practice.map((p, i) => ({ marker: practiceOffset + i + 1, text: p.text })),
         ...results.map((r, i) => ({ marker: offset + i + 1, text: r.text })),
       ],
       factValues,

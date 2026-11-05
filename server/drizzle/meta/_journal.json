@@ -302,6 +302,20 @@
       "when": 1793807534123,
       "tag": "0042_rate_card_cost_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1793813791381,
+      "tag": "0043_chat_practice_citation",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1793813800739,
+      "tag": "0044_chat_practice_citation_rules",
+      "breakpoints": true
     }
   ]
 }

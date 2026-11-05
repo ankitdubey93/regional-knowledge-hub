@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
-import { chatCitation, chatMessage, client, conversation, conversationDocument, document, type DOCUMENT_KINDS } from '../db/schema';
+import { chatCitation, chatMessage, client, conversation, conversationDocument, document, member, user, type DOCUMENT_KINDS } from '../db/schema';
 import { withOrg } from '../db/withOrg';
 import type { ConversationRow } from '../types/chat';
 import type { Client } from '../types/clients';
@@ -8,6 +8,7 @@ import { stripMarkers } from '../chat/prompt';
 import { restoreMessageView } from '../chat/restoreView';
 import { CryptoError, aadFor, seal, unseal } from '../privacy/crypto';
 import { emptyRedactionMap, type RedactionMap } from '../privacy/redact';
+import { practiceParamsSchema } from '@chub/shared/lib/chatWire';
 import type {
   AttachedDocument,
   ChatMessageView,
@@ -183,6 +184,9 @@ function toCitationView(c: CitationRow): CitationView {
     ...(c.ledgerImportId !== null && c.ledgerReport !== null && c.ledgerAsAt !== null
       ? { ledger: { importId: c.ledgerImportId, compareImportId: c.ledgerCompareImportId, report: c.ledgerReport, asAt: c.ledgerAsAt } }
       : {}),
+    ...(c.practiceKind !== null && c.practiceParams !== null && c.practiceAsOf !== null
+      ? { practice: { kind: c.practiceKind, params: practiceParamsSchema.parse(c.practiceParams), asOf: c.practiceAsOf.toISOString() } }
+      : {}),
   };
 }
 
@@ -327,11 +331,11 @@ export async function deleteConversation(
   });
 }
 
-/** What the chat flow needs: the conversation, its client (or null), and the names to redact (every client name and `entities` entry in the workspace). */
+/** What the chat flow needs: the conversation, its client (or null), and the names to redact (every client name and `entities` entry in the workspace, and (A1) every member's name). */
 export async function conversationContext(
   orgId: string,
   id: string,
-): Promise<{ conversation: ConversationRow; client: Client | null; names: string[] } | null> {
+): Promise<{ conversation: ConversationRow; client: Client | null; names: string[]; staffNames: string[] } | null> {
   return withOrg(orgId, async (tx) => {
     const found = await tx
       .select()
@@ -346,8 +350,14 @@ export async function conversationContext(
       names.add(c.name);
       for (const e of c.entities) names.add(e);
     }
+    const staff = await tx
+      .select({ name: user.name })
+      .from(member)
+      .innerJoin(user, eq(user.id, member.userId))
+      .where(eq(member.organizationId, orgId));
+    const staffNames = [...new Set(staff.map((s) => s.name.trim()).filter((n) => n !== ''))];
     const own = conv.clientId === null ? null : (clients.find((c) => c.id === conv.clientId) ?? null);
-    return { conversation: conv, client: own, names: [...names] };
+    return { conversation: conv, client: own, names: [...names], staffNames };
   });
 }
 
@@ -434,6 +444,9 @@ export async function insertAssistantMessage(
             ledgerCompareImportId: c.ledger?.compareImportId ?? null,
             ledgerReport: c.ledger?.report ?? null,
             ledgerAsAt: c.ledger?.asAt ?? null,
+            practiceKind: c.practice?.kind ?? null,
+            practiceParams: c.practice?.params ?? null,
+            practiceAsOf: c.practice ? new Date(c.practice.asOf) : null,
           })),
         )
         .returning();

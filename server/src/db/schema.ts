@@ -26,7 +26,7 @@ import type { CurriculumMeta, EngagementTemplateStep, Fact } from '@chub/shared/
 import { CURRENCIES, INVOICE_STATUSES, LINE_KINDS, PRICING_MODELS, TAX_SCHEMES, TAX_TREATMENTS } from '@chub/shared/utils/invoice';
 import { ENGAGEMENT_KINDS, ENGAGEMENT_STATUSES, TASK_STATUSES } from '@chub/shared/utils/engagements';
 import type { ImportIssue } from '@chub/shared/utils/ledgerImport';
-import { CHAT_SCOPES, MESSAGE_ROLES, MESSAGE_STATUSES, type GroundingFlag } from '@chub/shared/lib/chatWire';
+import { CHAT_SCOPES, MESSAGE_ROLES, MESSAGE_STATUSES, PRACTICE_KINDS, type GroundingFlag, type PracticeParams } from '@chub/shared/lib/chatWire';
 import { organization, user } from './auth-schema';
 
 export * from './auth-schema';
@@ -215,6 +215,10 @@ export const chatCitation = pgTable(
     ledgerCompareImportId: uuid('ledger_compare_import_id'),
     ledgerReport: text('ledger_report', { enum: ['pnl', 'bs'] }),
     ledgerAsAt: date('ledger_as_at', { mode: 'string' }),
+    // A1: a practice citation. No FK: a citation is a snapshot of the firm's records when the answer was given.
+    practiceKind: text('practice_kind', { enum: PRACTICE_KINDS }),
+    practiceParams: jsonb('practice_params').$type<PracticeParams>(),
+    practiceAsOf: timestamp('practice_as_of', { withTimezone: true }),
   },
   (t) => [
     foreignKey({ columns: [t.messageId, t.orgId], foreignColumns: [chatMessage.id, chatMessage.orgId], name: 'chat_citation_message_org_fk' }).onDelete('cascade'),

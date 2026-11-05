@@ -27,7 +27,7 @@ export interface LedgerSource {
 const PLACEHOLDER = /\[[A-Z]+_\d+\]/g;
 const STOP_WORDS = new Set(['account', 'accounts', 'total', 'other', 'with', 'from', 'into', 'this', 'that', 'general', 'current']);
 
-function hasWord(haystack: string, word: string): boolean {
+export function hasWord(haystack: string, word: string): boolean {
   return new RegExp(`(?<![\\p{L}\\p{N}])${word}(?![\\p{L}\\p{N}])`, 'u').test(haystack);
 }
 

@@ -37,14 +37,14 @@ Outlines exist so the whole track is visible and its decisions are written down.
 | 11 | `b1-time.md` | full | 6, launch gate | none | done (landed 2026-10-31) |
 | 12 | `b2-invoicing.md` | full | 11 | Confirm the FX policy; `fact-check` the invoice content; import one Xero CSV | built 2026-11-03 (plan deleted on commit) |
 | 13 | `b3-profitability.md` | full | 12 | none | built 2026-11-04 (plan deleted on commit) |
-| 14 | `a1-practice-router.md` | outline | 7, 11 | Approve the Hard rule 12 amendment | todo |
+| 14 | `a1-practice-router.md` | full | 7, 11 | Approve the Hard rule 12 amendment (approved 2026-11-04, with staff names redacted in every chat and unbilled time in minutes only) | built 2026-11-05 (plan deleted on commit) |
 | 15 | `a2-extraction.md` | outline | launch gate, 0b | none | todo |
 | any | `d3-xlsx-import.md` | full | D1 (built) | Supply `l2-exports/xero-au-tb.xlsx` and `xero-uk-tb.xlsx` (the real Excel exports) | done (landed 2026-10-31) |
 | any | `a3-kb-mtd-treaties.md` | full | — (P2a built) | Ingested 2026-10-30 (K1 to K8 all published) | done (landed 2026-10-30) |
 
 `prose-figures-inventory.md` is a working list for debt-sprint item 7. It is not a plan.
 
-**Next:** A1 (`a1-practice-router.md`, outline; needs the owner's approval of the Hard rule 12 amendment before `/code-planner`). B2's owner release checks are still open: the FX policy, the ATO invoice content, a Xero CSV import.
+**Next:** A2 (`a2-extraction.md`, outline; its gates are the launch gate (built, legal review owed) and 0b (done)). B2's owner release checks are still open: the FX policy, the ATO invoice content, a Xero CSV import.
 
 Later work in the roadmap but not planned here: D2 (GL transactions), D4 (Xero and QBO connections), the Phase 2 learning simulators and topics, and the four owed content skills. Each gets its own plan when its turn comes.
 

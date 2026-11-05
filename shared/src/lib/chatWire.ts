@@ -6,6 +6,7 @@ export const CHAT_SCOPES = ['AU', 'UK', 'ALL'] as const;
 export const MESSAGE_ROLES = ['user', 'assistant'] as const;
 export const MESSAGE_STATUSES = ['sent', 'answered', 'flagged', 'not_covered', 'refused', 'stopped', 'error'] as const;
 export const FLAG_CODES = ['uncited', 'bad_marker', 'unsupported_number', 'from_document'] as const;
+export const PRACTICE_KINDS = ['due_soon', 'over_capacity', 'unbilled_time', 'open_engagements', 'outstanding_requests'] as const;
 export const NOT_COVERED_REPLY = "The Knowledge Hub doesn't cover this yet, so I can't answer it. Try rephrasing the question, or browse the guides.";
 export const NOT_IN_SOURCES = "The Knowledge Hub sources I was given don't cover this.";
 
@@ -17,11 +18,21 @@ export const ledgerCitationRefSchema = z.object({
   report: z.enum(['pnl', 'bs']),
   asAt: z.string(),
 });
+export const practiceParamsSchema = z.object({
+  clientId: z.string().nullable(),
+  days: z.number().int().nullable(),
+  weekStart: z.string().nullable(),
+});
+export const practiceCitationRefSchema = z.object({
+  kind: z.enum(PRACTICE_KINDS),
+  params: practiceParamsSchema,
+  asOf: z.string(),
+});
 export const citationViewSchema = z.object({
   marker: z.number().int().min(1),
   sourceId: z.string().nullable(), versionId: z.string().nullable(), chunkId: z.string().nullable(),
   title: z.string(), citation: z.string(),
-  kind: z.enum(['act', 'regulation', 'bill', 'ruling', 'guidance', 'standard', 'curriculum', 'ledger']),
+  kind: z.enum(['act', 'regulation', 'bill', 'ruling', 'guidance', 'standard', 'curriculum', 'ledger', 'practice']),
   jurisdiction: z.enum(['AU', 'UK', 'INTL']),
   billStatus: z.enum(['introduced', 'passed', 'assented', 'lapsed']).nullable(),
   headingPath: z.array(z.string()),
@@ -30,6 +41,7 @@ export const citationViewSchema = z.object({
   officialUrl: z.string().nullable(),
   excerpt: z.string(),
   ledger: ledgerCitationRefSchema.optional(),
+  practice: practiceCitationRefSchema.optional(),
 });
 export const chatMessageViewSchema = z.object({
   id: z.string(), role: z.enum(MESSAGE_ROLES), body: z.string(), status: z.enum(MESSAGE_STATUSES),
@@ -57,6 +69,9 @@ export type MessageStatus = (typeof MESSAGE_STATUSES)[number];
 export type GroundingFlag = z.infer<typeof groundingFlagSchema>;
 export type CitationView = z.infer<typeof citationViewSchema>;
 export type LedgerCitationRef = z.infer<typeof ledgerCitationRefSchema>;
+export type PracticeKind = (typeof PRACTICE_KINDS)[number];
+export type PracticeParams = z.infer<typeof practiceParamsSchema>;
+export type PracticeCitationRef = z.infer<typeof practiceCitationRefSchema>;
 export type ChatMessageView = z.infer<typeof chatMessageViewSchema>;
 export type AttachedDocument = z.infer<typeof attachedDocumentSchema>;
 export type ConversationView = z.infer<typeof conversationViewSchema>;
